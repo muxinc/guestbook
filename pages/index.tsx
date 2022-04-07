@@ -8,9 +8,11 @@ import Recorder from '../components/Recorder';
 import SelectDevice from '../components/SelectDevice';
 import Grid from '../components/Grid';
 import Sidebar from '../components/Sidebar';
+import RecordingStatus from "../constants/RecordingStatus"
 
 const Home: NextPage = () => {
   const [videoDeviceId, setVideoDeviceId] = useState();
+  const [recordingStatus, setRecordingStatus] = useState(RecordingStatus.INITIALIZING);
 
   return (
     <div className={styles.container}>
@@ -27,7 +29,7 @@ const Home: NextPage = () => {
             <SelectDevice setVideoDeviceId={setVideoDeviceId} />
           </div>
           <div>
-            <Recorder videoDeviceId={videoDeviceId} />
+            <Recorder videoDeviceId={videoDeviceId} recordingStatus={recordingStatus} setRecordingStatus={setRecordingStatus} />
             <Grid />
           </div>
         </div>
