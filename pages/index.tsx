@@ -8,11 +8,13 @@ import Recorder from '../components/Recorder';
 import SelectDevice from '../components/SelectDevice';
 import Grid from '../components/Grid';
 import Sidebar from '../components/Sidebar';
+import Countdown from '../components/Countdown';
 import RecordingStatus from "../constants/RecordingStatus"
 
 const Home: NextPage = () => {
   const [videoDeviceId, setVideoDeviceId] = useState();
   const [recordingStatus, setRecordingStatus] = useState(RecordingStatus.INITIALIZING);
+  const [countdownSec, setCountdownSec] = useState(5);
 
   return (
     <div className={styles.container}>
@@ -29,7 +31,11 @@ const Home: NextPage = () => {
             <SelectDevice setVideoDeviceId={setVideoDeviceId} />
           </div>
           <div>
-            <Recorder videoDeviceId={videoDeviceId} recordingStatus={recordingStatus} setRecordingStatus={setRecordingStatus} />
+            {countdownSec > 0 &&
+              recordingStatus === RecordingStatus.COUNTING && (
+                <Countdown seconds={countdownSec} setSeconds={setCountdownSec} setRecordingStatus={setRecordingStatus} />
+              )}
+            <Recorder videoDeviceId={videoDeviceId} recordingStatus={recordingStatus} setRecordingStatus={setRecordingStatus} setCountdownSec={setCountdownSec} />
             <Grid />
           </div>
         </div>
