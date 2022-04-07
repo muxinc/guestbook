@@ -1,0 +1,36 @@
+{
+  "upload_id": "dn7XoQ0202Gk6KBYKU2Rl3xU8TJ9Zvb7ZZfDvwk0100Rfpc",
+  "tracks": [
+    {
+      "type": "video",
+      "max_width": 640,
+      "max_height": 480,
+      "max_frame_rate": 29.917,
+      "id": "hQMZHK7xyD002EAfnFkKS4Zi1JBObYBHN2tlhu02RQ00Ic"
+    },
+    {
+      "type": "audio",
+      "max_channels": 1,
+      "max_channel_layout": "mono",
+      "id": "ZPBM4cZjW9ersn00RlXc5ZDpRB3UuGx5yrAq7AfoTDl4"
+    }
+  ],
+  "status": "ready",
+  "playback_ids": [
+    {
+      "policy": "public",
+      "id": "tpjR3V3bA00V018KgckmC6Q5I027fHCIUhChu8yjjdbImQ"
+    }
+  ],
+  "non_standard_input_reasons": {
+    "audio_codec": "opus"
+  },
+  "mp4_support": "none",
+  "max_stored_resolution": "SD",
+  "max_stored_frame_rate": 29.917,
+  "master_access": "none",
+  "id": "4HUjccr1ItSqSIn5DsggLKLzbjp3KJ631cBMOK000200Ho",
+  "duration": 4.681667,
+  "created_at": 1649355598,
+  "aspect_ratio": "4:3"
+}
