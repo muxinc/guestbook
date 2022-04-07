@@ -48,7 +48,9 @@ const Home: NextPage = () => {
       </Head>
       <main className="bg-gray-800 h-screen">
         <Navbar
+          videoDeviceId={videoDeviceId}
           setVideoDeviceId={setVideoDeviceId}
+          audioDeviceId={audioDeviceId}
           setAudioDeviceId={setAudioDeviceId}
         />
         {countdownSec > 0 && recordingStatus === RecordingStatus.COUNTING && (
