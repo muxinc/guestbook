@@ -29,7 +29,7 @@ const Countdown = ({ seconds, setSeconds, setRecordingStatus }) => {
     >
       <motion.div
         key={seconds}
-        className="text-5xl text-white"
+        className="text-[200px] text-white"
         initial="hidden"
         animate="visible"
         variants={variants}
