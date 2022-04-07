@@ -2,9 +2,7 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 const Mux = require("@mux/mux-node").default;
 
-type Data = {
-  url: string;
-};
+type Data = string;
 
 export default async function handler(
   req: NextApiRequest,
