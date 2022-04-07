@@ -1,19 +1,21 @@
-import type { NextPage } from 'next'
-import Head from 'next/head'
-import Image from 'next/image'
-import styles from '../styles/Home.module.css'
+import type { NextPage } from "next";
+import Head from "next/head";
+import Image from "next/image";
+import styles from "../styles/Home.module.css";
 
 import { useState } from "react";
-import Recorder from '../components/Recorder';
-import SelectDevice from '../components/SelectDevice';
-import Grid from '../components/Grid';
-import Sidebar from '../components/Sidebar';
-import Countdown from '../components/Countdown';
-import RecordingStatus from "../constants/RecordingStatus"
+import Recorder from "../components/Recorder";
+import SelectDevice from "../components/SelectDevice";
+import Grid from "../components/Grid";
+import Sidebar from "../components/Sidebar";
+import Countdown from "../components/Countdown";
+import RecordingStatus from "../constants/RecordingStatus";
 
 const Home: NextPage = () => {
   const [videoDeviceId, setVideoDeviceId] = useState();
-  const [recordingStatus, setRecordingStatus] = useState(RecordingStatus.INITIALIZING);
+  const [recordingStatus, setRecordingStatus] = useState(
+    RecordingStatus.INITIALIZING
+  );
   const [countdownSec, setCountdownSec] = useState(5);
 
   return (
@@ -25,7 +27,10 @@ const Home: NextPage = () => {
       </Head>
 
       <main className={styles.main}>
-        <div className="grid bg-gray-800 h-screen" style={{ gridTemplateColumns: "20% 80%" }}>
+        <div
+          className="grid bg-gray-800 h-screen"
+          style={{ gridTemplateColumns: "20% 80%" }}
+        >
           <div>
             <Sidebar />
             <SelectDevice setVideoDeviceId={setVideoDeviceId} />
@@ -33,15 +38,24 @@ const Home: NextPage = () => {
           <div>
             {countdownSec > 0 &&
               recordingStatus === RecordingStatus.COUNTING && (
-                <Countdown seconds={countdownSec} setSeconds={setCountdownSec} setRecordingStatus={setRecordingStatus} />
+                <Countdown
+                  seconds={countdownSec}
+                  setSeconds={setCountdownSec}
+                  setRecordingStatus={setRecordingStatus}
+                />
               )}
-            <Recorder videoDeviceId={videoDeviceId} recordingStatus={recordingStatus} setRecordingStatus={setRecordingStatus} setCountdownSec={setCountdownSec} />
+            <Recorder
+              videoDeviceId={videoDeviceId}
+              recordingStatus={recordingStatus}
+              setRecordingStatus={setRecordingStatus}
+              setCountdownSec={setCountdownSec}
+            />
             <Grid />
           </div>
         </div>
       </main>
     </div>
-  )
-}
+  );
+};
 
-export default Home
+export default Home;

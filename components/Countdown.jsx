@@ -4,7 +4,7 @@ import RecordingStatus from "../constants/RecordingStatus";
 
 const variants = {
   visible: { opacity: 1, transform: "scale(1)" },
-  hidden: { opacity: 0, transform: "scale(0)" }
+  hidden: { opacity: 0, transform: "scale(0)" },
 };
 
 const Countdown = ({ seconds, setSeconds, setRecordingStatus }) => {
@@ -15,7 +15,7 @@ const Countdown = ({ seconds, setSeconds, setRecordingStatus }) => {
       setSeconds(nextSecond);
       if (nextSecond === 0) {
         setRecordingStatus(RecordingStatus.RECORDING);
-      };
+      }
     }, 1000);
 
     return () => clearTimeout(timeout);

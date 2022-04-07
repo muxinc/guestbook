@@ -1,4 +1,4 @@
-import * as React from 'react';
+import * as React from "react";
 
 const Sidebar = () => {
   return (
@@ -8,6 +8,6 @@ const Sidebar = () => {
       <p className="text-sm">An open-source project from Mux</p>
     </div>
   );
-}
+};
 
 export default Sidebar;

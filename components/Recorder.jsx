@@ -55,7 +55,7 @@ const Recorder = ({
       console.log(error);
       setErrorMessage(error);
     }
-  }, [file])
+  }, [file]);
 
   // Start countdown
   const handleClickRecord = () => {
@@ -141,9 +141,9 @@ const Recorder = ({
   // Upload on new file detected
   React.useEffect(() => {
     if (file) {
-      handleUpload()
+      handleUpload();
     }
-  }, [file, handleUpload])
+  }, [file, handleUpload]);
 
   return (
     <div className="w-full bg-gray-900 h-[50vh] relative">
