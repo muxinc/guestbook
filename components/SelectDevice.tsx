@@ -1,12 +1,25 @@
 import * as React from "react";
+import { LocalStorageKeys } from "../constants/LocalStorage";
 
-const SelectDevice = ({ setVideoDeviceId }) => {
-  const [devices, set] = React.useState([]);
+type Props = {
+  videoDeviceId: string;
+  audioDeviceId: string;
+  setVideoDeviceId: (id: string) => void;
+  setAudioDeviceId: (id: string) => void;
+};
+
+const SelectDevice = ({
+  videoDeviceId,
+  setVideoDeviceId,
+  audioDeviceId,
+  setAudioDeviceId,
+}: Props) => {
+  const [devices, setDevices] = React.useState<MediaDeviceInfo[]>([]);
 
   React.useEffect(() => {
     const detect = async () => {
       const devices = await navigator.mediaDevices.enumerateDevices();
-      set(devices);
+      setDevices(devices);
     };
 
     detect();
@@ -17,8 +30,13 @@ const SelectDevice = ({ setVideoDeviceId }) => {
       <select
         className="border p-2 w-full mb-2"
         onChange={(e) => {
-          console.log(e.target.value);
+          localStorage.setItem(
+            LocalStorageKeys.AUDIO_DEVICE_ID,
+            e.target.value
+          );
+          setAudioDeviceId(e.target.value);
         }}
+        value={videoDeviceId}
       >
         {devices
           .filter((d) => d.kind === "audioinput")
@@ -29,13 +47,16 @@ const SelectDevice = ({ setVideoDeviceId }) => {
           ))}
       </select>
 
-      <hr />
-
       <select
         className="border p-2 w-full mb-2"
         onChange={(e) => {
+          localStorage.setItem(
+            LocalStorageKeys.VIDEO_DEVICE_ID,
+            e.target.value
+          );
           setVideoDeviceId(e.target.value);
         }}
+        value={audioDeviceId}
       >
         {devices
           .filter((d) => d.kind === "videoinput")

@@ -9,23 +9,34 @@ import {
   NUMBER_VIDEO_BITS_PER_SECOND,
 } from "../constants/MediaRecorder";
 
+type Props = {
+  videoDeviceId: string | undefined;
+  audioDeviceId: string | undefined;
+  recordingStatus: RecordingStatus;
+  setRecordingStatus: (status: RecordingStatus) => void;
+  setCountdownSec: (sec: number) => void;
+};
+
 const Recorder = ({
   videoDeviceId,
+  audioDeviceId,
   recordingStatus,
   setRecordingStatus,
   setCountdownSec,
-}) => {
-  const videoRef = React.useRef();
-  const mediaRecorderRef = React.useRef();
+}: Props) => {
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const mediaRecorderRef = React.useRef<MediaRecorder>();
 
-  const [chunks, setChunks] = React.useState([]);
-  const [file, setFile] = React.useState();
+  const [chunks, setChunks] = React.useState<Blob[]>([]);
+  const [file, setFile] = React.useState<File | null>(null);
 
   const [progress, setProgress] = React.useState(0);
-  const [statusMessage, setStatusMessage] = React.useState(null);
+  const [statusMessage, setStatusMessage] = React.useState<string | null>(null);
 
   const handleUpload = React.useCallback(async () => {
     try {
+      if (!file) return;
+
       const response = await fetch("/api/upload", { method: "POST" });
       const url = await response.text();
 
@@ -52,8 +63,7 @@ const Recorder = ({
         setFile(null);
       });
     } catch (error) {
-      console.log(error);
-      setErrorMessage(error);
+      console.error(error);
     }
   }, [file]);
 
@@ -72,24 +82,40 @@ const Recorder = ({
   // Start recording
   React.useEffect(() => {
     if (recordingStatus !== RecordingStatus.RECORDING) return;
+    if (!mediaRecorderRef.current) return;
     console.log("Now recording!");
 
     mediaRecorderRef.current.start(500);
 
     // Automatically stop the recording after 10 seconds.
     setTimeout(() => {
-      mediaRecorderRef.current.stop();
+      mediaRecorderRef.current?.stop();
     }, 5000);
   }, [recordingStatus]);
 
   // Setup MediaRecorder
   React.useEffect(() => {
-    if (recordingStatus !== RecordingStatus.INITIALIZING) return;
-
+    if (
+      recordingStatus !== RecordingStatus.INITIALIZING &&
+      recordingStatus !== RecordingStatus.READY
+    )
+      return;
     const setup = async () => {
-      const videoPrefs = videoDeviceId ? { deviceId: videoDeviceId } : true;
+      if (!videoRef.current) return;
+
+      const audioPrefs: boolean | MediaTrackConstraints = audioDeviceId
+        ? { deviceId: audioDeviceId }
+        : true;
+      const videoPrefs: boolean | MediaTrackConstraints = videoDeviceId
+        ? {
+            deviceId: videoDeviceId,
+            facingMode: "user",
+            width: { ideal: 1920 },
+            height: { ideal: 1080 },
+          }
+        : true;
       const stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
+        audio: audioPrefs,
         video: videoPrefs,
       });
 
@@ -111,10 +137,11 @@ const Recorder = ({
       videoRef.current.srcObject = stream;
       videoRef.current.muted = true;
       videoRef.current.controls = false;
+
+      setRecordingStatus(RecordingStatus.READY);
     };
     setup();
-    setRecordingStatus(RecordingStatus.READY);
-  }, [recordingStatus, setRecordingStatus, videoDeviceId]);
+  }, [audioDeviceId, recordingStatus, setRecordingStatus, videoDeviceId]);
 
   // Handle MediaRecorder onstop
   React.useEffect(() => {
@@ -136,7 +163,7 @@ const Recorder = ({
       setRecordingStatus(RecordingStatus.READY);
       setCountdownSec(5);
     };
-  }, [chunks, setChunks]);
+  }, [chunks, setChunks, setCountdownSec, setRecordingStatus]);
 
   // Upload on new file detected
   React.useEffect(() => {

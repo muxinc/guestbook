@@ -1,13 +1,20 @@
 import React, { useEffect } from "react";
-import { motion } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import RecordingStatus from "../constants/RecordingStatus";
 
-const variants = {
+const variants: Variants = {
   visible: { opacity: 1, transform: "scale(1)" },
   hidden: { opacity: 0, transform: "scale(0)" },
 };
 
-const Countdown = ({ seconds, setSeconds, setRecordingStatus }) => {
+type Props = {
+  seconds: number;
+  setSeconds: (seconds: number) => void;
+  setRecordingStatus: (status: RecordingStatus) => void;
+};
+
+const Countdown = ({ seconds, setSeconds, setRecordingStatus }: Props) => {
+  console.log({ seconds });
   useEffect(() => {
     const nextSecond = seconds - 1;
 

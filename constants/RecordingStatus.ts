@@ -1,13 +1,8 @@
-const INITIALIZING = "initializing";
-const READY = "ready";
-const RECORDING = "recording";
-const COUNTING = "counting";
-
-const statuses = {
-  INITIALIZING,
-  READY,
-  RECORDING,
-  COUNTING,
+enum RecordingStatus {
+  INITIALIZING = "initializing",
+  READY = "ready",
+  RECORDING = "recording",
+  COUNTING = "counting",
 };
 
-export default statuses;
+export default RecordingStatus;
