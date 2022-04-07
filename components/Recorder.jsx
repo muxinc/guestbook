@@ -132,14 +132,6 @@ const Recorder = ({
         { type: finalBlob.type }
       );
       setFile(createdFile);
-
-      // create a video element in the browser and add it to the document body
-      let video = document.createElement("video");
-      video.src = objUrl;
-      video.controls = true;
-      video.muted = false;
-
-      document.body.appendChild(video);
       setChunks([]);
       setRecordingStatus(RecordingStatus.READY);
       setCountdownSec(5);
