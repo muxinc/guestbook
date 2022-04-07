@@ -5,7 +5,19 @@ import { MIME_TYPE, NUMBER_AUDIO_BITS_PER_SECOND, NUMBER_VIDEO_BITS_PER_SECOND }
 const Recorder = ({ videoDeviceId, recordingStatus, setRecordingStatus }) => {
 
   const videoRef = React.useRef();
+  const mediaRecorderRef = React.useRef();
+
   const [chunks, setChunks] = React.useState([]);
+
+  const handleClickRecord = () => {
+    if (!mediaRecorderRef.current) return;
+    mediaRecorderRef.current.start(2000);
+
+    // Automatically stop the recording after 10 seconds.
+    setTimeout(() => {
+      mediaRecorderRef.current.stop();
+    }, 5000);
+  }
 
   React.useEffect(() => {
     if (recordingStatus !== RecordingStatus.INITIALIZING) return;
@@ -18,17 +30,17 @@ const Recorder = ({ videoDeviceId, recordingStatus, setRecordingStatus }) => {
         throw new Error('Sorry, this codec is not supported.');
       }
 
-      const mediaRecorder = new MediaRecorder(stream, {
+      mediaRecorderRef.current = new MediaRecorder(stream, {
         audioBitsPerSecond: NUMBER_AUDIO_BITS_PER_SECOND,
         videoBitsPerSecond: NUMBER_VIDEO_BITS_PER_SECOND,
         mimeType: MIME_TYPE
       });
 
-      mediaRecorder.ondataavailable = (e) => {
+      mediaRecorderRef.current.ondataavailable = (e) => {
         chunks.push(e.data);
       }
 
-      mediaRecorder.onstop = (e) => {
+      mediaRecorderRef.current.onstop = (e) => {
         let finalBlob = new Blob(chunks, { type: MIME_TYPE });
         const objUrl = URL.createObjectURL(finalBlob);
 
@@ -55,10 +67,10 @@ const Recorder = ({ videoDeviceId, recordingStatus, setRecordingStatus }) => {
     <div className="w-full bg-gray-900 h-[50vh] relative">
       <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center">
         <div className="bg-gray-200 p-3 mb-4 w-48 flex items-center justify-center rounded-full opacity-90">
-          <button className="cursor-pointer bg-red-800 rounded-full w-12 h-12 block"></button>
+          <button className="cursor-pointer bg-red-800 rounded-full w-12 h-12 block" onClick={handleClickRecord}></button>
         </div>
       </div>
-      <video className="mx-auto aspect-video h-full" ref={videoRef} autoPlay />
+      <video className="mx-auto aspect-video h-full pointer-events-none" ref={videoRef} autoPlay />
     </div>
   )
 }
