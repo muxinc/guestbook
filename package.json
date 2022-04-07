@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@mux/upchunk": "^2.3.1",
     "framer-motion": "^6.2.9",
     "next": "12.1.4",
     "react": "18.0.0",
