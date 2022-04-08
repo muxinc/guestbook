@@ -45,8 +45,7 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
         ? {
             deviceId: videoDeviceId,
             facingMode: "user",
-            width: { ideal: 1920 },
-            height: { ideal: 1080 },
+            aspectRatio: 16 / 9,
           }
         : true;
       const stream = await navigator.mediaDevices.getUserMedia({
