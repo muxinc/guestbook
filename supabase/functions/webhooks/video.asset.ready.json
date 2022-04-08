@@ -1,36 +1,52 @@
 {
-  "upload_id": "dn7XoQ0202Gk6KBYKU2Rl3xU8TJ9Zvb7ZZfDvwk0100Rfpc",
-  "tracks": [
-    {
-      "type": "video",
-      "max_width": 640,
-      "max_height": 480,
-      "max_frame_rate": 29.917,
-      "id": "hQMZHK7xyD002EAfnFkKS4Zi1JBObYBHN2tlhu02RQ00Ic"
-    },
-    {
-      "type": "audio",
-      "max_channels": 1,
-      "max_channel_layout": "mono",
-      "id": "ZPBM4cZjW9ersn00RlXc5ZDpRB3UuGx5yrAq7AfoTDl4"
-    }
-  ],
-  "status": "ready",
-  "playback_ids": [
-    {
-      "policy": "public",
-      "id": "tpjR3V3bA00V018KgckmC6Q5I027fHCIUhChu8yjjdbImQ"
-    }
-  ],
-  "non_standard_input_reasons": {
-    "audio_codec": "opus"
+  "type": "video.asset.ready",
+  "request_id": null,
+  "object": {
+    "type": "asset",
+    "id": "apeoo7TFGjL4I3jznrK3fe5o3pgxcemF5YOIqx33p9s"
   },
-  "mp4_support": "none",
-  "max_stored_resolution": "SD",
-  "max_stored_frame_rate": 29.917,
-  "master_access": "none",
-  "id": "4HUjccr1ItSqSIn5DsggLKLzbjp3KJ631cBMOK000200Ho",
-  "duration": 4.681667,
-  "created_at": 1649355598,
-  "aspect_ratio": "4:3"
+  "id": "0f8a9f25-7c1b-4bf0-bf2c-47d8a2083b17",
+  "environment": {
+    "name": "Mux Guestbook",
+    "id": "vqhv6d"
+  },
+  "data": {
+    "tracks": [
+      {
+        "type": "video",
+        "max_width": 1920,
+        "max_height": 1080,
+        "max_frame_rate": 29.97,
+        "id": "zCSxIsLVdGMTQ6zX3teO1sSilAK01mJrEYr7zLvymsls",
+        "duration": 23.8238
+      },
+      {
+        "type": "audio",
+        "max_channels": 2,
+        "max_channel_layout": "stereo",
+        "id": "MFCSnGOI9s6j31ErtWGJwYexSonHt02AOSqVwo02nt39o",
+        "duration": 23.823792
+      }
+    ],
+    "status": "ready",
+    "playback_ids": [
+      {
+        "policy": "public",
+        "id": "BVzgvVreJRpw5WKpy300M01UPkGl01cSAAx1wv897VQtCU"
+      }
+    ],
+    "passthrough": "{'eventId': 1}",
+    "mp4_support": "none",
+    "max_stored_resolution": "HD",
+    "max_stored_frame_rate": 29.97,
+    "master_access": "none",
+    "id": "apeoo7TFGjL4I3jznrK3fe5o3pgxcemF5YOIqx33p9s",
+    "duration": 23.857167,
+    "created_at": 1649436438,
+    "aspect_ratio": "16:9"
+  },
+  "created_at": "2022-04-08T16:47:21.000000Z",
+  "attempts": [],
+  "accessor_source": null,
+  "accessor": null
 }
