@@ -3,12 +3,18 @@ import * as UpChunk from "@mux/upchunk";
 
 import RecordingStatus from "constants/RecordingStatus";
 import {
-  MIME_TYPE,
+  MIME_TYPE_STACK,
   NUMBER_AUDIO_BITS_PER_SECOND,
   NUMBER_VIDEO_BITS_PER_SECOND,
 } from "constants/MediaRecorder";
 import TimerButton from "./TimerButton";
 import { useDeviceIdContext } from "contexts/DeviceIdContext";
+
+const getSupportedMimeType = () => {
+  return MIME_TYPE_STACK.find((mimeType) =>
+    MediaRecorder.isTypeSupported(mimeType)
+  );
+};
 
 type Props = {
   recordingStatus: RecordingStatus;
@@ -41,26 +47,29 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
       const audioPrefs: boolean | MediaTrackConstraints = audioDeviceId
         ? { deviceId: audioDeviceId }
         : true;
-      const videoPrefs: boolean | MediaTrackConstraints = videoDeviceId
-        ? {
-            deviceId: videoDeviceId,
-            facingMode: "user",
-            aspectRatio: 16 / 9,
-          }
-        : true;
+      const videoPrefs: boolean | MediaTrackConstraints = {
+        facingMode: "user",
+        aspectRatio: 16 / 9,
+      };
+      if (videoDeviceId) {
+        videoPrefs.deviceId = videoDeviceId;
+      }
+
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: audioPrefs,
         video: videoPrefs,
       });
 
-      if (!MediaRecorder.isTypeSupported(MIME_TYPE)) {
-        throw new Error("Sorry, this codec is not supported.");
+      const mimeType = getSupportedMimeType();
+      if (typeof mimeType === "undefined") {
+        throw new Error("No supported mime type found");
       }
-
+      // TODO: this doesn't turn off the old camera when switching to a new one
+      // particularly in safari
       mediaRecorderRef.current = new MediaRecorder(stream, {
         audioBitsPerSecond: NUMBER_AUDIO_BITS_PER_SECOND,
         videoBitsPerSecond: NUMBER_VIDEO_BITS_PER_SECOND,
-        mimeType: MIME_TYPE,
+        mimeType,
       });
 
       mediaRecorderRef.current.ondataavailable = (e) => {
@@ -104,7 +113,7 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
 
     mediaRecorderRef.current.onstop = (e) => {
       console.log("stopping recording!");
-      let finalBlob = new Blob(chunks, { type: MIME_TYPE });
+      let finalBlob = new Blob(chunks, { type: getSupportedMimeType() });
       const objUrl = URL.createObjectURL(finalBlob);
 
       // you might instead create a new file from the aggregated chunk data
@@ -123,6 +132,7 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
   const handleUpload = React.useCallback(async () => {
     try {
       if (!file) return;
+
 
       const response = await fetch("/api/upload", { method: "POST" });
       const url = await response.text();

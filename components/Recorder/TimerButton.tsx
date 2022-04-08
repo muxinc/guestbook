@@ -106,7 +106,7 @@ const TimerButton = ({
       whileFocus="hover"
       whileTap="pressed"
       disabled={countdownState !== CountdownState.READY}
-      className={`bg-gray-300/90 p-3 mb-3 w-44 flex items-center justify-center rounded-full text-pink-600`}
+      className={`bg-gray-300/90 p-3 mb-3 w-32 sm:w-40 h-14 sm:h-16 relative flex items-center justify-center rounded-full text-pink-600 transform-gpu`}
       onClick={startCountdown}
     >
       {countdownState !== CountdownState.READY && (
@@ -114,7 +114,7 @@ const TimerButton = ({
           layout
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          className={`text-4xl font-bold grow ${
+          className={`text-2xl sm:text-4xl font-bold grow ${
             countdownState === CountdownState.RECORDING ? "animate-pulse" : ""
           }`}
         >
@@ -123,12 +123,12 @@ const TimerButton = ({
       )}
       <motion.div
         layout
+        className="h-full aspect-square"
         variants={recordingIndicatorVariants}
-        className="w-12 h-12 block"
       >
         <svg
           viewBox="0 0 100 100"
-          className="overflow-visible rotate-90 scale-x-[-1]"
+          className="overflow-visible scale-x-[-1] rotate-90"
         >
           <AnimatePresence>
             {countdownState === CountdownState.RECORDING ? (

@@ -40,13 +40,20 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
   useEffect(() => {
     const setState = async () => {
       /* First we get a list of devices */
+      await navigator.mediaDevices.getUserMedia({
+        video: true,
+        audio: true,
+      }); // safari won't return a list of devices until we approve this
+
       const devices = await navigator.mediaDevices.enumerateDevices();
+
       const videoDevices = devices.filter(
         (d) => d.kind === "videoinput"
       ) as VideoDeviceInfo[];
       const audioDevices = devices.filter(
         (d) => d.kind === "audioinput"
       ) as AudioDeviceInfo[];
+
       setVideoDevices(videoDevices);
       setAudioDevices(audioDevices);
 
