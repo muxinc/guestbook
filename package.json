@@ -11,11 +11,15 @@
   "dependencies": {
     "@mux/mux-node": "^5.0.0-rc.5",
     "@mux/upchunk": "^2.3.1",
+    "@reach/dialog": "^0.16.2",
+    "@reach/visually-hidden": "^0.16.0",
     "@supabase/supabase-js": "^1.33.3",
     "framer-motion": "^6.2.9",
     "next": "12.1.4",
     "react": "18.0.0",
-    "react-dom": "18.0.0"
+    "react-dom": "18.0.0",
+    "react-icons": "^4.3.1",
+    "use-sound": "^4.0.1"
   },
   "devDependencies": {
     "@types/node": "17.0.23",

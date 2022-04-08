@@ -1,0 +1,6 @@
+.overlay {
+  @apply bg-gray-900/50 backdrop-blur;
+}
+.content {
+  @apply bg-gray-800 w-[95vw] max-w-xl rounded;
+}

@@ -28,7 +28,7 @@ const Grid = () => {
   }, []);
 
   return (
-    <div className="bg-gray-700 flex flex-wrap justify-between gap-2 py-4 w-full overflow-scroll h-[50vh]">
+    <div className="bg-gray-700 flex flex-wrap justify-between gap-2 py-4 overflow-y-scroll">
       {entries
         ? entries.map((row) => (
             <motion.div

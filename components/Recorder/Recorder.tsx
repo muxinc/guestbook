@@ -1,29 +1,23 @@
 import * as React from "react";
 import * as UpChunk from "@mux/upchunk";
-import { motion } from "framer-motion";
 
-import RecordingStatus from "../constants/RecordingStatus";
+import RecordingStatus from "constants/RecordingStatus";
 import {
   MIME_TYPE,
   NUMBER_AUDIO_BITS_PER_SECOND,
   NUMBER_VIDEO_BITS_PER_SECOND,
-} from "../constants/MediaRecorder";
+} from "constants/MediaRecorder";
+import TimerButton from "./TimerButton";
+import { useDeviceIdContext } from "contexts/DeviceIdContext";
 
 type Props = {
-  videoDeviceId: string | undefined;
-  audioDeviceId: string | undefined;
   recordingStatus: RecordingStatus;
   setRecordingStatus: (status: RecordingStatus) => void;
-  setCountdownSec: (sec: number) => void;
 };
 
-const Recorder = ({
-  videoDeviceId,
-  audioDeviceId,
-  recordingStatus,
-  setRecordingStatus,
-  setCountdownSec,
-}: Props) => {
+const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
+  const { videoDeviceId, audioDeviceId } = useDeviceIdContext();
+
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = React.useRef<MediaRecorder>();
 
@@ -33,67 +27,8 @@ const Recorder = ({
   const [progress, setProgress] = React.useState(0);
   const [statusMessage, setStatusMessage] = React.useState<string | null>(null);
 
-  const handleUpload = React.useCallback(async () => {
-    try {
-      if (!file) return;
-
-      const response = await fetch("/api/upload", { method: "POST" });
-      const url = await response.text();
-
-      const upload = UpChunk.createUpload({
-        endpoint: url, // Authenticated url
-        file, // File object with your video file’s properties
-        chunkSize: 30720, // Uploads the file in ~30 MB chunks
-      });
-
-      // Subscribe to events
-      upload.on("error", (error) => {
-        console.log(error);
-        setStatusMessage(error.detail);
-      });
-
-      upload.on("progress", (progress) => {
-        console.log(progress);
-        setProgress(progress.detail);
-      });
-
-      upload.on("success", () => {
-        console.log("successsss");
-        setStatusMessage("Wrap it up, we're done here. 👋");
-        setFile(null);
-      });
-    } catch (error) {
-      console.error(error);
-    }
-  }, [file]);
-
-  // Start countdown
-  const handleClickRecord = () => {
-    if (!mediaRecorderRef.current) return;
-
-    if (recordingStatus !== RecordingStatus.READY) {
-      console.log("Recorder not ready!");
-      return;
-    }
-
-    setRecordingStatus(RecordingStatus.COUNTING);
-  };
-
-  // Start recording
-  React.useEffect(() => {
-    if (recordingStatus !== RecordingStatus.RECORDING) return;
-    if (!mediaRecorderRef.current) return;
-    console.log("Now recording!");
-
-    mediaRecorderRef.current.start(500);
-
-    // Automatically stop the recording after 10 seconds.
-    setTimeout(() => {
-      mediaRecorderRef.current?.stop();
-    }, 5000);
-  }, [recordingStatus]);
-
-  // Setup MediaRecorder
+  // Setup MediaRecorder when initializing
+  // change cameras when initializing or ready
   React.useEffect(() => {
     if (
       recordingStatus !== RecordingStatus.INITIALIZING &&
@@ -143,7 +78,28 @@ const Recorder = ({
     setup();
   }, [audioDeviceId, recordingStatus, setRecordingStatus, videoDeviceId]);
 
-  // Handle MediaRecorder onstop
+  // Pass these three functions to our countdown button.
+  // They'll handle updating the
+  const startCountdown = React.useCallback(() => {
+    if (!mediaRecorderRef.current) return false;
+    if (recordingStatus !== RecordingStatus.READY) {
+      console.log("Recorder not ready!");
+      return false;
+    }
+    setRecordingStatus(RecordingStatus.COUNTING);
+    return true;
+  }, [recordingStatus, setRecordingStatus]);
+  const startRecording = React.useCallback(() => {
+    setRecordingStatus(RecordingStatus.RECORDING);
+    console.log("Now recording!");
+    mediaRecorderRef.current?.start(500);
+  }, [setRecordingStatus]);
+  const stopRecording = React.useCallback(() => {
+    mediaRecorderRef.current?.stop();
+    // The useEffect down below will handle the rest.
+  }, []);
+
+  // Create a file on MediaRecorder's stop event
   React.useEffect(() => {
     if (!mediaRecorderRef.current) return;
 
@@ -155,17 +111,50 @@ const Recorder = ({
       // you might instead create a new file from the aggregated chunk data
       const createdFile = new File(
         [finalBlob],
-        "video-recording-new-new-final-FORREAL",
+        "video-recording-new-new-final-FORREAL_v2",
         { type: finalBlob.type }
       );
       setFile(createdFile);
       setChunks([]);
       setRecordingStatus(RecordingStatus.READY);
-      setCountdownSec(5);
     };
-  }, [chunks, setChunks, setCountdownSec, setRecordingStatus]);
+  }, [chunks, setChunks, setRecordingStatus]);
 
   // Upload on new file detected
+  const handleUpload = React.useCallback(async () => {
+    try {
+      if (!file) return;
+
+      const response = await fetch("/api/upload", { method: "POST" });
+      const url = await response.text();
+
+      const upload = UpChunk.createUpload({
+        endpoint: url, // Authenticated url
+        file, // File object with your video file’s properties
+        chunkSize: 30720, // Uploads the file in ~30 MB chunks
+      });
+
+      // Subscribe to events
+      upload.on("error", (error) => {
+        console.log(error);
+        setStatusMessage(error.detail);
+      });
+
+      upload.on("progress", (progress) => {
+        console.log(progress);
+        setProgress(progress.detail);
+      });
+
+      upload.on("success", () => {
+        console.log("successsss");
+        setStatusMessage("Wrap it up, we're done here. 👋");
+        setFile(null);
+      });
+    } catch (error) {
+      console.error(error);
+    }
+  }, [file]);
+
   React.useEffect(() => {
     if (file) {
       handleUpload();
@@ -173,24 +162,21 @@ const Recorder = ({
   }, [file, handleUpload]);
 
   return (
-    <div className="w-full bg-gray-900 h-[50vh] relative">
-      {recordingStatus === RecordingStatus.READY && (
-        <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center">
-          <div className="bg-gray-200 p-3 mb-4 w-48 flex items-center justify-center rounded-full opacity-90">
-            <motion.button
-              className="cursor-pointer bg-red-800 rounded-full w-12 h-12 block"
-              whileHover={{ scale: 1.04 }}
-              whileTap={{ scale: 0.9 }}
-              onClick={handleClickRecord}
-            ></motion.button>
-          </div>
-        </div>
-      )}
+    <div className="w-full bg-gray-900 relative">
       <video
-        className="mx-auto aspect-video h-full pointer-events-none"
+        className="mx-auto aspect-video h-full scale-x-[-1] pointer-events-none"
         ref={videoRef}
         autoPlay
       />
+      <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center">
+        <TimerButton
+          onCountdownStart={startCountdown}
+          countdownDuration={3}
+          onCountdownEnd={startRecording}
+          recordingDuration={5}
+          onRecordingEnd={stopRecording}
+        />
+      </div>
     </div>
   );
 };
