@@ -18,6 +18,7 @@ export default async function handler(
     cors_origin: "https://your-app.com",
     new_asset_settings: {
       playback_policy: "public",
+      passthrough: JSON.stringify({ eventId: 1 })
     },
   });
 
