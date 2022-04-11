@@ -1,71 +1,51 @@
 import { FormEvent, useId } from "react";
 
 import Dialog from "components/Dialog";
-import { useState } from "react";
+
+export type Form = {
+  firstName: string;
+  lastName: string;
+  email: string;
+};
+export type SignupDismissFn = (form?: Form) => void;
 
 type Props = {
   isDialogOpen: boolean;
-  setIsDialogOpen: (isDialogOpen: boolean) => void;
-  setFileUploadUrl: (fileUploadUrl: string) => void;
+  onDismiss: SignupDismissFn;
+  disabled?: boolean;
 };
 
 const SettingsDialog = ({
   isDialogOpen,
-  setIsDialogOpen,
-  setFileUploadUrl,
+  onDismiss,
+  disabled = false,
 }: Props) => {
   const firstNameId = useId();
   const lastNameId = useId();
   const emailId = useId();
-  const [isSubmitting, setIsSubmitting] = useState(false);
 
   const onFormSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    try {
-      const formData = new FormData(e.currentTarget);
+    const formData = new FormData(e.currentTarget);
 
-      // if we posted just this, it would be multipart/form-data
-      // which I don't want to deal with right now
-      // so instead...
-      const body = new URLSearchParams();
-      Array.from(formData.entries()).forEach(([key, value]) => {
-        if (typeof value === "string") {
-          body.append(key, value);
-        }
+    const firstName = formData.get("firstName");
+    const lastName = formData.get("lastName");
+    const email = formData.get("email");
+
+    if (
+      typeof firstName === "string" &&
+      typeof lastName === "string" &&
+      typeof email === "string"
+    ) {
+      onDismiss({
+        firstName,
+        lastName,
+        email,
       });
-
-      const response = await fetch("/api/upload", {
-        method: "POST",
-        body,
-      });
-      const url = await response.text();
-
-      setFileUploadUrl(url);
-      setIsDialogOpen(false);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
     }
   };
   const onNoThanks = async () => {
-    if (isSubmitting) return;
-    setIsSubmitting(true);
-    try {
-      const response = await fetch("/api/upload", {
-        method: "POST",
-      });
-      const url = await response.text();
-
-      setFileUploadUrl(url);
-      setIsDialogOpen(false);
-    } catch (error) {
-      console.error(error);
-    } finally {
-      setIsSubmitting(false);
-    }
+    onDismiss();
   };
 
   return (
@@ -101,7 +81,7 @@ const SettingsDialog = ({
               type="text"
               className="border disabled:border-gray-400 rounded-sm bg-transparent p-2 w-full"
               required
-              disabled={isSubmitting}
+              disabled={disabled}
             />
           </div>
           <div>
@@ -114,7 +94,7 @@ const SettingsDialog = ({
               type="text"
               className="border disabled:border-gray-400 rounded-sm bg-transparent p-2 w-full"
               required
-              disabled={isSubmitting}
+              disabled={disabled}
             />
           </div>
         </div>
@@ -128,13 +108,13 @@ const SettingsDialog = ({
             type="text"
             className="border disabled:border-gray-400 rounded-sm bg-transparent p-2 w-full"
             required
-            disabled={isSubmitting}
+            disabled={disabled}
           />
         </div>
         <button
           type="submit"
           className="rounded-sm w-full transition bg-pink-400 hover:bg-pink-300 disabled:bg-gray-400 disabled:text-gray-700 text-gray-900 p-2 mb-2"
-          disabled={isSubmitting}
+          disabled={disabled}
         >
           Submit
         </button>
@@ -145,7 +125,7 @@ const SettingsDialog = ({
             onNoThanks();
           }}
           className="rounded-sm w-full transition bg-gray-300 hover:bg-gray-200 disabled:text-gray-600 text-gray-900 p-2"
-          disabled={isSubmitting}
+          disabled={disabled}
         >
           Nah, No Thanks
         </button>
