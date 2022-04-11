@@ -1,8 +1,8 @@
-import { useContext, createContext, useState, useEffect } from "react";
+import { useContext, createContext, useEffect } from "react";
 import useLocalStorageState, {
   booleanValidator,
 } from "utils/useLocalStorageState";
-import * as styles from "./PreferenceContext.module.css";
+import styles from "./PreferenceContext.module.css";
 
 type PreferenceContextValue = {
   isSoundEnabled: boolean;

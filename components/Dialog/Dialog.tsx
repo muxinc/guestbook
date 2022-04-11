@@ -3,7 +3,7 @@ import * as React from "react";
 import { DialogOverlay, DialogContent } from "@reach/dialog";
 import "@reach/dialog/styles.css";
 
-import * as styles from "./Dialog.module.css";
+import styles from "./Dialog.module.css";
 import { AnimatePresence, motion } from "framer-motion";
 
 const MotionDialogOverlay = motion(DialogOverlay);
@@ -26,7 +26,7 @@ const Dialog = ({
 }: Props) => {
   return (
     <AnimatePresence>
-      {isDialogOpen && (
+      {isDialogOpen ? (
         <MotionDialogOverlay
           onDismiss={onDismiss}
           className={`${styles.overlay} ${overlayClassName}`}
@@ -44,7 +44,7 @@ const Dialog = ({
             {children}
           </MotionDialogContent>
         </MotionDialogOverlay>
-      )}
+      ) : null}
     </AnimatePresence>
   );
 };
