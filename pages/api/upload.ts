@@ -10,33 +10,27 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const signupForm = req.body;
-  if (typeof signupForm === "object") {
-    const { firstName, lastName, email } = signupForm;
-    console.log({ firstName, lastName, email });
-  }
+  const { firstName, lastName, email } = req.body;
 
   const { Video } = new Mux(
     process.env.MUX_ACCESS_TOKEN,
     process.env.MUX_SECRET_TOKEN
   );
 
-  const { data, error } = await supabase
-    .from("entries")
-    .insert([
-      {
-        first_name: firstName || null,
-        last_name: lastName || null,
-        email: email || null,
-      },
-    ]);
+  const { data, error } = await supabaseAdmin.from("entries").insert([
+    {
+      first_name: firstName || null,
+      last_name: lastName || null,
+      email: email || null,
+    },
+  ]);
 
   // This ultimately just makes a POST request to https://api.mux.com/video/v1/uploads with the supplied options.
   const upload = await Video.Uploads.create({
     cors_origin: "https://your-app.com",
     new_asset_settings: {
       playback_policy: "public",
-      passthrough: JSON.stringify({ entry_id: data.id }),
+      passthrough: JSON.stringify({ entry_id: data[0].id }),
     },
   });
 
