@@ -1,16 +1,18 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import { createClient } from "@supabase/supabase-js";
 const Mux = require("@mux/mux-node").default;
 
-// Create a single supabase client for interacting with your database
-const supabase = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL as string,
-  process.env.SUPABASE_SERVICE_ROLE as string
-);
+import supabaseAdmin from "../../utils/supabaseAdmin";
 
 type Data = {
   status: string;
 };
+
+type Metadata = {
+  entry_id?: number;
+};
+
+const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
+const { entry_id } = metadata;
 
 export default async function handler(
   req: NextApiRequest,
@@ -20,6 +22,21 @@ export default async function handler(
     process.env.MUX_ACCESS_TOKEN,
     process.env.MUX_SECRET_TOKEN
   );
+
+  const {
+    type,
+    data: { id: asset_id, playback_ids, passthrough },
+  } = req.body;
+
+  if (type !== "video.asset.ready") {
+    res.status(200).json({ status: "ignored." });
+  }
+
+  const { data, error } = await supabaseAdmin
+    .from("entries")
+    .insert([{ id: entry_id, asset_id, playback_id: playback_ids[0].id }], {
+      upsert: true,
+    });
 
   res.status(200).json({ status: "ok" });
 }
