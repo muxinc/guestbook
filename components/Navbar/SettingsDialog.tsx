@@ -36,7 +36,10 @@ const SettingsDialog = ({ className }: Props) => {
         <VisuallyHidden>Open Settings</VisuallyHidden>
       </button>
       {/* These fellas are styled down below, for greater specificity */}
-      <Dialog isDialogOpen={isDialogOpen} setIsDialogOpen={setIsDialogOpen}>
+      <Dialog
+        isDialogOpen={isDialogOpen}
+        onDismiss={() => setIsDialogOpen(false)}
+      >
         <div className="mb-2">
           <label>
             <input
@@ -50,7 +53,7 @@ const SettingsDialog = ({ className }: Props) => {
         </div>
         <hr className="mb-4" />
         <select
-          className="border rounded-sm p-2 w-full mb-4 bg-transparent"
+          className="border rounded-sm p-2 w-full mb-4 bg-transparent appearance-none"
           onChange={(e) => setAudioDeviceId(e.target.value)}
           value={audioDeviceId}
         >
@@ -63,7 +66,7 @@ const SettingsDialog = ({ className }: Props) => {
         </select>
 
         <select
-          className="border rounded-sm p-2 w-full mb-4 bg-transparent"
+          className="border rounded-sm p-2 w-full mb-4 bg-transparent appearance-none"
           onChange={(e) => setVideoDeviceId(e.target.value)}
           value={videoDeviceId}
         >
