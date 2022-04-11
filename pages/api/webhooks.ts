@@ -11,9 +11,6 @@ type Metadata = {
   entry_id?: number;
 };
 
-const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
-const { entry_id } = metadata;
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
@@ -31,6 +28,9 @@ export default async function handler(
   if (type !== "video.asset.ready") {
     res.status(200).json({ status: "ignored." });
   }
+
+  const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
+  const { entry_id } = metadata;
 
   const { data, error } = await supabaseAdmin
     .from("entries")

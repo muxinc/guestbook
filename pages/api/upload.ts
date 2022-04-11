@@ -3,6 +3,7 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import supabaseAdmin from "../../utils/supabaseAdmin";
 
 const Mux = require("@mux/mux-node").default;
+import { createClient, PostgrestResponse } from "@supabase/supabase-js";
 
 type Data = string;
 
@@ -29,16 +30,14 @@ export default async function handler(
     process.env.MUX_SECRET_TOKEN
   );
 
-  const { data, error }: { data: Entry[] } = await supabaseAdmin
-    .from("entries")
-    .insert([
-      {
-        first_name: firstName || null,
-        last_name: lastName || null,
-        email: email || null,
-        event_id: 1,
-      },
-    ]);
+  const { data, error } = await supabaseAdmin.from<Entry>("entries").insert([
+    {
+      first_name: firstName || null,
+      last_name: lastName || null,
+      email: email || null,
+      event_id: 1,
+    },
+  ]);
 
   if (error) {
     res.status(500).end("could not create record");
@@ -49,7 +48,7 @@ export default async function handler(
     cors_origin: "https://your-app.com",
     new_asset_settings: {
       playback_policy: "public",
-      passthrough: JSON.stringify({ entry_id: data[0].id }),
+      passthrough: data ? JSON.stringify({ entry_id: data[0].id }) : null,
     },
   });
 
