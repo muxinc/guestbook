@@ -6,6 +6,18 @@ const Mux = require("@mux/mux-node").default;
 
 type Data = string;
 
+type Entry = {
+  id: number;
+  first_name?: string;
+  last_name?: string;
+  email?: string;
+  asset_id?: string;
+  created_at: string;
+  playback_id?: string;
+  event_id: number;
+  status: "pending";
+};
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
@@ -17,14 +29,20 @@ export default async function handler(
     process.env.MUX_SECRET_TOKEN
   );
 
-  const { data, error } = await supabaseAdmin.from("entries").insert([
-    {
-      first_name: firstName || null,
-      last_name: lastName || null,
-      email: email || null,
-      event_id: 1,
-    },
-  ]);
+  const { data, error }: { data: Entry[] } = await supabaseAdmin
+    .from("entries")
+    .insert([
+      {
+        first_name: firstName || null,
+        last_name: lastName || null,
+        email: email || null,
+        event_id: 1,
+      },
+    ]);
+
+  if (error) {
+    res.status(500).end("could not create record");
+  }
 
   // This ultimately just makes a POST request to https://api.mux.com/video/v1/uploads with the supplied options.
   const upload = await Video.Uploads.create({
