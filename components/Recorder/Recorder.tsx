@@ -186,13 +186,13 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
 
   return (
     <>
-      <div className="w-full bg-gray-900 relative">
+      <div className="w-full bg-gray-900 relative p-2 sm:p-4 max-h-[50vh]">
         <video
-          className="mx-auto aspect-video h-full scale-x-[-1] pointer-events-none"
+          className="rounded-lg scale-x-[-1] pointer-events-none w-auto h-full aspect-video mx-auto"
           ref={videoRef}
           autoPlay
         />
-        <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center">
+        <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center">
           <TimerButton
             onCountdownStart={startCountdown}
             countdownDuration={3}
