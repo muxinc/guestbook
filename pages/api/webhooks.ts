@@ -34,9 +34,19 @@ export default async function handler(
 
   const { data, error } = await supabaseAdmin
     .from("entries")
-    .insert([{ id: entry_id, asset_id, playback_id: playback_ids[0].id }], {
-      upsert: true,
-    });
+    .insert(
+      [
+        {
+          id: entry_id,
+          asset_id,
+          playback_id: playback_ids[0].id,
+          status: "ready",
+        },
+      ],
+      {
+        upsert: true,
+      }
+    );
 
   res.status(200).json({ status: "ok" });
 }
