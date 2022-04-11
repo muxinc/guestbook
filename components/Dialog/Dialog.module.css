@@ -1,6 +1,8 @@
 .overlay {
   @apply bg-gray-900/50 backdrop-blur;
+  min-width: 320px;
 }
 .content {
   @apply bg-gray-800 w-[95vw] max-w-xl rounded;
+  min-width: 305px;
 }

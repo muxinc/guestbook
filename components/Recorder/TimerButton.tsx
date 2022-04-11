@@ -97,7 +97,11 @@ const TimerButton = ({
   }, [countdownState, secondsRemaining, playSound]);
 
   const countdownText =
-    countdownState === CountdownState.COUNTING ? secondsRemaining : "REC";
+    countdownState === CountdownState.COUNTING
+      ? secondsRemaining
+      : countdownState === CountdownState.RECORDING
+      ? "REC"
+      : "DONE";
 
   return (
     <motion.button

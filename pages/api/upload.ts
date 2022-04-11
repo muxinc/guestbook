@@ -8,6 +8,12 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
+  const signupForm = req.body;
+  if (typeof signupForm === "object") {
+    const { firstName, lastName, email } = signupForm;
+    console.log({ firstName, lastName, email });
+  }
+
   const { Video } = new Mux(
     process.env.MUX_ACCESS_TOKEN,
     process.env.MUX_SECRET_TOKEN
@@ -18,7 +24,7 @@ export default async function handler(
     cors_origin: "https://your-app.com",
     new_asset_settings: {
       playback_policy: "public",
-      passthrough: JSON.stringify({ eventId: 1 })
+      passthrough: JSON.stringify({ eventId: 1 }),
     },
   });
 

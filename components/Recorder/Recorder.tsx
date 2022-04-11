@@ -7,8 +7,11 @@ import {
   NUMBER_AUDIO_BITS_PER_SECOND,
   NUMBER_VIDEO_BITS_PER_SECOND,
 } from "constants/MediaRecorder";
-import TimerButton from "./TimerButton";
+
 import { useDeviceIdContext } from "contexts/DeviceIdContext";
+
+import TimerButton from "./TimerButton";
+import SignupDialog from "./SignupDialog";
 
 const getSupportedMimeType = () => {
   return MIME_TYPE_STACK.find((mimeType) =>
@@ -29,9 +32,13 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
 
   const [chunks, setChunks] = React.useState<Blob[]>([]);
   const [file, setFile] = React.useState<File | null>(null);
+  const [fileUploadUrl, setFileUploadUrl] = React.useState<string | null>(null);
 
   const [progress, setProgress] = React.useState(0);
   const [statusMessage, setStatusMessage] = React.useState<string | null>(null);
+
+  const [isSignupDialogOpen, setIsSignupDialogOpen] =
+    React.useState<boolean>(false);
 
   // Setup MediaRecorder when initializing
   // change cameras when initializing or ready
@@ -128,17 +135,23 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
     };
   }, [chunks, setChunks, setRecordingStatus]);
 
-  // Upload on new file detected
+  React.useEffect(() => {
+    // When we detect a new file, we show the contact form.
+    // The contact form is in charge of fetching our upload link
+    if (file) {
+      // We set a slight timeout just to make it less... confusing?
+      const timeout = setTimeout(() => setIsSignupDialogOpen(true), 500);
+      return () => clearTimeout(timeout);
+    }
+  }, [file]);
+
   const handleUpload = React.useCallback(async () => {
     try {
       if (!file) return;
-
-
-      const response = await fetch("/api/upload", { method: "POST" });
-      const url = await response.text();
+      if (!fileUploadUrl) return;
 
       const upload = UpChunk.createUpload({
-        endpoint: url, // Authenticated url
+        endpoint: fileUploadUrl, // Authenticated url
         file, // File object with your video file’s properties
         chunkSize: 30720, // Uploads the file in ~30 MB chunks
       });
@@ -157,36 +170,44 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
       upload.on("success", () => {
         console.log("successsss");
         setStatusMessage("Wrap it up, we're done here. 👋");
+        setFileUploadUrl(null);
         setFile(null);
       });
     } catch (error) {
       console.error(error);
     }
-  }, [file]);
+  }, [file, fileUploadUrl]);
 
   React.useEffect(() => {
-    if (file) {
+    if (file && fileUploadUrl) {
       handleUpload();
     }
-  }, [file, handleUpload]);
+  }, [file, fileUploadUrl, handleUpload]);
 
   return (
-    <div className="w-full bg-gray-900 relative">
-      <video
-        className="mx-auto aspect-video h-full scale-x-[-1] pointer-events-none"
-        ref={videoRef}
-        autoPlay
-      />
-      <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center">
-        <TimerButton
-          onCountdownStart={startCountdown}
-          countdownDuration={3}
-          onCountdownEnd={startRecording}
-          recordingDuration={5}
-          onRecordingEnd={stopRecording}
+    <>
+      <div className="w-full bg-gray-900 relative">
+        <video
+          className="mx-auto aspect-video h-full scale-x-[-1] pointer-events-none"
+          ref={videoRef}
+          autoPlay
         />
+        <div className="absolute bottom-0 left-0 right-0 flex items-center justify-center">
+          <TimerButton
+            onCountdownStart={startCountdown}
+            countdownDuration={3}
+            onCountdownEnd={startRecording}
+            recordingDuration={5}
+            onRecordingEnd={stopRecording}
+          />
+        </div>
       </div>
-    </div>
+      <SignupDialog
+        isDialogOpen={isSignupDialogOpen}
+        setIsDialogOpen={setIsSignupDialogOpen}
+        setFileUploadUrl={setFileUploadUrl}
+      />
+    </>
   );
 };
 
