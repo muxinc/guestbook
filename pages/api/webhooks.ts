@@ -23,6 +23,7 @@ export default async function handler(
 
   if (!EVENTS.includes(type)) {
     res.status(200).json({ status: "ignored." });
+    return;
   }
 
   const { id: asset_id, passthrough, status, playback_ids } = data;
