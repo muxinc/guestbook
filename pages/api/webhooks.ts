@@ -22,31 +22,29 @@ export default async function handler(
 
   const {
     type,
-    data: { id: asset_id, playback_ids, passthrough },
+    data: { id: asset_id, playback_ids, passthrough, status },
   } = req.body;
 
-  if (type !== "video.asset.ready") {
+  if (type !== "video.asset.created" || type !== "video.asset.ready") {
     res.status(200).json({ status: "ignored." });
   }
 
   const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
   const { entry_id } = metadata;
 
-  const { data, error } = await supabaseAdmin
-    .from("entries")
-    .insert(
-      [
-        {
-          id: entry_id,
-          asset_id,
-          playback_id: playback_ids[0].id,
-          status: "ready",
-        },
-      ],
+  const { data, error } = await supabaseAdmin.from("entries").insert(
+    [
       {
-        upsert: true,
-      }
-    );
+        id: entry_id,
+        asset_id,
+        playback_id: playback_ids[0].id,
+        status,
+      },
+    ],
+    {
+      upsert: true,
+    }
+  );
 
   res.status(200).json({ status: "ok" });
 }
