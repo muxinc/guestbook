@@ -108,7 +108,8 @@ const Video = ({
                 strokeWidth={10}
                 animate={{
                   pathLength:
-                    video.status === Status.UPLOADING
+                    video.status === Status.UPLOADING &&
+                    typeof video.uploadStatus === "number"
                       ? (0.9 * video.uploadStatus) / 100
                       : 0.9,
                   rotate: video.status === Status.UPLOADING ? 270 : [270, 630],
@@ -123,9 +124,10 @@ const Video = ({
               />
             </svg>
             <div className="absolute w-full h-full inset-0 flex items-center justify-center text-gray-800">
-              {(video.status === Status.UPLOADING ||
-                video.status === Status.UPLOADED) &&
-                `${video.uploadStatus.toFixed()}%`}
+              {video.status === Status.UPLOADING &&
+              typeof video.uploadStatus === "number"
+                ? `${video.uploadStatus.toFixed()}%`
+                : null}
             </div>
           </>
         )}
