@@ -32,11 +32,7 @@ export default async function handler(
   if (type === "video.asset.created") {
     const {
       type,
-      data: {
-        id: asset_id,
-        new_asset_settings: { passthrough },
-        status,
-      },
+      data: { id: asset_id, passthrough, status },
     } = req.body;
 
     const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
