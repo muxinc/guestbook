@@ -32,19 +32,18 @@ export default async function handler(
   const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
   const { entry_id } = metadata;
 
-  const { data, error } = await supabaseAdmin.from("entries").insert(
-    [
-      {
-        id: entry_id,
-        asset_id,
-        playback_id: playback_ids[0].id,
-        status,
-      },
-    ],
-    {
+  const payload = {
+    id: entry_id,
+    asset_id,
+    playback_id: playback_ids ? playback_ids[0].id : null,
+    status,
+  };
+
+  const { data, error } = await supabaseAdmin
+    .from("entries")
+    .insert([payload], {
       upsert: true,
-    }
-  );
+    });
 
   res.status(200).json({ status: "ok" });
 }
