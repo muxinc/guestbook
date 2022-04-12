@@ -26,7 +26,7 @@ const Home: NextPage = () => {
         />
       </Head>
       <main
-        className="bg-gray-800 bg-brick h-screen grid"
+        className="bg-gray-800 bg-brick h-[100vh] h-[100svh] grid"
         style={{
           gridTemplateRows: "auto auto 1fr",
         }}

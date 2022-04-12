@@ -36,7 +36,7 @@ const Dialog = ({
       {isDialogOpen ? (
         <MotionDialogOverlay
           onDismiss={onDismiss}
-          className={`${styles.overlay} ${overlayClassName}`}
+          className={`${styles.overlay} z-50 ${overlayClassName}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

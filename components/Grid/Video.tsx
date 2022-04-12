@@ -1,9 +1,9 @@
 import { useState, MouseEventHandler } from "react";
 
-import { Video, isReadyVideo, Status } from "contexts/VideoContext";
-
 import { motion } from "framer-motion";
-import Image from "next/image";
+import MuxVideo from "@mux-elements/mux-video-react";
+
+import { Video, Status } from "contexts/VideoContext";
 
 const transitionStatuses = [
   // these are the statuses that are initialized by the client
@@ -29,25 +29,27 @@ const Video = ({
   highQuality = false,
 }: Props) => {
   const [rotate, setRotate] = useState(() => -4 + Math.random() * 8);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+
   return (
     <motion.button
       onClick={onClick}
       aria-label={label}
-      className={`bg-gray-100 p-1 aspect-square grid justify-items-stretch rounded overflow-hidden ${className}`}
+      className={`bg-gray-200 p-1 aspect-square grid justify-items-stretch rounded overflow-hidden ${className}`}
       style={{
         gridTemplateRows: "3fr 1fr",
         gridTemplateAreas: '"photo" "label"',
       }}
       initial={
-        transitionStatuses.includes(video.status as Status)
+        transitionStatuses.includes(video.status)
           ? { y: "-160%" } // new video? slide in!
           : { opacity: 0, scale: 0.9, rotate } // just fade in if these videos are already initialized
       }
       animate={{
-        y: transitionStatuses.includes(video.status as Status)
+        y: transitionStatuses.includes(video.status)
           ? ["-160%", "-50%", "0%"]
           : "0%",
-        rotate: transitionStatuses.includes(video.status as Status)
+        rotate: transitionStatuses.includes(video.status)
           ? [0, 0, rotate]
           : rotate,
         opacity: 1,
@@ -68,22 +70,29 @@ const Video = ({
         className="relative bg-gray-400 h-full rounded-sm overflow-hidden"
         style={{ gridArea: "photo" }}
       >
-        {isReadyVideo(video) ? (
+        {video.status === Status.READY ? (
           highQuality ? (
-            <Image
-              // TODO: replace with player
-              src={`https://image.mux.com/${video.playbackId}/animated.gif?width=640`}
-              layout="fill"
-              objectFit="cover"
-              alt=""
+            <MuxVideo
+              className="h-full w-full object-cover"
+              playbackId={video.playbackId}
+              streamType="on-demand"
+              controls={false}
+              autoPlay
+              loop
             />
           ) : (
-            // TOOD: fade in
-            <Image
+            <motion.img
+              animate={{
+                opacity: isImageLoaded ? 1 : 0,
+              }}
+              transition={{
+                duration: 3,
+              }}
               src={`https://image.mux.com/${video.playbackId}/animated.gif`}
-              layout="fill"
-              objectFit="cover"
               alt=""
+              className="object-cover w-full h-full"
+              onLoad={() => setIsImageLoaded(true)}
+              loading="lazy"
             />
           )
         ) : (
@@ -92,23 +101,37 @@ const Video = ({
               viewBox="0 0 100 100"
               className="absolute w-full h-full inset-0"
             >
-              {/* TODO: loading spinner */}
               <motion.circle
                 cx="50"
                 cy="50"
                 r="30"
                 strokeWidth={10}
-                className="fill-transparent stroke-gray-500"
+                animate={{
+                  pathLength:
+                    video.status === Status.UPLOADING
+                      ? (0.9 * video.uploadStatus) / 100
+                      : 0.9,
+                  rotate: video.status === Status.UPLOADING ? 270 : [270, 630],
+                }}
+                transition={{
+                  rotate:
+                    video.status === Status.UPLOADING
+                      ? {}
+                      : { duration: 1, ease: "linear", repeat: Infinity },
+                }}
+                className={`fill-transparent stroke-gray-500`}
               />
             </svg>
             <div className="absolute w-full h-full inset-0 flex items-center justify-center text-gray-800">
-              {video.statusMessage}
+              {(video.status === Status.UPLOADING ||
+                video.status === Status.UPLOADED) &&
+                `${video.uploadStatus.toFixed()}%`}
             </div>
           </>
         )}
       </div>
       <div
-        className="font-mono h-full flex items-center justify-center"
+        className="font-mono h-full flex items-center justify-center text-gray-700"
         style={{ gridArea: "label" }}
       >
         {video.status}

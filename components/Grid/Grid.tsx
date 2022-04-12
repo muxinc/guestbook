@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { useVideoContext, Video } from "contexts/VideoContext";
+import { Status, useVideoContext, Video } from "contexts/VideoContext";
 import VideoCard from "./Video";
 import Dialog from "components/Dialog";
 
@@ -12,20 +12,20 @@ const Grid = () => {
     <>
       <section className="bg-gray-700 p-4 overflow-y-scroll overflow-x-hidden">
         <motion.div
-          className="grid gap-2"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-          }}
+          className="grid gap-2 justify-center grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fill,_minmax(160px,1fr))]"
           layoutScroll
         >
-          {videos.map((video) => (
-            <VideoCard
-              key={video.id}
-              video={video}
-              onClick={() => setOpenVideo(video)}
-              label="Open Video"
-            />
-          ))}
+          {videos.map(
+            (video) =>
+              video.status !== Status.PENDING && (
+                <VideoCard
+                  key={video.id}
+                  video={video}
+                  onClick={() => setOpenVideo(video)}
+                  label="Open Video"
+                />
+              )
+          )}
         </motion.div>
       </section>
       <Dialog
@@ -33,7 +33,6 @@ const Grid = () => {
         onDismiss={() => setOpenVideo(null)}
         label="Video"
         styledDialog={false}
-        overlayClassName="z-50"
       >
         {openVideo && (
           <VideoCard

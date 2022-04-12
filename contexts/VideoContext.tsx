@@ -21,20 +21,14 @@ export enum Status {
   ERROR = "ERROR",
   UNKNOWN = "UNKNOWN",
 }
-interface AnyOldVideo {
+export interface Video {
   id: number;
-  status: Omit<Status, Status.READY>;
-  statusMessage?: string;
+  status: Status;
+  // TODO: conditional fields based on type
+  uploadStatus?: number;
+  assetId?: string;
+  playbackId?: string;
 }
-interface ReadyVideo extends AnyOldVideo {
-  status: Status.READY;
-  assetId: string;
-  playbackId: string;
-}
-export type Video = AnyOldVideo | ReadyVideo;
-export const isReadyVideo = (video: Video): video is ReadyVideo =>
-  video.status === Status.READY;
-
 type VideoContextValue = {
   videos: Video[];
   setVideo: (video: Video) => void;
@@ -99,7 +93,6 @@ const VideoProvider = ({ children }: ProviderProps) => {
       // .abortSignal(ac.signal);
 
       if (entries) {
-        console.log({ entries });
         const entryVideos: Video[] = entries.map((entry) => ({
           id: entry.id,
           status: supabaseToVideoStatus[entry.status] || Status.UNKNOWN,
@@ -124,7 +117,6 @@ const VideoProvider = ({ children }: ProviderProps) => {
     const subscription = supabase
       .from<SupabaseEntry>("entries")
       .on("*", ({ new: entry, ...rest }) => {
-        console.log({ entry, rest });
         switch (entry.status) {
           case "preparing":
             setVideo({
@@ -177,11 +169,11 @@ const VideoProvider = ({ children }: ProviderProps) => {
         });
 
         upload.on("error", (error) => {
-          console.log(error);
+          console.error(error);
           setVideo({
             id,
             status: Status.ERROR,
-            statusMessage: error.detail,
+            // statusMessage: error.detail,
           });
         });
 
@@ -189,7 +181,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
           setVideo({
             id,
             status: Status.UPLOADING,
-            statusMessage: progress.detail,
+            uploadStatus: progress.detail,
           });
         });
 
