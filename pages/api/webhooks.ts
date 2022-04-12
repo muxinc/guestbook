@@ -25,12 +25,15 @@ export default async function handler(
   console.log(type);
   console.log(data);
 
-  if (type !== "video.asset.created" || type !== "video.asset.ready") {
+  if (type !== "video.upload.created" || type !== "video.asset.ready") {
     res.status(200).json({ status: "ignored." });
   }
 
-  if (type === "video.asset.created") {
-    const { id: asset_id, passthrough, status } = data;
+  if (type === "video.upload.created") {
+    const {
+      new_asset_settings: { passthrough },
+      status,
+    } = data;
 
     const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
 
@@ -38,7 +41,6 @@ export default async function handler(
       [
         {
           id: metadata.entry_id,
-          asset_id,
           status,
         },
       ],
