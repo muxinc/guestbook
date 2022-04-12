@@ -29,21 +29,53 @@ export default async function handler(
     res.status(200).json({ status: "ignored." });
   }
 
-  const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
-  const { entry_id } = metadata;
+  if (type === "video.asset.created") {
+    const {
+      type,
+      data: {
+        id: asset_id,
+        new_asset_settings: { passthrough },
+        status,
+      },
+    } = req.body;
 
-  const payload = {
-    id: entry_id,
-    asset_id,
-    playback_id: playback_ids ? playback_ids[0].id : null,
-    status,
-  };
+    const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
 
-  const { data, error } = await supabaseAdmin
-    .from("entries")
-    .insert([payload], {
-      upsert: true,
-    });
+    const { data, error } = await supabaseAdmin.from("entries").insert(
+      [
+        {
+          id: metadata.entry_id,
+          asset_id,
+          status,
+        },
+      ],
+      {
+        upsert: true,
+      }
+    );
+  }
+
+  if (type === "video.asset.ready") {
+    const {
+      type,
+      data: { id: asset_id, playback_ids, passthrough, status },
+    } = req.body;
+
+    const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
+
+    const { data, error } = await supabaseAdmin.from("entries").insert(
+      [
+        {
+          id: metadata.entry_id,
+          status,
+          playback_id: playback_ids[0].id,
+        },
+      ],
+      {
+        upsert: true,
+      }
+    );
+  }
 
   res.status(200).json({ status: "ok" });
 }
