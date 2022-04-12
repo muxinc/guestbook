@@ -39,6 +39,7 @@ const SettingsDialog = ({ className }: Props) => {
       <Dialog
         isDialogOpen={isDialogOpen}
         onDismiss={() => setIsDialogOpen(false)}
+        label="Settings"
       >
         <div className="mb-2">
           <label>

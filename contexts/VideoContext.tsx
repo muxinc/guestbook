@@ -12,29 +12,32 @@ import { supabase } from "../utils/supabaseClient";
 import SignupDialog, { Form, SignupDismissFn } from "components/SignupDialog";
 
 export enum Status {
-  INITIALIZING = "INITIALIZING",
+  INITIALIZING = "INITIALIZING", // about to upload
   UPLOADING = "UPLOADING",
   UPLOADED = "UPLOADED",
-  CREATED = "CREATED",
+  PENDING = "PENDING", // uploading from another client
+  PREPARING = "PREPARING",
   READY = "READY",
   ERROR = "ERROR",
   UNKNOWN = "UNKNOWN",
 }
 interface AnyOldVideo {
-  id: string;
+  id: number;
   status: Omit<Status, Status.READY>;
   statusMessage?: string;
 }
 interface ReadyVideo extends AnyOldVideo {
   status: Status.READY;
+  assetId: string;
   playbackId: string;
 }
-type Video = AnyOldVideo | ReadyVideo;
+export type Video = AnyOldVideo | ReadyVideo;
 export const isReadyVideo = (video: Video): video is ReadyVideo =>
   video.status === Status.READY;
 
 type VideoContextValue = {
   videos: Video[];
+  setVideo: (video: Video) => void;
   submitUpload: (file: File) => void;
 };
 type DefaultValue = undefined;
@@ -45,6 +48,11 @@ export const VideoContext = createContext<ContextValue>(undefined);
 type ProviderProps = {
   children: React.ReactNode;
 };
+enum SupabaseStatus {
+  PENDING = "pending",
+  PREPARING = "preparing",
+  READY = "ready",
+}
 type SupabaseEntry = {
   // TODO: generate types
   id: number;
@@ -52,10 +60,15 @@ type SupabaseEntry = {
   asset_id: string;
   created_at: string;
   playback_id: string;
-  status: string;
+  status: SupabaseStatus;
   email: string | null;
   first_name: string | null;
   last_name: string | null;
+};
+const supabaseToVideoStatus: Record<SupabaseStatus, Status> = {
+  [SupabaseStatus.PENDING]: Status.PENDING,
+  [SupabaseStatus.PREPARING]: Status.PREPARING,
+  [SupabaseStatus.READY]: Status.READY,
 };
 
 const VideoProvider = ({ children }: ProviderProps) => {
@@ -86,9 +99,11 @@ const VideoProvider = ({ children }: ProviderProps) => {
       // .abortSignal(ac.signal);
 
       if (entries) {
+        console.log({ entries });
         const entryVideos: Video[] = entries.map((entry) => ({
-          id: entry.asset_id,
-          status: entry.status === "ready" ? Status.READY : Status.UNKNOWN,
+          id: entry.id,
+          status: supabaseToVideoStatus[entry.status] || Status.UNKNOWN,
+          assetId: entry.asset_id,
           playbackId: entry.playback_id,
         }));
         // I want this to be setVideos(videos => [...videos, ...entryVideos]) in case this operation is slow
@@ -108,12 +123,31 @@ const VideoProvider = ({ children }: ProviderProps) => {
   useEffect(() => {
     const subscription = supabase
       .from<SupabaseEntry>("entries")
-      .on("*", (payload) => console.log({ payload }))
+      .on("*", ({ new: entry, ...rest }) => {
+        console.log({ entry, rest });
+        switch (entry.status) {
+          case "preparing":
+            setVideo({
+              id: entry.id,
+              status: Status.PREPARING,
+            });
+          case "ready":
+            setVideo({
+              id: entry.id,
+              status: Status.READY,
+              assetId: entry.asset_id,
+              playbackId: entry.playback_id,
+            });
+        }
+      })
       .subscribe();
-    return () => {
-      supabase.removeSubscription(subscription);
+    const unsubscribe = async () => {
+      await supabase.removeSubscription(subscription);
     };
-  }, []);
+    return () => {
+      unsubscribe();
+    };
+  }, [setVideo]);
 
   // Here's some state that doesn't get passed down.
   // When a user submits an upload, we pop up the signup dialog
@@ -199,6 +233,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
 
   const value: VideoContextValue = {
     videos,
+    setVideo,
     submitUpload: preSubmitUpload,
   };
 

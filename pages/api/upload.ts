@@ -6,7 +6,7 @@ const Mux = require("@mux/mux-node").default;
 import { createClient, PostgrestResponse } from "@supabase/supabase-js";
 
 type Data = {
-  id: string;
+  id: number | null;
   url: string;
 };
 
@@ -57,5 +57,8 @@ export default async function handler(
 
   // Save the Upload ID in your own DB somewhere, then
   // return the upload URL to the end-user.
-  res.status(201).json({ id: upload.id, url: upload.url });
+  res.status(201).json({
+    id: data ? data[0].id : null,
+    url: upload.url,
+  });
 }
