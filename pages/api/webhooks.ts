@@ -20,24 +20,21 @@ export default async function handler(
     process.env.MUX_SECRET_TOKEN
   );
 
-  const {
-    type,
-    data: { id: asset_id, playback_ids, passthrough, status },
-  } = req.body;
+  const { type, data } = req.body;
+
+  console.log(type);
+  console.log(data);
 
   if (type !== "video.asset.created" || type !== "video.asset.ready") {
     res.status(200).json({ status: "ignored." });
   }
 
   if (type === "video.asset.created") {
-    const {
-      type,
-      data: { id: asset_id, passthrough, status },
-    } = req.body;
+    const { id: asset_id, passthrough, status } = data;
 
     const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
 
-    const { data, error } = await supabaseAdmin.from("entries").insert(
+    const { data: result, error } = await supabaseAdmin.from("entries").insert(
       [
         {
           id: metadata.entry_id,
@@ -52,14 +49,11 @@ export default async function handler(
   }
 
   if (type === "video.asset.ready") {
-    const {
-      type,
-      data: { id: asset_id, playback_ids, passthrough, status },
-    } = req.body;
+    const { id: asset_id, passthrough, playback_ids, status } = data;
 
     const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
 
-    const { data, error } = await supabaseAdmin.from("entries").insert(
+    const { data: result, error } = await supabaseAdmin.from("entries").insert(
       [
         {
           id: metadata.entry_id,
