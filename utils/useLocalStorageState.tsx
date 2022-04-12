@@ -25,7 +25,7 @@ function useLocalStorageState<T>({ initialValue, key, validator }: Config<T>) {
         }
       }
     }
-  }, []);
+  }, [scopedKey, validator]);
 
   const setValueAndPersist = (newValue: T) => {
     setValue(newValue);

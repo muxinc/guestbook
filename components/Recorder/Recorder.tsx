@@ -40,20 +40,20 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
       recordingStatus !== RecordingStatus.READY
     )
       return;
+    if (!videoDeviceId && !audioDeviceId) return;
+
     const setup = async () => {
       if (!videoRef.current) return;
 
-      const audioPrefs: boolean | MediaTrackConstraints = audioDeviceId
-        ? { deviceId: audioDeviceId }
-        : true;
+      const audioPrefs: boolean | MediaTrackConstraints = {
+        deviceId: audioDeviceId,
+      };
       const videoPrefs: boolean | MediaTrackConstraints = {
+        deviceId: videoDeviceId,
         facingMode: "user",
         // TODO: what do we do on mobile, where default is 9 / 16?
         aspectRatio: 16 / 9,
       };
-      if (videoDeviceId) {
-        videoPrefs.deviceId = videoDeviceId;
-      }
 
       const stream = await navigator.mediaDevices.getUserMedia({
         audio: audioPrefs,
@@ -132,7 +132,7 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
     <div className="w-full bg-gray-900 relative p-2 sm:p-4 max-h-[50vh]">
       <div className="aspect-video max-h-full max-w-full relative mx-auto">
         <video
-          className="rounded-lg scale-x-[-1] pointer-events-none absolute h-full w-auto"
+          className="bg-black rounded-lg scale-x-[-1] pointer-events-none absolute h-full w-auto"
           ref={videoRef}
           autoPlay
         />

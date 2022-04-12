@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { DialogOverlay, DialogContent } from "@reach/dialog";
-import "@reach/dialog/styles.css";
 
 import styles from "./Dialog.module.css";
 import { AnimatePresence, motion } from "framer-motion";
@@ -30,13 +29,13 @@ const Dialog = ({
 }: Props) => {
   const dialogStyles = styledDialog
     ? `${styles.content} ${styles.styled} text-white`
-    : styles.content;
+    : "";
   return (
     <AnimatePresence>
       {isDialogOpen ? (
         <MotionDialogOverlay
           onDismiss={onDismiss}
-          className={`${styles.overlay} ${overlayClassName}`}
+          className={`${styles.overlay} z-50 ${overlayClassName}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}

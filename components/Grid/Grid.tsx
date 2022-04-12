@@ -1,47 +1,52 @@
-import { useState } from "react";
+import { useMemo } from "react";
+
 import { motion } from "framer-motion";
-import { useVideoContext, Video } from "contexts/VideoContext";
-import VideoCard from "./Video";
+
+import { Status, useVideoContext, Video } from "contexts/VideoContext";
 import Dialog from "components/Dialog";
+import useHash from "utils/useHash";
+
+import VideoCard from "./Video";
 
 const Grid = () => {
   const { videos } = useVideoContext();
-  const [openVideo, setOpenVideo] = useState<Video | null>(null);
+  const [hash, setHash] = useHash();
+  const openVideo = useMemo(
+    () => videos.find((video) => video.id.toString() === hash),
+    [hash, videos]
+  );
 
   return (
     <>
       <section className="bg-gray-700 p-4 overflow-y-scroll overflow-x-hidden">
         <motion.div
-          className="grid gap-2"
-          style={{
-            gridTemplateColumns: "repeat(auto-fill, minmax(160px, 1fr))",
-          }}
+          className="grid gap-2 justify-center grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fill,_minmax(160px,1fr))]"
           layoutScroll
         >
           {videos.map((video) => (
             <VideoCard
               key={video.id}
               video={video}
-              onClick={() => setOpenVideo(video)}
+              onClick={() => setHash(video.id.toString())}
               label="Open Video"
             />
           ))}
         </motion.div>
       </section>
       <Dialog
-        isDialogOpen={openVideo !== null}
-        onDismiss={() => setOpenVideo(null)}
+        isDialogOpen={typeof openVideo !== "undefined"}
+        onDismiss={() => setHash("")}
         label="Video"
         styledDialog={false}
-        overlayClassName="z-50"
+        className="w-[95vw] max-w-xl p-0 bg-transparent mx-auto my-16"
       >
         {openVideo && (
           <VideoCard
             video={openVideo}
-            onClick={() => setOpenVideo(null)}
+            onClick={() => setHash("")}
             label="Close Video"
-            className="mx-auto my-16 w-[95vw] max-w-xl"
-            highQuality={true}
+            fullscreen={true}
+            className="w-full h-full"
           />
         )}
       </Dialog>

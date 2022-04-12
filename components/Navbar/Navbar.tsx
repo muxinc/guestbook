@@ -3,10 +3,10 @@ import SelectDevice from "./SettingsDialog";
 
 const Navbar = () => (
   <div className="p-4 pr-12 sm:pr-4 sm:text-center relative">
-    <h1 className="text-4xl sm:text-5xl font-header neon-pink-600 mb-2">
+    <h1 className="text-4xl sm:text-5xl md:text-6xl font-header neon-pink-600 mb-2">
       Mux @ React Miami
     </h1>
-    <p className="text-lg sm:text-xl text-white">
+    <p className="text-lg sm:text-xl md:text-2xl text-white">
       <span className="whitespace-nowrap">Sign the video guestbook!</span>{" "}
       <span className="whitespace-nowrap">Win this 4K Monitor!</span>
     </p>
