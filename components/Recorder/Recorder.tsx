@@ -48,6 +48,7 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
         : true;
       const videoPrefs: boolean | MediaTrackConstraints = {
         facingMode: "user",
+        // TODO: what do we do on mobile, where default is 9 / 16?
         aspectRatio: 16 / 9,
       };
       if (videoDeviceId) {
@@ -129,11 +130,13 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
 
   return (
     <div className="w-full bg-gray-900 relative p-2 sm:p-4 max-h-[50vh]">
-      <video
-        className="rounded-lg scale-x-[-1] pointer-events-none w-auto h-full aspect-video mx-auto"
-        ref={videoRef}
-        autoPlay
-      />
+      <div className="aspect-video max-h-full max-w-full relative mx-auto">
+        <video
+          className="rounded-lg scale-x-[-1] pointer-events-none absolute h-full w-auto"
+          ref={videoRef}
+          autoPlay
+        />
+      </div>
       <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center">
         <TimerButton
           onCountdownStart={startCountdown}

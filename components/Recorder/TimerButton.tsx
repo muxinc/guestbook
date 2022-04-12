@@ -3,6 +3,7 @@ import { AnimatePresence, motion, Variants } from "framer-motion";
 
 import useSound from "use-sound";
 import { useEffect } from "react";
+import { usePreferenceContext } from "contexts/PreferenceContext";
 
 const recordingIndicatorVariants: Variants = {
   initial: {
@@ -37,7 +38,11 @@ const TimerButton = ({
   recordingDuration,
   onRecordingEnd,
 }: Props) => {
-  const [playSound] = useSound("sounds/beep.mp3", { volume: 0.5 });
+  const { isSoundEnabled } = usePreferenceContext();
+  const [playSound] = useSound("sounds/beep.mp3", {
+    volume: 0.5,
+    soundEnabled: isSoundEnabled,
+  });
 
   const [countdownState, setCountdownState] = useState(CountdownState.READY);
   const [secondsRemaining, setSecondsRemaining] =

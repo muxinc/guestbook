@@ -53,9 +53,10 @@ const SettingsDialog = ({
       isDialogOpen={isDialogOpen}
       onDismiss={onNoThanks}
       className="text-lg leading-12"
+      label="Sign up for Mux Updates!"
     >
       <p className="mb-4 text-2xl font-header text-center">One more thing...</p>
-      <h3 className="text-4xl font-bold text-center mb-8">
+      <h3 className="text-3xl font-bold text-center mb-8">
         Sign Up for Mux Updates!
         <br />
         Win this 4K monitor!

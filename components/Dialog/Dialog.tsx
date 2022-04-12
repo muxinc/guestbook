@@ -12,18 +12,25 @@ const MotionDialogContent = motion(DialogContent);
 type Props = {
   isDialogOpen: boolean;
   onDismiss: () => void;
+  label: string;
   children?: React.ReactNode;
   className?: string;
   overlayClassName?: string;
+  styledDialog?: boolean;
 };
 
 const Dialog = ({
   isDialogOpen,
   onDismiss,
   children,
+  label,
   className = "",
   overlayClassName = "",
+  styledDialog = true,
 }: Props) => {
+  const dialogStyles = styledDialog
+    ? `${styles.content} ${styles.styled} text-white`
+    : styles.content;
   return (
     <AnimatePresence>
       {isDialogOpen ? (
@@ -35,8 +42,8 @@ const Dialog = ({
           exit={{ opacity: 0 }}
         >
           <MotionDialogContent
-            aria-label="Settings"
-            className={`${styles.content} text-white ${className}`}
+            aria-label={label}
+            className={`${dialogStyles} ${className}`}
             initial={{ y: -100 }}
             animate={{ y: 0 }}
             exit={{ y: -100 }}
