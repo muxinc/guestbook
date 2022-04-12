@@ -5,6 +5,8 @@ import MuxVideo from "@mux-elements/mux-video-react";
 
 import { Video, Status } from "contexts/VideoContext";
 
+const MotionMuxVideo = motion(MuxVideo);
+
 const transitionStatuses = [
   // these are the statuses that are initialized by the client
   // and should be animated in
@@ -17,19 +19,20 @@ type Props = {
   video: Video;
   onClick: MouseEventHandler<HTMLButtonElement>;
   label: string;
+  layoutId: string;
   className?: string;
-  highQuality?: boolean;
+  fullscreen?: boolean;
 };
 
 const Video = ({
   video,
   onClick,
   label,
+  fullscreen = false,
   className = "",
-  highQuality = false,
 }: Props) => {
-  const [rotate, setRotate] = useState(() => -4 + Math.random() * 8);
-  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const [rotate] = useState(() => -4 + Math.random() * 8);
+  const [isLoaded, setIsLoaded] = useState(false);
 
   return (
     <motion.button
@@ -55,9 +58,9 @@ const Video = ({
         opacity: 1,
         scale: 1,
       }}
-      whileHover={{ scale: 1.04, zIndex: 1 }}
-      whileFocus={{ scale: 1.04, zIndex: 1 }}
-      whileTap={{ scale: 0.9 }}
+      whileHover={fullscreen ? {} : { scale: 1.04, zIndex: 1 }}
+      whileFocus={fullscreen ? {} : { scale: 1.04, zIndex: 1 }}
+      whileTap={fullscreen ? {} : { scale: 0.9 }}
       layout
       transition={{
         y: { duration: 3, times: [0, 0.88, 1], delay: 0.5 },
@@ -71,19 +74,22 @@ const Video = ({
         style={{ gridArea: "photo" }}
       >
         {video.status === Status.READY ? (
-          highQuality ? (
-            <MuxVideo
+          fullscreen ? (
+            <MotionMuxVideo
               className="h-full w-full object-cover"
               playbackId={video.playbackId}
               streamType="on-demand"
               controls={false}
               autoPlay
               loop
+              onLoadedData={() => setIsLoaded(true)}
+              animate={{ opacity: isLoaded ? 1 : 0 }}
+              transition={{ duration: 0.5 }}
             />
           ) : (
             <motion.img
               animate={{
-                opacity: isImageLoaded ? 1 : 0,
+                opacity: isLoaded ? 1 : 0,
               }}
               transition={{
                 duration: 3,
@@ -91,7 +97,7 @@ const Video = ({
               src={`https://image.mux.com/${video.playbackId}/animated.gif`}
               alt=""
               className="object-cover w-full h-full"
-              onLoad={() => setIsImageLoaded(true)}
+              onLoad={() => setIsLoaded(true)}
               loading="lazy"
             />
           )

@@ -1,5 +1,13 @@
 .overlay {
   @apply bg-gray-900/50 backdrop-blur;
+
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  z-index: 100;
+
   min-width: 320px;
 }
 .content {
@@ -8,7 +16,6 @@
   width: initial;
   padding: 0;
   margin: 0;
-  z-index: 100;
 }
 .content.styled {
   @apply mx-auto my-16 p-8 bg-gray-800 w-[95vw] max-w-xl rounded;

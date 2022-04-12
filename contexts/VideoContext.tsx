@@ -93,12 +93,14 @@ const VideoProvider = ({ children }: ProviderProps) => {
       // .abortSignal(ac.signal);
 
       if (entries) {
-        const entryVideos: Video[] = entries.map((entry) => ({
-          id: entry.id,
-          status: supabaseToVideoStatus[entry.status] || Status.UNKNOWN,
-          assetId: entry.asset_id,
-          playbackId: entry.playback_id,
-        }));
+        const entryVideos: Video[] = entries
+          .map((entry) => ({
+            id: entry.id,
+            status: supabaseToVideoStatus[entry.status] || Status.UNKNOWN,
+            assetId: entry.asset_id,
+            playbackId: entry.playback_id,
+          }))
+          .filter((video) => video.status !== Status.PENDING);
         // I want this to be setVideos(videos => [...videos, ...entryVideos]) in case this operation is slow
         // but react strict mode calls this effect twice
         // meaning that we have 2x entryVideos.
@@ -116,7 +118,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
   useEffect(() => {
     const subscription = supabase
       .from<SupabaseEntry>("entries")
-      .on("*", ({ new: entry, ...rest }) => {
+      .on("*", ({ new: entry }) => {
         switch (entry.status) {
           case "preparing":
             setVideo({

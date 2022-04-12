@@ -1,7 +1,6 @@
 import * as React from "react";
 
 import { DialogOverlay, DialogContent } from "@reach/dialog";
-import "@reach/dialog/styles.css";
 
 import styles from "./Dialog.module.css";
 import { AnimatePresence, motion } from "framer-motion";
@@ -30,7 +29,7 @@ const Dialog = ({
 }: Props) => {
   const dialogStyles = styledDialog
     ? `${styles.content} ${styles.styled} text-white`
-    : styles.content;
+    : "";
   return (
     <AnimatePresence>
       {isDialogOpen ? (
