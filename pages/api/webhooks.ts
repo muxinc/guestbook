@@ -44,5 +44,10 @@ export default async function handler(
     }
   );
 
+  // Store payload
+  await supabaseAdmin
+    .from("activity")
+    .insert([{ entry_id: metadata.entry_id, payload: JSON.stringify(data) }]);
+
   res.status(200).json({ status: "ok" });
 }
