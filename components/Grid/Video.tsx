@@ -19,7 +19,6 @@ type Props = {
   video: Video;
   onClick: MouseEventHandler<HTMLButtonElement>;
   label: string;
-  layoutId: string;
   className?: string;
   fullscreen?: boolean;
 };
