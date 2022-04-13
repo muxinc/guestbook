@@ -1,17 +1,11 @@
 import type { NextPage } from "next";
 import Head from "next/head";
 
-import { useState } from "react";
 import Recorder from "../components/Recorder";
 import Grid from "../components/Grid";
 import Navbar from "../components/Navbar";
-import RecordingStatus from "../constants/RecordingStatus";
 
 const Home: NextPage = () => {
-  const [recordingStatus, setRecordingStatus] = useState(
-    RecordingStatus.INITIALIZING
-  );
-
   return (
     <>
       <Head>
@@ -32,10 +26,7 @@ const Home: NextPage = () => {
         }}
       >
         <Navbar />
-        <Recorder
-          recordingStatus={recordingStatus}
-          setRecordingStatus={setRecordingStatus}
-        />
+        <Recorder />
         <Grid />
       </main>
     </>

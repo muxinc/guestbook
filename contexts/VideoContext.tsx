@@ -10,6 +10,7 @@ import * as UpChunk from "@mux/upchunk";
 import { supabase } from "../utils/supabaseClient";
 
 import SignupDialog, { Form, SignupDismissFn } from "components/SignupDialog";
+import { MessageType, useConsoleContext } from "./ConsoleContext";
 
 export enum Status {
   INITIALIZING = "INITIALIZING", // about to upload
@@ -66,6 +67,8 @@ const supabaseToVideoStatus: Record<SupabaseStatus, Status> = {
 };
 
 const VideoProvider = ({ children }: ProviderProps) => {
+  const { setMessage } = useConsoleContext();
+
   const [videos, setVideos] = useState<Video[]>([]);
   const setVideo = useCallback((newVideo: Video) => {
     setVideos((videos) => {
@@ -101,6 +104,10 @@ const VideoProvider = ({ children }: ProviderProps) => {
             playbackId: entry.playback_id,
           }))
           .filter((video) => video.status !== Status.PENDING);
+        setMessage({
+          content: `Loaded ${entryVideos.length} videos`,
+          type: MessageType.SUPABASE,
+        });
         // I want this to be setVideos(videos => [...videos, ...entryVideos]) in case this operation is slow
         // but react strict mode calls this effect twice
         // meaning that we have 2x entryVideos.
@@ -112,27 +119,37 @@ const VideoProvider = ({ children }: ProviderProps) => {
     };
     initialize();
     return () => ac.abort();
-  }, []);
+  }, [setMessage]);
 
   // And let's listen to updates from the db, too
   useEffect(() => {
     const subscription = supabase
       .from<SupabaseEntry>("entries")
-      .on("*", ({ new: entry }) => {
-        switch (entry.status) {
+      .on("*", ({ new: { status, id, asset_id, playback_id }, eventType }) => {
+        switch (status) {
           case "preparing":
             setVideo({
-              id: entry.id,
+              id: id,
               status: Status.PREPARING,
             });
           case "ready":
             setVideo({
-              id: entry.id,
+              id: id,
               status: Status.READY,
-              assetId: entry.asset_id,
-              playbackId: entry.playback_id,
+              assetId: asset_id,
+              playbackId: playback_id,
             });
         }
+        const messagePreview = JSON.stringify({
+          id,
+          status,
+          asset_id,
+          playback_id,
+        });
+        setMessage({
+          content: `(${eventType}) ${messagePreview}`,
+          type: MessageType.SUPABASE,
+        });
       })
       .subscribe();
     const unsubscribe = async () => {
@@ -141,7 +158,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
     return () => {
       unsubscribe();
     };
-  }, [setVideo]);
+  }, [setMessage, setVideo]);
 
   // Here's some state that doesn't get passed down.
   // When a user submits an upload, we pop up the signup dialog
@@ -154,9 +171,20 @@ const VideoProvider = ({ children }: ProviderProps) => {
   const submitUpload = useCallback(
     async (file: File, form?: Form) => {
       try {
+        setMessage({
+          content:
+            "Requesting authenticated url from Mux via serverless function",
+          type: MessageType.NEXT,
+        });
+
         const body = new URLSearchParams(form);
         const response = await fetch("/api/upload", { method: "POST", body });
         const { id, url } = await response.json();
+
+        setMessage({
+          content: `Received authenticated url from Mux: ${url}.`,
+          type: MessageType.NEXT,
+        });
 
         const video: Video = {
           id,
@@ -164,22 +192,31 @@ const VideoProvider = ({ children }: ProviderProps) => {
         };
         setVideo(video);
 
-        const upload = UpChunk.createUpload({
+        const options: UpChunk.UpChunkOptions = {
           endpoint: url, // Authenticated url
           file, // File object with your video file’s properties
           chunkSize: 30720, // Uploads the file in ~30 MB chunks
+        };
+        const optionsString = JSON.stringify(options);
+        setMessage({
+          content: `Uploading with options: ${optionsString}`,
+          type: MessageType.NEXT,
         });
+        const upload = UpChunk.createUpload(options);
 
         upload.on("error", (error) => {
           console.error(error);
           setVideo({
             id,
             status: Status.ERROR,
-            // statusMessage: error.detail,
           });
         });
 
         upload.on("progress", (progress) => {
+          setMessage({
+            content: `Progress: ${progress.detail.toFixed()}%`,
+            type: MessageType.UPCHUNK,
+          });
           setVideo({
             id,
             status: Status.UPLOADING,
@@ -188,6 +225,10 @@ const VideoProvider = ({ children }: ProviderProps) => {
         });
 
         upload.on("success", () => {
+          setMessage({
+            content: `Upload success!`,
+            type: MessageType.UPCHUNK,
+          });
           setVideo({
             id,
             status: Status.UPLOADED,
@@ -199,7 +240,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
         return;
       }
     },
-    [setVideo]
+    [setMessage, setVideo]
   );
 
   const preSubmitUpload = useCallback(

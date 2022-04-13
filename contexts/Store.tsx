@@ -1,6 +1,7 @@
 import DeviceIdProvider from "contexts/DeviceIdContext";
 import PreferenceProvider from "contexts/PreferenceContext";
 import VideoProvider from "contexts/VideoContext";
+import ConsoleProvider from "contexts/ConsoleContext";
 
 import { MotionConfig } from "framer-motion";
 
@@ -9,13 +10,15 @@ type Props = {
 };
 
 const Store = ({ children }: Props) => (
-  <DeviceIdProvider>
-    <PreferenceProvider>
-      <VideoProvider>
-        <MotionConfig reducedMotion="user">{children}</MotionConfig>
-      </VideoProvider>
-    </PreferenceProvider>
-  </DeviceIdProvider>
+  <ConsoleProvider>
+    <DeviceIdProvider>
+      <PreferenceProvider>
+        <VideoProvider>
+          <MotionConfig reducedMotion="user">{children}</MotionConfig>
+        </VideoProvider>
+      </PreferenceProvider>
+    </DeviceIdProvider>
+  </ConsoleProvider>
 );
 
 export default Store;

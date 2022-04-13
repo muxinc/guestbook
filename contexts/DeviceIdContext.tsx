@@ -1,6 +1,11 @@
-import { useContext } from "react";
-import { createContext } from "react";
-import { useState, useEffect } from "react";
+import {
+  createContext,
+  useContext,
+  useState,
+  useEffect,
+  useCallback,
+} from "react";
+import { useConsoleContext, MessageType } from "./ConsoleContext";
 
 enum LocalStorageKeys {
   AUDIO_DEVICE_ID = "mux-guestbook:audioDeviceId",
@@ -32,11 +37,25 @@ interface ProviderProps {
 }
 
 const DeviceIdProvider = ({ children }: ProviderProps) => {
+  const { setMessage } = useConsoleContext();
+
   const [videoDevices, setVideoDevices] = useState<VideoDeviceInfo[]>();
   const [audioDevices, setAudioDevices] = useState<AudioDeviceInfo[]>();
   const [videoDeviceId, setVideoDeviceId] = useState<string>();
   const [audioDeviceId, setAudioDeviceId] = useState<string>();
 
+  /* We want our setters to keep state in sync with localStorage */
+  const setVideoDeviceIdLocalStorage = useCallback((id: string) => {
+    localStorage.setItem(LocalStorageKeys.VIDEO_DEVICE_ID, id);
+    setVideoDeviceId(id);
+  }, []);
+
+  const setAudioDeviceIdLocalStorage = useCallback((id: string) => {
+    localStorage.setItem(LocalStorageKeys.AUDIO_DEVICE_ID, id);
+    setAudioDeviceId(id);
+  }, []);
+
+  /* And when we load the page we want to load our preferences from localStorage */
   useEffect(() => {
     const setState = async () => {
       /* First we get a list of devices */
@@ -54,6 +73,15 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
         (d) => d.kind === "audioinput"
       ) as AudioDeviceInfo[];
 
+      setMessage({
+        content: `Found ${videoDevices.length} video devices`,
+        type: MessageType.RECORDER,
+      });
+      setMessage({
+        content: `Found ${audioDevices.length} audio devices`,
+        type: MessageType.RECORDER,
+      });
+
       setVideoDevices(videoDevices);
       setAudioDevices(audioDevices);
 
@@ -67,37 +95,64 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
       const audioDeviceId = localStorage.getItem(
         LocalStorageKeys.AUDIO_DEVICE_ID
       );
-      const videoDeviceIds = videoDevices.map((d) => d.deviceId);
-      const audioDeviceIds = audioDevices.map((d) => d.deviceId);
+      const videoDevice = videoDevices.find(
+        (d) => d.deviceId === videoDeviceId
+      );
+      const audioDevice = audioDevices.find(
+        (d) => d.deviceId === audioDeviceId
+      );
       if (
         typeof videoDeviceId === "string" &&
-        videoDeviceIds.includes(videoDeviceId)
+        typeof videoDevice !== "undefined"
       ) {
-        setVideoDeviceId(videoDeviceId);
+        setMessage({
+          content: `Found video device preference in localStorage (${videoDeviceId})`,
+          type: MessageType.RECORDER,
+        });
+        setVideoDeviceIdLocalStorage(videoDeviceId);
       } else {
-        setVideoDeviceId(videoDeviceIds[0]);
+        setVideoDeviceIdLocalStorage(videoDevices[0].deviceId);
       }
       if (
         typeof audioDeviceId === "string" &&
-        audioDeviceIds.includes(audioDeviceId)
+        typeof audioDevice !== "undefined"
       ) {
-        setAudioDeviceId(audioDeviceId);
+        setMessage({
+          content: `Found audio device preference in localStorage (${audioDeviceId})`,
+          type: MessageType.RECORDER,
+        });
+        setAudioDeviceIdLocalStorage(audioDeviceId);
       } else {
-        setAudioDeviceId(audioDeviceIds[0]);
+        setAudioDeviceIdLocalStorage(audioDevices[0].deviceId);
       }
     };
     setState();
-  }, []);
+  }, [setAudioDeviceIdLocalStorage, setMessage, setVideoDeviceIdLocalStorage]);
 
-  /* We want our setters to keep state in sync with localStorage */
-  const setVideoDeviceIdLocalStorage = (id: string) => {
-    localStorage.setItem(LocalStorageKeys.VIDEO_DEVICE_ID, id);
-    setVideoDeviceId(id);
-  };
-  const setAudioDeviceIdLocalStorage = (id: string) => {
-    localStorage.setItem(LocalStorageKeys.AUDIO_DEVICE_ID, id);
-    setAudioDeviceId(id);
-  };
+  /* These two effects alert us when the active device changes */
+  useEffect(() => {
+    const videoDevice = videoDevices?.find(
+      (device) => device.deviceId === videoDeviceId
+    );
+    if (typeof videoDevice !== "undefined") {
+      setMessage({
+        content: `Setting ${videoDevice.label} as video device`,
+        type: MessageType.RECORDER,
+      });
+    }
+  }, [setMessage, videoDeviceId, videoDevices]);
+
+  useEffect(() => {
+    const audioDevice = audioDevices?.find(
+      (device) => device.deviceId === audioDeviceId
+    );
+    if (typeof audioDevice !== "undefined") {
+      setMessage({
+        content: `Setting ${audioDevice.label} as audio device`,
+        type: MessageType.RECORDER,
+      });
+    }
+  }, [setMessage, audioDeviceId, audioDevices]);
 
   /* Finally, we wrap this all up in a provider to give it to our children */
   const value = {
