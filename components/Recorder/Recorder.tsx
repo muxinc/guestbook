@@ -9,8 +9,11 @@ import {
 
 import { useDeviceIdContext } from "contexts/DeviceIdContext";
 import { useVideoContext } from "contexts/VideoContext";
+import { MessageType, useConsoleContext } from "contexts/ConsoleContext";
 
 import TimerButton from "./TimerButton";
+
+import formatBytes from "utils/formatBytes";
 
 const getSupportedMimeType = () => {
   return MIME_TYPE_STACK.find((mimeType) =>
@@ -18,19 +21,25 @@ const getSupportedMimeType = () => {
   );
 };
 
-type Props = {
-  recordingStatus: RecordingStatus;
-  setRecordingStatus: (status: RecordingStatus) => void;
-};
-
-const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
+const Recorder = () => {
   const { videoDeviceId, audioDeviceId } = useDeviceIdContext();
   const { submitUpload } = useVideoContext();
+  const { setMessage } = useConsoleContext();
 
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = React.useRef<MediaRecorder>();
 
+  const [recordingStatus, setRecordingStatus] = React.useState(
+    RecordingStatus.INITIALIZING
+  );
   const [chunks, setChunks] = React.useState<Blob[]>([]);
+
+  React.useEffect(() => {
+    setMessage({
+      content: recordingStatus,
+      type: MessageType.RECORDER,
+    });
+  }, [recordingStatus, setMessage]);
 
   // Setup MediaRecorder when initializing
   // change cameras when initializing or ready
@@ -64,17 +73,28 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
       if (typeof mimeType === "undefined") {
         throw new Error("No supported mime type found");
       }
-      // TODO: this doesn't turn off the old camera when switching to a new one
-      // particularly in safari
-      mediaRecorderRef.current = new MediaRecorder(stream, {
+      const options: MediaRecorderOptions = {
         audioBitsPerSecond: NUMBER_AUDIO_BITS_PER_SECOND,
         videoBitsPerSecond: NUMBER_VIDEO_BITS_PER_SECOND,
         mimeType,
+      };
+      // TODO: this doesn't turn off the old camera when switching to a new one
+      // particularly in safari
+      mediaRecorderRef.current = new MediaRecorder(stream, options);
+
+      const optionsString = JSON.stringify(options);
+      setMessage({
+        content: `Initialized Media Recorder with options ${optionsString}`,
+        type: MessageType.RECORDER,
       });
 
       mediaRecorderRef.current.ondataavailable = (e) => {
-        console.log("saving chunk");
-        setChunks((c) => [...c, e.data]);
+        const chunk = e.data;
+        setMessage({
+          content: `Saving chunk. (${formatBytes(chunk.size)}, ${chunk.type})`,
+          type: MessageType.RECORDER,
+        });
+        setChunks((c) => [...c, chunk]);
       };
 
       videoRef.current.srcObject = stream;
@@ -84,24 +104,34 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
       setRecordingStatus(RecordingStatus.READY);
     };
     setup();
-  }, [audioDeviceId, recordingStatus, setRecordingStatus, videoDeviceId]);
+  }, [
+    audioDeviceId,
+    recordingStatus,
+    setMessage,
+    setRecordingStatus,
+    videoDeviceId,
+  ]);
 
   // Pass these three functions to our countdown button.
   // They'll handle updating the
   const startCountdown = React.useCallback(() => {
     if (!mediaRecorderRef.current) return false;
     if (recordingStatus !== RecordingStatus.READY) {
-      console.log("Recorder not ready!");
+      setMessage({
+        content: `Recorder not ready!`,
+        type: MessageType.RECORDER,
+      });
       return false;
     }
     setRecordingStatus(RecordingStatus.COUNTING);
     return true;
-  }, [recordingStatus, setRecordingStatus]);
+  }, [recordingStatus, setMessage, setRecordingStatus]);
+
   const startRecording = React.useCallback(() => {
     setRecordingStatus(RecordingStatus.RECORDING);
-    console.log("Now recording!");
     mediaRecorderRef.current?.start(500);
   }, [setRecordingStatus]);
+
   const stopRecording = React.useCallback(() => {
     mediaRecorderRef.current?.stop();
     // The useEffect down below will handle the rest.
@@ -112,7 +142,11 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
     if (!mediaRecorderRef.current) return;
 
     mediaRecorderRef.current.onstop = (e) => {
-      console.log("stopping recording!");
+      setMessage({
+        content: `Stopping recording...`,
+        type: MessageType.RECORDER,
+      });
+
       let finalBlob = new Blob(chunks, { type: getSupportedMimeType() });
       const objUrl = URL.createObjectURL(finalBlob);
 
@@ -122,11 +156,19 @@ const Recorder = ({ recordingStatus, setRecordingStatus }: Props) => {
         "video-recording-new-new-final-FORREAL_v2",
         { type: finalBlob.type }
       );
+
+      setMessage({
+        content: `Created file: ${formatBytes(createdFile.size)}, ${
+          createdFile.type
+        }`,
+        type: MessageType.RECORDER,
+      });
+
       submitUpload(createdFile);
       setChunks([]);
       setRecordingStatus(RecordingStatus.READY);
     };
-  }, [chunks, setChunks, setRecordingStatus, submitUpload]);
+  }, [chunks, setChunks, setMessage, setRecordingStatus, submitUpload]);
 
   return (
     <div className="w-full bg-gray-900 relative p-2 sm:p-4 max-h-[50vh]">
