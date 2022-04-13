@@ -24,12 +24,15 @@ const Grid = () => {
           layoutScroll
         >
           {videos.map((video) => (
-            <VideoCard
+            <motion.button
               key={video.id}
-              video={video}
               onClick={() => setHash(video.id.toString())}
-              label="Open Video"
-            />
+              whileHover={{ scale: 1.04 }}
+              whileFocus={{ scale: 1.04 }}
+              whileTap={{ scale: 0.9 }}
+            >
+              <VideoCard video={video} label="Open Video" />
+            </motion.button>
           ))}
         </motion.div>
       </section>
@@ -38,12 +41,11 @@ const Grid = () => {
         onDismiss={() => setHash("")}
         label="Video"
         styledDialog={false}
-        className="w-[95vw] max-w-xl p-0 bg-transparent mx-auto my-16"
+        className="w-[95vw] max-w-xl p-0 bg-transparent mx-auto my-16 outline-none"
       >
         {openVideo && (
           <VideoCard
             video={openVideo}
-            onClick={() => setHash("")}
             label="Close Video"
             fullscreen={true}
             className="w-full h-full"

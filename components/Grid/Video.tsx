@@ -1,4 +1,4 @@
-import { useState, MouseEventHandler } from "react";
+import { useState } from "react";
 
 import { motion } from "framer-motion";
 import MuxVideo from "@mux-elements/mux-video-react";
@@ -17,25 +17,17 @@ const transitionStatuses = [
 
 type Props = {
   video: Video;
-  onClick: MouseEventHandler<HTMLButtonElement>;
   label: string;
   className?: string;
   fullscreen?: boolean;
 };
 
-const Video = ({
-  video,
-  onClick,
-  label,
-  fullscreen = false,
-  className = "",
-}: Props) => {
+const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
   const [rotate] = useState(() => -4 + Math.random() * 8);
   const [isLoaded, setIsLoaded] = useState(false);
 
   return (
-    <motion.button
-      onClick={onClick}
+    <motion.div
       aria-label={label}
       className={`bg-gray-200 p-1 aspect-square grid justify-items-stretch rounded overflow-hidden ${className}`}
       style={{
@@ -57,9 +49,6 @@ const Video = ({
         opacity: 1,
         scale: 1,
       }}
-      whileHover={fullscreen ? {} : { scale: 1.04, zIndex: 1 }}
-      whileFocus={fullscreen ? {} : { scale: 1.04, zIndex: 1 }}
-      whileTap={fullscreen ? {} : { scale: 0.9 }}
       layout
       transition={{
         y: { duration: 3, times: [0, 0.88, 1], delay: 0.5 },
@@ -75,15 +64,24 @@ const Video = ({
         {video.status === Status.READY ? (
           fullscreen ? (
             <MotionMuxVideo
-              className="h-full w-full object-cover"
+              className="h-full w-full object-cover cursor-pointer"
               playbackId={video.playbackId}
               streamType="on-demand"
-              controls={false}
-              autoPlay
               loop
+              autoPlay
               onLoadedData={() => setIsLoaded(true)}
               animate={{ opacity: isLoaded ? 1 : 0 }}
               transition={{ duration: 0.5 }}
+              onClick={(e) => {
+                // Fallback functionality in case autoplay fails
+                const videoElement = e.currentTarget as HTMLVideoElement;
+                // I feel like there's a more accessible way to do this.
+                if (videoElement.paused) {
+                  videoElement.play();
+                } else {
+                  videoElement.pause();
+                }
+              }}
             />
           ) : (
             <motion.img
@@ -143,7 +141,7 @@ const Video = ({
       >
         {video.status}
       </div>
-    </motion.button>
+    </motion.div>
   );
 };
 
