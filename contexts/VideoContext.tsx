@@ -11,6 +11,7 @@ import { supabase } from "../utils/supabaseClient";
 
 import SignupDialog, { Form, SignupDismissFn } from "components/SignupDialog";
 import { MessageType, useConsoleContext } from "./ConsoleContext";
+import formatBytes from "utils/formatBytes";
 
 export enum Status {
   INITIALIZING = "INITIALIZING", // about to upload
@@ -140,14 +141,9 @@ const VideoProvider = ({ children }: ProviderProps) => {
               playbackId: playback_id,
             });
         }
-        const messagePreview = JSON.stringify({
-          id,
-          status,
-          asset_id,
-          playback_id,
-        });
         setMessage({
-          content: `(${eventType}) ${messagePreview}`,
+          content: `(${eventType})`,
+          data: { id, status, asset_id, playback_id },
           type: MessageType.SUPABASE,
         });
       })
@@ -192,17 +188,15 @@ const VideoProvider = ({ children }: ProviderProps) => {
         };
         setVideo(video);
 
-        const options: UpChunk.UpChunkOptions = {
+        setMessage({
+          content: `Uploading with chunk size ${formatBytes(30720)}.`,
+          type: MessageType.NEXT,
+        });
+        const upload = UpChunk.createUpload({
           endpoint: url, // Authenticated url
           file, // File object with your video file’s properties
           chunkSize: 30720, // Uploads the file in ~30 MB chunks
-        };
-        const optionsString = JSON.stringify(options);
-        setMessage({
-          content: `Uploading with options: ${optionsString}`,
-          type: MessageType.NEXT,
         });
-        const upload = UpChunk.createUpload(options);
 
         upload.on("error", (error) => {
           console.error(error);
@@ -214,7 +208,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
 
         upload.on("progress", (progress) => {
           setMessage({
-            content: `Progress: ${progress.detail.toFixed()}%`,
+            content: `Progress: ${progress.detail.toFixed()}\%`,
             type: MessageType.UPCHUNK,
           });
           setVideo({

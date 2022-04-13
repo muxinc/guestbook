@@ -81,10 +81,9 @@ const Recorder = () => {
       // TODO: this doesn't turn off the old camera when switching to a new one
       // particularly in safari
       mediaRecorderRef.current = new MediaRecorder(stream, options);
-
-      const optionsString = JSON.stringify(options);
       setMessage({
-        content: `Initialized Media Recorder with options ${optionsString}`,
+        content: "Configured Media Recorder",
+        data: options,
         type: MessageType.RECORDER,
       });
 

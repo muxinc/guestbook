@@ -18,6 +18,7 @@ export enum MessageType {
 }
 type Message = {
   content: string;
+  data?: any;
   type: MessageType;
 };
 type ConsoleContextValue = {
@@ -48,6 +49,9 @@ const ConsoleProvider = ({ children }: ProviderProps) => {
       `%c[${message.type}]: ${message.content}`,
       `color: ${consoleColors[message.type]}`
     );
+    if (typeof message.data !== "undefined") {
+      console.log(message.data);
+    }
     setMessages((m) => [message, ...m]);
   }, []);
   /* We listen for messages from the database to slip on in here */
@@ -56,7 +60,8 @@ const ConsoleProvider = ({ children }: ProviderProps) => {
       .from<SupabaseActivity>("activity")
       .on("*", (payload) => {
         setMessage({
-          content: JSON.stringify(payload),
+          content: "(Webhook)",
+          data: JSON.parse(payload.new.payload),
           type: MessageType.MUX,
         });
       })
