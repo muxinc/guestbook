@@ -247,11 +247,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
     (file: File) => {
       // Before we submit our upload,
       // let's offer the user a chance to sign up
-      const timeout = setTimeout(() => {
-        // after a short timeout.
-        // feels like better ux
-        setIsSignupDialogOpen(true);
-      }, 750);
+      setIsSignupDialogOpen(true);
       // We can't just say (form) => { ... }
       // because setState accepts an updater function.
       // So we use that updater function to return (form) => { ... }
@@ -260,8 +256,6 @@ const VideoProvider = ({ children }: ProviderProps) => {
         setIsSignupDialogOpen(false);
       };
       setOnSignupDialogDismiss(() => onDismiss);
-
-      return () => clearTimeout(timeout);
     },
     [submitUpload]
   );

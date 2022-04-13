@@ -39,8 +39,12 @@ const TimerButton = ({
   onRecordingEnd,
 }: Props) => {
   const { isSoundEnabled } = usePreferenceContext();
-  const [playSound] = useSound("sounds/beep.mp3", {
+  const [playBeep] = useSound("sounds/beep.mp3", {
     volume: 0.5,
+    soundEnabled: isSoundEnabled,
+  });
+  const [playDing] = useSound("sounds/ding.mp3", {
+    volume: 0.8,
     soundEnabled: isSoundEnabled,
   });
 
@@ -76,6 +80,7 @@ const TimerButton = ({
         } else if (countdownState === CountdownState.RECORDING) {
           // Transition from recording to finished
           setCountdownState(CountdownState.READY);
+          playDing();
           onRecordingEnd();
         }
       }
@@ -88,7 +93,8 @@ const TimerButton = ({
     countdownState,
     onCountdownEnd,
     onRecordingEnd,
-    playSound,
+    playBeep,
+    playDing,
     recordingDuration,
     secondsRemaining,
   ]);
@@ -97,9 +103,9 @@ const TimerButton = ({
   // we play a sound if appropriate
   useEffect(() => {
     if (countdownState === CountdownState.COUNTING && secondsRemaining > 0) {
-      playSound();
+      playBeep();
     }
-  }, [countdownState, secondsRemaining, playSound]);
+  }, [countdownState, secondsRemaining, playBeep]);
 
   const countdownText =
     countdownState === CountdownState.COUNTING
