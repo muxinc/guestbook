@@ -111,7 +111,14 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
         });
         setVideoDeviceIdLocalStorage(videoDeviceId);
       } else {
-        setVideoDeviceIdLocalStorage(videoDevices[0].deviceId);
+        // First, we try to find a front-facing camera
+        const frontCamera = videoDevices.find((d) =>
+          d.label.toLowerCase().includes("front")
+        );
+        // Then we default to the first device
+        setVideoDeviceIdLocalStorage(
+          frontCamera?.deviceId ?? videoDevices[0].deviceId
+        );
       }
       if (
         typeof audioDeviceId === "string" &&

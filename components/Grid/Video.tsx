@@ -92,9 +92,17 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
                 duration: 3,
               }}
               src={`https://image.mux.com/${video.playbackId}/animated.gif`}
+              data-src={`https://image.mux.com/${video.playbackId}/animated.gif`}
               alt=""
               className="object-cover w-full h-full"
               onLoad={() => setIsLoaded(true)}
+              onError={(e) => {
+                const image = e.currentTarget as HTMLImageElement;
+                image.src = "";
+                setTimeout(() => {
+                  image.src = image.dataset.src ?? "";
+                }, 2000);
+              }}
               loading="lazy"
             />
           )

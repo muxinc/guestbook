@@ -21,7 +21,11 @@ const getSupportedMimeType = () => {
   );
 };
 
-const Recorder = () => {
+type Props = {
+  className?: string;
+};
+
+const Recorder = ({ className = "" }: Props) => {
   const { videoDeviceId, audioDeviceId } = useDeviceIdContext();
   const { submitUpload } = useVideoContext();
   const { setMessage } = useConsoleContext();
@@ -41,16 +45,28 @@ const Recorder = () => {
     });
   }, [recordingStatus, setMessage]);
 
-  // Setup MediaRecorder when initializing
-  // change cameras when initializing or ready
   React.useEffect(() => {
-    if (
-      recordingStatus !== RecordingStatus.INITIALIZING &&
-      recordingStatus !== RecordingStatus.READY
-    )
-      return;
-    if (!videoDeviceId && !audioDeviceId) return;
+    // This hook should run under two circumstances:
+    // 1. Initializing & videoDeviceId/audioDeviceId are set
+    // 2. Ready & videoDeviceId/audioDeviceId are changed
+    const isInitReady =
+      recordingStatus === RecordingStatus.INITIALIZING &&
+      videoDeviceId &&
+      audioDeviceId;
 
+    const videoSrcObject = videoRef.current?.srcObject as
+      | MediaStream
+      | null
+      | undefined;
+    const videoTrack = videoSrcObject?.getVideoTracks()[0];
+    const audioTrack = videoSrcObject?.getAudioTracks()[0];
+    const isReadyReady =
+      recordingStatus === RecordingStatus.READY &&
+      (videoDeviceId !== videoTrack?.getSettings().deviceId ||
+        audioDeviceId !== audioTrack?.getSettings().deviceId);
+    if (!isInitReady && !isReadyReady) return;
+
+    // Did we pass the test? Ok let's go.
     const setup = async () => {
       if (!videoRef.current) return;
 
@@ -59,8 +75,10 @@ const Recorder = () => {
       };
       const videoPrefs: boolean | MediaTrackConstraints = {
         deviceId: videoDeviceId,
-        facingMode: "user",
-        // TODO: what do we do on mobile, where default is 9 / 16?
+        // When in portrait mode, iOS will invert this ratio. So like, 9 / 16.
+        // Which, like, what if I want a horizontal crop of a vertical video?
+        // AND THEN it'll still try to tell me that the width of the video > height.
+        // Whatever.
         aspectRatio: 16 / 9,
       };
 
@@ -78,8 +96,6 @@ const Recorder = () => {
         videoBitsPerSecond: NUMBER_VIDEO_BITS_PER_SECOND,
         mimeType,
       };
-      // TODO: this doesn't turn off the old camera when switching to a new one
-      // particularly in safari
       mediaRecorderRef.current = new MediaRecorder(stream, options);
       setMessage({
         content: "Configured Media Recorder",
@@ -97,7 +113,9 @@ const Recorder = () => {
       };
 
       videoRef.current.srcObject = stream;
+      videoRef.current.autoplay = true;
       videoRef.current.muted = true;
+      videoRef.current.playsInline = true;
       videoRef.current.controls = false;
 
       setRecordingStatus(RecordingStatus.READY);
@@ -170,14 +188,15 @@ const Recorder = () => {
   }, [chunks, setChunks, setMessage, setRecordingStatus, submitUpload]);
 
   return (
-    <div className="w-full bg-gray-900 relative p-2 sm:p-4 max-h-[50vh]">
-      <div className="aspect-video max-h-full max-w-full relative mx-auto">
-        <video
-          className="bg-black rounded-lg scale-x-[-1] pointer-events-none absolute h-full w-auto"
-          ref={videoRef}
-          autoPlay
-        />
-      </div>
+    <div className={`relative bg-gray-900 p-2 sm:p-4 ${className}`}>
+      <video
+        className="w-full h-full scale-x-[-1] pointer-events-none"
+        ref={videoRef}
+        autoPlay
+        muted
+        playsInline
+        controls={false}
+      />
       <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center">
         <TimerButton
           onCountdownStart={startCountdown}

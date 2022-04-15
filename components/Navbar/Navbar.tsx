@@ -2,11 +2,11 @@ import * as React from "react";
 import SelectDevice from "./SettingsDialog";
 
 const Navbar = () => (
-  <div className="py-8 pr-12 sm:pr-4 sm:text-center relative">
-    <h1 className="text-4xl sm:text-5xl md:text-6xl font-header neon-pink-600 mb-2">
+  <div className="p-4 pr-12 sm:pr-4 sm:text-center relative">
+    <h1 className="text-3xl sm:text-5xl md:text-6xl font-header neon-pink-600 sm:mb-2">
       Mux @ React Miami
     </h1>
-    <p className="text-lg sm:text-xl md:text-2xl text-white">
+    <p className="hidden sm:block sm:text-xl md:text-2xl text-white">
       <span className="whitespace-nowrap">Sign the video guestbook!</span>{" "}
       <span className="whitespace-nowrap">Win this 4K Monitor!</span>
     </p>

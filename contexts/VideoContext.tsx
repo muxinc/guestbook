@@ -208,7 +208,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
 
         upload.on("progress", (progress) => {
           setMessage({
-            content: `Progress: ${progress.detail.toFixed()}\%`,
+            content: `Progress: ${progress.detail.toFixed()}/100`,
             type: MessageType.UPCHUNK,
           });
           setVideo({
