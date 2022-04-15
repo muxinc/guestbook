@@ -2,7 +2,7 @@ import * as React from "react";
 import SelectDevice from "./SettingsDialog";
 
 const Navbar = () => (
-  <div className="p-4 pr-12 sm:pr-4 sm:text-center relative">
+  <div className="py-8 sm:py-4 pr-12 sm:pr-4 sm:text-center relative">
     <h1 className="text-3xl sm:text-5xl md:text-6xl font-header neon-pink-600 sm:mb-2">
       Mux @ React Miami
     </h1>
