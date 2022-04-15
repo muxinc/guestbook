@@ -192,6 +192,10 @@ const Recorder = ({ className = "" }: Props) => {
       <video
         className="w-full h-full scale-x-[-1] pointer-events-none"
         ref={videoRef}
+        autoPlay
+        muted
+        playsInline
+        controls={false}
       />
       <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center">
         <TimerButton
