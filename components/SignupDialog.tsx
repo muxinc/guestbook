@@ -80,6 +80,7 @@ const SettingsDialog = ({
               name="firstName"
               id={firstNameId}
               type="text"
+              autoComplete="given-name"
               className="border disabled:border-gray-400 rounded-sm bg-transparent p-2 w-full"
               required
               disabled={disabled}
@@ -93,6 +94,7 @@ const SettingsDialog = ({
               name="lastName"
               id={lastNameId}
               type="text"
+              autoComplete="family-name"
               className="border disabled:border-gray-400 rounded-sm bg-transparent p-2 w-full"
               required
               disabled={disabled}
@@ -106,7 +108,8 @@ const SettingsDialog = ({
           <input
             name="email"
             id={emailId}
-            type="text"
+            type="email"
+            autoComplete="email"
             className="border disabled:border-gray-400 rounded-sm bg-transparent p-2 w-full"
             required
             disabled={disabled}

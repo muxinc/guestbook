@@ -8,7 +8,11 @@ import useHash from "utils/useHash";
 
 import VideoCard from "./Video";
 
-const Grid = () => {
+type Props = {
+  className?: string;
+};
+
+const Grid = ({ className = "" }: Props) => {
   const { videos } = useVideoContext();
   const [hash, setHash] = useHash();
   const openVideo = useMemo(
@@ -18,7 +22,9 @@ const Grid = () => {
 
   return (
     <>
-      <section className="bg-gray-700 p-4 overflow-y-scroll overflow-x-hidden">
+      <section
+        className={`bg-gray-700 p-4 overflow-y-scroll overflow-x-hidden ${className}`}
+      >
         <motion.div
           className="grid gap-2 justify-center grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fill,_minmax(160px,1fr))]"
           layoutScroll
