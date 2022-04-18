@@ -23,7 +23,7 @@ const Grid = ({ className = "" }: Props) => {
   return (
     <>
       <section
-        className={`bg-gray-700 p-4 overflow-y-scroll overflow-x-hidden ${className}`}
+        className={`p-4 overflow-y-scroll overflow-x-hidden ${className}`}
       >
         <motion.div
           className="grid gap-2 justify-center grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fill,_minmax(160px,1fr))]"

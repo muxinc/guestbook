@@ -8,7 +8,7 @@ module.exports = {
   theme: {
     extend: {
       fontFamily: {
-        header: "'Yellowtail', cursive",
+        header: "'Yellowtail', sans-serif",
         body: [...defaultTheme.fontFamily.sans],
       },
     },

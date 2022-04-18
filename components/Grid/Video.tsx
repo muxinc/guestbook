@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { motion } from "framer-motion";
 import MuxVideo from "@mux-elements/mux-video-react";
@@ -24,7 +24,34 @@ type Props = {
 
 const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
   const [rotate] = useState(() => -4 + Math.random() * 8);
-  const [isLoaded, setIsLoaded] = useState(false);
+  const [isLoaded, setIsLoaded] = useState(() => false);
+
+  const [imgSrc, setImgSrc] = useState(
+    () => `https://image.mux.com/${video.playbackId}/animated.gif`
+  );
+  const [retryCount, setRetryCount] = useState(0);
+  const [retryTimeout, setRetryTimeout] =
+    useState<ReturnType<typeof setTimeout>>();
+
+  const imgLoad = () => {
+    setIsLoaded(true);
+  };
+  const imgRetry = () => {
+    if (retryCount < 3) {
+      setRetryCount((c) => c + 1);
+      setImgSrc("");
+
+      const timeout = setTimeout(() => {
+        setImgSrc(`https://image.mux.com/${video.playbackId}/animated.gif`);
+      });
+      setRetryTimeout(timeout);
+    }
+  };
+  useEffect(() => {
+    if (typeof retryTimeout !== "undefined") {
+      () => clearTimeout(retryTimeout);
+    }
+  }, [retryTimeout]);
 
   return (
     <motion.div
@@ -61,8 +88,51 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
         className="relative bg-gray-400 h-full rounded-sm overflow-hidden"
         style={{ gridArea: "photo" }}
       >
-        {video.status === Status.READY ? (
-          fullscreen ? (
+        {/* Loading Spinner */}
+        {!isLoaded && (
+          <>
+            {" "}
+            <svg
+              viewBox="0 0 100 100"
+              className="absolute w-full h-full inset-0"
+            >
+              <motion.circle
+                cx="50"
+                cy="50"
+                r="30"
+                strokeWidth={10}
+                animate={{
+                  pathLength:
+                    video.status === Status.UPLOADING &&
+                    typeof video.uploadStatus === "number"
+                      ? (0.9 * video.uploadStatus) / 100
+                      : 0.9,
+                  rotate:
+                    video.status === Status.UPLOADING &&
+                    video.uploadStatus !== 100
+                      ? 270
+                      : [270, 630],
+                }}
+                transition={{
+                  rotate:
+                    video.status === Status.UPLOADING
+                      ? {}
+                      : { duration: 1, ease: "linear", repeat: Infinity },
+                }}
+                className={`fill-transparent stroke-gray-500`}
+              />
+            </svg>
+            <div className="absolute w-full h-full inset-0 flex items-center justify-center text-gray-800">
+              {video.status === Status.UPLOADING &&
+              typeof video.uploadStatus === "number"
+                ? `${video.uploadStatus.toFixed()}%`
+                : null}
+            </div>
+          </>
+        )}
+        {/* image or video element */}
+        {video.status === Status.READY &&
+          (fullscreen ? (
             <MotionMuxVideo
               className="h-full w-full object-cover cursor-pointer"
               playbackId={video.playbackId}
@@ -89,59 +159,16 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
                 opacity: isLoaded ? 1 : 0,
               }}
               transition={{
-                duration: 3,
+                duration: 1,
               }}
-              src={`https://image.mux.com/${video.playbackId}/animated.gif`}
-              data-src={`https://image.mux.com/${video.playbackId}/animated.gif`}
+              src={imgSrc}
               alt=""
               className="object-cover w-full h-full"
-              onLoad={() => setIsLoaded(true)}
-              onError={(e) => {
-                const image = e.currentTarget as HTMLImageElement;
-                image.src = "";
-                setTimeout(() => {
-                  image.src = image.dataset.src ?? "";
-                }, 2000);
-              }}
               loading="lazy"
+              onLoad={imgLoad}
+              onError={imgRetry}
             />
-          )
-        ) : (
-          <>
-            <svg
-              viewBox="0 0 100 100"
-              className="absolute w-full h-full inset-0"
-            >
-              <motion.circle
-                cx="50"
-                cy="50"
-                r="30"
-                strokeWidth={10}
-                animate={{
-                  pathLength:
-                    video.status === Status.UPLOADING &&
-                    typeof video.uploadStatus === "number"
-                      ? (0.9 * video.uploadStatus) / 100
-                      : 0.9,
-                  rotate: video.status === Status.UPLOADING ? 270 : [270, 630],
-                }}
-                transition={{
-                  rotate:
-                    video.status === Status.UPLOADING
-                      ? {}
-                      : { duration: 1, ease: "linear", repeat: Infinity },
-                }}
-                className={`fill-transparent stroke-gray-500`}
-              />
-            </svg>
-            <div className="absolute w-full h-full inset-0 flex items-center justify-center text-gray-800">
-              {video.status === Status.UPLOADING &&
-              typeof video.uploadStatus === "number"
-                ? `${video.uploadStatus.toFixed()}%`
-                : null}
-            </div>
-          </>
-        )}
+          ))}
       </div>
       <div
         className="font-mono h-full flex items-center justify-center text-gray-700"

@@ -257,7 +257,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
   const value: VideoContextValue = {
     videos,
     setVideo,
-    submitUpload: preSubmitUpload,
+    submitUpload,
   };
 
   return (

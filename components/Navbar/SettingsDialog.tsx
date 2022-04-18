@@ -13,7 +13,7 @@ type Props = {
   className?: string;
 };
 
-const SettingsDialog = ({ className }: Props) => {
+const SettingsDialog = ({ className = "" }: Props) => {
   const {
     videoDevices,
     audioDevices,
@@ -29,7 +29,7 @@ const SettingsDialog = ({ className }: Props) => {
   return (
     <>
       <button
-        className={`p-4 group ${className}`}
+        className={`p-4 cursor-pointer group ${className}`}
         onClick={() => setIsDialogOpen(true)}
       >
         <BsFillGearFill className="text-xl text-white group-hover:rotate-6" />

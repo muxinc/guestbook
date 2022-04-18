@@ -188,7 +188,7 @@ const Recorder = ({ className = "" }: Props) => {
   }, [chunks, setChunks, setMessage, setRecordingStatus, submitUpload]);
 
   return (
-    <div className={`relative bg-gray-900 p-2 sm:p-4 ${className}`}>
+    <div className={`relative bg-gray-900 ${className}`}>
       <video
         className="w-full h-full scale-x-[-1] pointer-events-none"
         ref={videoRef}

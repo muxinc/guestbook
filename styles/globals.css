@@ -54,6 +54,13 @@
 }
 
 @layer utilities {
+  .bg-grid {
+    background-image: url("/images/graph-paper.svg");
+  }
+  .bg-brick {
+    background-image: url("/images/brick-wall.svg");
+  }
+
   .neon-pink-600 {
     /*
     You know what would be cool?
@@ -67,17 +74,23 @@
     /* https://css-tricks.com/how-to-create-neon-text-with-css/ */
     100% {
       /* Larger blur radius */
-      text-shadow: 0 0 0.03em #fff, 0 0 0.06em #fff, 0 0 0.09em #fff,
-        0 0 0.15em theme(colors.pink.600), 0 0 0.7em theme(colors.pink.600),
-        0 0 0.85em theme(colors.pink.600), 0 0 1.1em theme(colors.pink.600),
-        0 0 1.25em theme(colors.pink.600);
+      filter: drop-shadow(0 0 0.01em rgba(255, 255, 255, 0.4))
+        drop-shadow(0 0 0.02em rgba(255, 255, 255, 0.4))
+        drop-shadow(0 0 0.04em rgba(219, 39, 119, 0.5))
+        drop-shadow(0 0 0.2em rgba(219, 39, 119, 0.5))
+        drop-shadow(0 0 0.3em rgba(219, 39, 119, 0.5))
+        drop-shadow(0 0 0.4em rgba(219, 39, 119, 0.5))
+        drop-shadow(0 0 0.5em rgba(219, 39, 119, 0.5));
     }
     0% {
       /* Smaller blur radius */
-      text-shadow: 0 0 0.02em #fff, 0 0 0.03em #fff, 0 0 0.05em #fff,
-        0 0 0.08em theme(colors.pink.600), 0 0 0.4em theme(colors.pink.600),
-        0 0 0.5em theme(colors.pink.600), 0 0 0.6em theme(colors.pink.600),
-        0 0 0.7em theme(colors.pink.600);
+      filter: drop-shadow(0 0 0.01em rgba(255, 255, 255, 0.4))
+        drop-shadow(0 0 0.02em rgba(255, 255, 255, 0.4))
+        drop-shadow(0 0 0.05em rgba(219, 39, 119, 0.5))
+        drop-shadow(0 0 0.1em rgba(219, 39, 119, 0.5))
+        drop-shadow(0 0 0.15em rgba(219, 39, 119, 0.5))
+        drop-shadow(0 0 0.2em rgba(219, 39, 119, 0.5))
+        drop-shadow(0 0 0.25em rgba(219, 39, 119, 0.5));
     }
   }
 }
