@@ -32,7 +32,7 @@ const SettingsDialog = ({ className = "" }: Props) => {
         className={`p-4 cursor-pointer group ${className}`}
         onClick={() => setIsDialogOpen(true)}
       >
-        <BsFillGearFill className="text-xl text-white group-hover:rotate-6" />
+        <BsFillGearFill className="text-xl group-hover:rotate-6" />
         <VisuallyHidden>Open Settings</VisuallyHidden>
       </button>
       {/* These fellas are styled down below, for greater specificity */}
@@ -52,9 +52,9 @@ const SettingsDialog = ({ className = "" }: Props) => {
             Enable Sound
           </label>
         </div>
-        <hr className="mb-4" />
+        <hr className="mb-4 border-gray-400" />
         <select
-          className="border rounded-sm p-2 w-full mb-4 bg-transparent appearance-none"
+          className="border border-gray-400 p-2 w-full mb-4 bg-transparent appearance-none"
           onChange={(e) => setAudioDeviceId(e.target.value)}
           value={audioDeviceId}
         >
@@ -67,7 +67,7 @@ const SettingsDialog = ({ className = "" }: Props) => {
         </select>
 
         <select
-          className="border rounded-sm p-2 w-full mb-4 bg-transparent appearance-none"
+          className="border border-gray-400 p-2 w-full mb-4 bg-transparent appearance-none"
           onChange={(e) => setVideoDeviceId(e.target.value)}
           value={videoDeviceId}
         >

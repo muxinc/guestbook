@@ -79,7 +79,7 @@ const Recorder = ({ className = "" }: Props) => {
         // Which, like, what if I want a horizontal crop of a vertical video?
         // AND THEN it'll still try to tell me that the width of the video > height.
         // Whatever.
-        aspectRatio: 16 / 9,
+        aspectRatio: 4 / 3,
       };
 
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -188,7 +188,7 @@ const Recorder = ({ className = "" }: Props) => {
   }, [chunks, setChunks, setMessage, setRecordingStatus, submitUpload]);
 
   return (
-    <div className={`relative bg-gray-900 ${className}`}>
+    <div className={`relative bg-black ${className}`}>
       <video
         className="w-full h-full scale-x-[-1] pointer-events-none"
         ref={videoRef}

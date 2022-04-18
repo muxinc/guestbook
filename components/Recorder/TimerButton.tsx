@@ -121,7 +121,7 @@ const TimerButton = ({
       whileFocus="hover"
       whileTap="pressed"
       disabled={countdownState !== CountdownState.READY}
-      className={`bg-gray-300/90 p-3 mb-3 w-32 sm:w-40 h-14 sm:h-16 relative flex items-center justify-center rounded-full text-pink-600 transform-gpu`}
+      className={`bg-white/80 p-3 mb-3 w-32 sm:w-40 h-14 sm:h-16 relative flex items-center justify-center rounded-full text-red-600 transform-gpu`}
       onClick={startCountdown}
     >
       {countdownState !== CountdownState.READY && (

@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 
 import { motion } from "framer-motion";
 import MuxVideo from "@mux-elements/mux-video-react";
@@ -56,7 +56,7 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
   return (
     <motion.div
       aria-label={label}
-      className={`bg-gray-200 p-1 aspect-square grid justify-items-stretch rounded overflow-hidden ${className}`}
+      className={`bg-white border border-gray-300 p-1 aspect-square grid justify-items-stretch overflow-hidden ${className}`}
       style={{
         gridTemplateRows: "3fr 1fr",
         gridTemplateAreas: '"photo" "label"',
@@ -85,7 +85,7 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
       }}
     >
       <div
-        className="relative bg-gray-400 h-full rounded-sm overflow-hidden"
+        className="relative bg-gray-400 h-full overflow-hidden"
         style={{ gridArea: "photo" }}
       >
         {/* Loading Spinner */}
@@ -108,10 +108,7 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
                       ? (0.9 * video.uploadStatus) / 100
                       : 0.9,
                   rotate:
-                    video.status === Status.UPLOADING &&
-                    video.uploadStatus !== 100
-                      ? 270
-                      : [270, 630],
+                    video.status === Status.UPLOADING ? 270 : [270, 270 + 360],
                 }}
                 transition={{
                   rotate:
@@ -122,7 +119,7 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
                 className={`fill-transparent stroke-gray-500`}
               />
             </svg>
-            <div className="absolute w-full h-full inset-0 flex items-center justify-center text-gray-800">
+            <div className="absolute w-full h-full inset-0 flex items-center justify-center">
               {video.status === Status.UPLOADING &&
               typeof video.uploadStatus === "number"
                 ? `${video.uploadStatus.toFixed()}%`

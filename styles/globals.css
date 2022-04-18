@@ -3,6 +3,17 @@
 @tailwind utilities;
 
 @layer base {
+  @font-face {
+    font-family: "LL Akkuratmono Regular Web";
+    src: url("/fonts/lineto-akkuratmono-regular.eot");
+    src: url("/fonts/lineto-akkuratmono-regular.woff2") format("woff2"),
+      url("/fonts/lineto-akkuratmono-regular.eot?#iefix")
+        format("embedded-opentype"),
+      url("/fonts/lineto-akkuratmono-regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+  }
+
   *,
   *::before,
   *::after {
@@ -17,13 +28,15 @@
     @apply outline-pink-500;
   }
   ::selection {
-    @apply bg-pink-500/50;
+    @apply bg-pink-600/30;
   }
 
   html,
   body {
     height: 100%;
     min-width: 320px;
+    @apply font-body;
+    color: rgb(56, 56, 56);
   }
 
   img,
@@ -59,6 +72,9 @@
   }
   .bg-brick {
     background-image: url("/images/brick-wall.svg");
+  }
+  .bg-mux {
+    background: linear-gradient(to right, #ff3d30, #ff2c61);
   }
 
   .neon-pink-600 {

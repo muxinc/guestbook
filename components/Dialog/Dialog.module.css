@@ -19,5 +19,5 @@
   margin: 0;
 }
 .content.styled {
-  @apply mx-auto my-16 p-8 bg-gray-800 w-[95vw] max-w-xl rounded;
+  @apply mx-auto my-16 p-8 bg-white w-[95vw] max-w-xl;
 }

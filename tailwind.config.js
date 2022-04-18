@@ -9,7 +9,8 @@ module.exports = {
     extend: {
       fontFamily: {
         header: "'Yellowtail', sans-serif",
-        body: [...defaultTheme.fontFamily.sans],
+        body: ["LL Akkuratmono Regular Web", ...defaultTheme.fontFamily.sans],
+        mono: ["LL Akkuratmono Regular Web", ...defaultTheme.fontFamily.mono],
       },
     },
   },

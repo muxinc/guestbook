@@ -23,10 +23,10 @@ const Grid = ({ className = "" }: Props) => {
   return (
     <>
       <section
-        className={`p-4 overflow-y-scroll overflow-x-hidden ${className}`}
+        className={`bg-gray-200 p-8 overflow-y-scroll overflow-x-hidden ${className}`}
       >
         <motion.div
-          className="grid gap-2 justify-center grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fill,_minmax(160px,1fr))]"
+          className="grid gap-6 justify-center grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fill,_minmax(160px,1fr))]"
           layoutScroll
         >
           {videos.map((video) => (
@@ -36,6 +36,7 @@ const Grid = ({ className = "" }: Props) => {
               whileHover={{ scale: 1.04 }}
               whileFocus={{ scale: 1.04 }}
               whileTap={{ scale: 0.9 }}
+              className="cursor-pointer"
             >
               <VideoCard video={video} label="Open Video" />
             </motion.button>

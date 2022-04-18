@@ -27,9 +27,7 @@ const Dialog = ({
   overlayClassName = "",
   styledDialog = true,
 }: Props) => {
-  const dialogStyles = styledDialog
-    ? `${styles.content} ${styles.styled} text-white`
-    : "";
+  const dialogStyles = styledDialog ? `${styles.content} ${styles.styled}` : "";
   return (
     <AnimatePresence>
       {isDialogOpen ? (
