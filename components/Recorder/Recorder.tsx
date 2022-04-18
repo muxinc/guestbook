@@ -79,7 +79,7 @@ const Recorder = ({ className = "" }: Props) => {
         // Which, like, what if I want a horizontal crop of a vertical video?
         // AND THEN it'll still try to tell me that the width of the video > height.
         // Whatever.
-        aspectRatio: 4 / 3,
+        aspectRatio: 16 / 9,
       };
 
       const stream = await navigator.mediaDevices.getUserMedia({
@@ -202,7 +202,7 @@ const Recorder = ({ className = "" }: Props) => {
           onCountdownStart={startCountdown}
           countdownDuration={3}
           onCountdownEnd={startRecording}
-          recordingDuration={5}
+          recordingDuration={3}
           onRecordingEnd={stopRecording}
         />
       </div>
