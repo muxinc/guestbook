@@ -26,33 +26,6 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
   const [rotate] = useState(() => -4 + Math.random() * 8);
   const [isLoaded, setIsLoaded] = useState(() => false);
 
-  const [imgSrc, setImgSrc] = useState(
-    () => `https://image.mux.com/${video.playbackId}/animated.gif`
-  );
-  const [retryCount, setRetryCount] = useState(0);
-  const [retryTimeout, setRetryTimeout] =
-    useState<ReturnType<typeof setTimeout>>();
-
-  const imgLoad = () => {
-    setIsLoaded(true);
-  };
-  const imgRetry = () => {
-    if (retryCount < 3) {
-      setRetryCount((c) => c + 1);
-      setImgSrc("");
-
-      const timeout = setTimeout(() => {
-        setImgSrc(`https://image.mux.com/${video.playbackId}/animated.gif`);
-      });
-      setRetryTimeout(timeout);
-    }
-  };
-  useEffect(() => {
-    if (typeof retryTimeout !== "undefined") {
-      () => clearTimeout(retryTimeout);
-    }
-  }, [retryTimeout]);
-
   return (
     <motion.div
       aria-label={label}
@@ -158,12 +131,19 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
               transition={{
                 duration: 1,
               }}
-              src={imgSrc}
+              src={`https://image.mux.com/${video.playbackId}/animated.gif`}
+              data-src={`https://image.mux.com/${video.playbackId}/animated.gif`}
               alt=""
               className="object-cover w-full h-full"
               loading="lazy"
-              onLoad={imgLoad}
-              onError={imgRetry}
+              onLoad={() => setIsLoaded(true)}
+              onError={(e) => {
+                const image = e.currentTarget as HTMLImageElement;
+                image.src = "";
+                setTimeout(() => {
+                  image.src = image.dataset.src ?? "";
+                }, 2000);
+              }}
             />
           ))}
       </div>
