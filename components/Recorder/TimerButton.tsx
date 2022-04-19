@@ -110,8 +110,8 @@ const TimerButton = ({
   const countdownText =
     countdownState === CountdownState.COUNTING
       ? secondsRemaining >= 2
-        ? "READY"
-        : "SET"
+        ? "Ready"
+        : "Set"
       : countdownState === CountdownState.RECORDING
       ? "REC"
       : "DONE";
