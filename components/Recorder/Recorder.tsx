@@ -200,7 +200,7 @@ const Recorder = ({ className = "" }: Props) => {
       <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center">
         <TimerButton
           onCountdownStart={startCountdown}
-          countdownDuration={3}
+          countdownDuration={2}
           onCountdownEnd={startRecording}
           recordingDuration={3}
           onRecordingEnd={stopRecording}
