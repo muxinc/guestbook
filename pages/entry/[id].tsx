@@ -1,14 +1,21 @@
 import { supabase } from "../../utils/supabaseClient";
-import type { NextPage } from "next";
+import type { GetStaticPaths, GetStaticProps, NextPage } from 'next';
+
 import Head from "next/head";
 import { useRouter } from 'next/router'
 
 import MuxVideo from "@mux-elements/mux-video-react";
 import Navbar from "../../components/Navbar";
 
-const Entry: NextPage = ({ data }) => {
-  const { playback_id } = data[0];
+type Entry = {
+  playback_id: string;
+}
 
+type Props = {
+  entry: Entry;
+};
+
+const Entry: NextPage = ({ entry: { playback_id } }) => {
   return (
     <>
       <Head>
@@ -42,17 +49,30 @@ const Entry: NextPage = ({ data }) => {
   );
 };
 
-// This gets called on every request
-export async function getServerSideProps(context) {
-  const id = context.params.id;
-
+export const getStaticProps: GetStaticProps<Props> = async ({ params: { id } }) => {
   const { data, error } = await supabase
     .from<SupabaseEntry>("entries")
     .select("*")
     .eq('id', id);
 
-  // Pass data to the page via props
-  return { props: { data } }
-}
+  if (error) {
+    return {
+      notFound: true,
+    };
+  }
+
+  const entry = data[0];
+
+  return {
+    props: {
+      entry
+    },
+  };
+};
+
+export const getStaticPaths: GetStaticPaths = async () => ({
+  paths: [],
+  fallback: 'blocking',
+});
 
 export default Entry;
