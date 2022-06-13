@@ -49,7 +49,7 @@ enum SupabaseStatus {
   PREPARING = "preparing",
   READY = "ready",
 }
-type SupabaseEntry = {
+export type SupabaseEntry = {
   // TODO: generate types
   id: number;
   event_id: number;
@@ -162,7 +162,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
   const [onSignupDialogDismiss, setOnSignupDialogDismiss] =
     // This is an initializer function that returns () => {}
     // so the initial state is actually just going to be () => {}. Just to be clear.
-    useState<SignupDismissFn>(() => () => {});
+    useState<SignupDismissFn>(() => () => { });
 
   const submitUpload = useCallback(
     async (file: File, form?: Form) => {

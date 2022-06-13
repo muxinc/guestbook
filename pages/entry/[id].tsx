@@ -6,6 +6,7 @@ import { useRouter } from 'next/router'
 
 import MuxVideo from "@mux-elements/mux-video-react";
 import Navbar from "../../components/Navbar";
+import { SupabaseEntry } from "../../contexts/VideoContext";
 
 type Entry = {
   playback_id: string;
@@ -15,7 +16,7 @@ type Props = {
   entry: Entry;
 };
 
-const Entry: NextPage = ({ entry: { playback_id } }: Props) => {
+const Entry: NextPage<Props> = ({ entry: { playback_id } }) => {
   return (
     <>
       <Head>
@@ -49,11 +50,17 @@ const Entry: NextPage = ({ entry: { playback_id } }: Props) => {
   );
 };
 
-export const getStaticProps: GetStaticProps<Props> = async ({ params: { id } }) => {
+export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
+  if (!params?.id || typeof params.id !== 'string') {
+    return {
+      notFound: true,
+    };
+  }
+
   const { data, error } = await supabase
     .from<SupabaseEntry>("entries")
     .select("*")
-    .eq('id', id);
+    .eq('id', params.id);
 
   if (error) {
     return {
