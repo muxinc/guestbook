@@ -15,7 +15,7 @@ type Props = {
   entry: Entry;
 };
 
-const Entry: NextPage = ({ entry: { playback_id } }) => {
+const Entry: NextPage = ({ entry: { playback_id } }: Props) => {
   return (
     <>
       <Head>
