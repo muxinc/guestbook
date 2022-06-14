@@ -18,7 +18,7 @@ const recordingIndicatorVariants: Variants = {
   },
 };
 
-const TimerButton = () => {
+const RecordButton = () => {
   const { recordingStatus, countdownSecondsRemaining, countdownStatus, setCountdownStatus } = useRecorderContext();
 
   const startCountdown = useCallback(() => {
@@ -86,4 +86,4 @@ const TimerButton = () => {
   );
 };
 
-export default TimerButton;
+export default RecordButton;
