@@ -10,27 +10,27 @@ import useSound from "use-sound";
 import { usePreferenceContext } from "contexts/PreferenceContext";
 import { MessageType, useConsoleContext } from "contexts/ConsoleContext";
 
-enum CountdownState {
+export enum CountdownStatus {
   READY,
-  COUNTING,
-  RECORDING,
+  COUNTING
 }
 
-enum RecordingStatus {
+export enum RecordingStatus {
   INITIALIZING = "initializing",
   READY = "ready",
   RECORDING = "recording",
-  COUNTING = "counting",
   STOPPING = "stopping"
 };
 
-const COUNTDOWN_DURATION = 2;
-const RECORDING_DURATION = 3;
+export const COUNTDOWN_DURATION = 2;
+export const RECORDING_DURATION = 3;
 
 type RecorderContextValue = {
   recordingStatus: RecordingStatus;
   setRecordingStatus: (status: RecordingStatus) => void;
-  secondsRemaining: number;
+  recordingSecondsRemaining: number;
+  countdownStatus: CountdownStatus;
+  setCountdownStatus: (status: CountdownStatus) => void;
 };
 
 type DefaultValue = undefined;
@@ -61,23 +61,11 @@ const RecorderProvider = ({ children }: ProviderProps) => {
     RecordingStatus.INITIALIZING
   );
 
-  const [countdownState, setCountdownState] = useState(CountdownState.READY);
-  const [secondsRemaining, setSecondsRemaining] =
+  const [countdownStatus, setCountdownStatus] = useState(CountdownStatus.READY);
+  const [countdownSecondsRemaining, setCountdownSecondsRemaining] =
     useState<number>(COUNTDOWN_DURATION);
 
-  // Begin counting down as long as the recorder is ready
-  const startCountdown = useCallback(() => {
-    if (recordingStatus !== RecordingStatus.READY) {
-      setMessage({
-        content: `Recorder not ready!`,
-        type: MessageType.RECORDER,
-      });
-      return false;
-    }
-
-    setSecondsRemaining(COUNTDOWN_DURATION);
-    setCountdownState(CountdownState.COUNTING);
-  }, [recordingStatus, setMessage]);
+  const [recordingSecondsRemaining, setRecordingSecondsRemaining] = useState<number>(RECORDING_DURATION);
 
   // Update the console with a message any time the recording status changes.
   useEffect(() => {
@@ -87,54 +75,60 @@ const RecorderProvider = ({ children }: ProviderProps) => {
     });
   }, [recordingStatus, setMessage]);
 
-  // Let's manage our two countdowns. Pre-recording and recording.
+  // Pre-recording countdown
   useEffect(() => {
-    if (
-      countdownState !== CountdownState.COUNTING &&
-      countdownState !== CountdownState.RECORDING
-    )
-      return;
-
-    const nextSecond = secondsRemaining - 1;
+    if (countdownStatus !== CountdownStatus.COUNTING) return;
+    const nextSecond = countdownSecondsRemaining - 1;
     const interval = setTimeout(() => {
-      setSecondsRemaining(nextSecond);
+      setCountdownSecondsRemaining(nextSecond);
       if (nextSecond === 0) {
-        if (countdownState === CountdownState.COUNTING) {
-          // Transition from countdown to recording
-          setSecondsRemaining(RECORDING_DURATION);
-          setCountdownState(CountdownState.RECORDING);
-          setRecordingStatus(RecordingStatus.RECORDING);
-        } else if (countdownState === CountdownState.RECORDING) {
-          // Transition from recording to finished
-          setCountdownState(CountdownState.READY);
-          setRecordingStatus(RecordingStatus.STOPPING);
-          playDing();
-        }
+        // Transition from countdown to recording
+        setRecordingSecondsRemaining(RECORDING_DURATION);
+        setRecordingStatus(RecordingStatus.RECORDING);
       }
     }, 1000);
 
     return () => {
       clearTimeout(interval);
     };
-  }, [
-    countdownState,
-    playBeep,
-    playDing,
-    secondsRemaining,
-  ]);
+  }, [countdownStatus, countdownSecondsRemaining, setCountdownSecondsRemaining, setRecordingSecondsRemaining]);
+
+  // Manage the recording timer
+  useEffect(() => {
+    if (recordingStatus !== RecordingStatus.RECORDING) return;
+    const nextSecond = recordingSecondsRemaining - 1;
+    const interval = setTimeout(() => {
+      setRecordingSecondsRemaining(nextSecond);
+      if (nextSecond === 0) {
+        // Transition from recording to finished
+        setRecordingStatus(RecordingStatus.STOPPING);
+
+        // Reset the pre-recording countdown state
+        setCountdownStatus(CountdownStatus.READY);
+        setCountdownSecondsRemaining(COUNTDOWN_DURATION);
+        playDing();
+      }
+    }, 1000);
+
+    return () => {
+      clearTimeout(interval);
+    };
+  }, [recordingStatus, recordingSecondsRemaining, setCountdownSecondsRemaining, setRecordingSecondsRemaining, playDing]);
 
   // After the countdown number has changed, we play a sound if appropriate
   useEffect(() => {
-    if (countdownState === CountdownState.COUNTING && secondsRemaining > 0) {
+    if (countdownStatus === CountdownStatus.COUNTING && countdownSecondsRemaining > 0) {
       playBeep();
     }
-  }, [countdownState, secondsRemaining, playBeep]);
+  }, [countdownStatus, countdownSecondsRemaining, playBeep]);
 
   /* Finally, we wrap this all up in a provider to give it to our children */
   const value = {
     recordingStatus,
     setRecordingStatus,
-    secondsRemaining
+    countdownStatus,
+    setCountdownStatus,
+    recordingSecondsRemaining
   };
 
   return (

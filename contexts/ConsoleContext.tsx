@@ -31,10 +31,10 @@ type ContextValue = ConsoleContextValue | DefaultValue;
 export const ConsoleContext = createContext<ContextValue>(undefined);
 
 const consoleColors: Record<MessageType, string> = {
-  [MessageType.RECORDER]: "red",
+  [MessageType.RECORDER]: "#fb2491",
   [MessageType.UPCHUNK]: "orange",
   [MessageType.NEXT]: "green",
-  [MessageType.SUPABASE]: "blue",
+  [MessageType.SUPABASE]: "#1ca0fd",
   [MessageType.MUX]: "magenta",
 };
 
