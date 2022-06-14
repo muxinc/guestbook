@@ -29,6 +29,7 @@ type RecorderContextValue = {
   recordingStatus: RecordingStatus;
   setRecordingStatus: (status: RecordingStatus) => void;
   recordingSecondsRemaining: number;
+  countdownSecondsRemaining: number;
   countdownStatus: CountdownStatus;
   setCountdownStatus: (status: CountdownStatus) => void;
 };
@@ -128,7 +129,8 @@ const RecorderProvider = ({ children }: ProviderProps) => {
     setRecordingStatus,
     countdownStatus,
     setCountdownStatus,
-    recordingSecondsRemaining
+    recordingSecondsRemaining,
+    countdownSecondsRemaining
   };
 
   return (

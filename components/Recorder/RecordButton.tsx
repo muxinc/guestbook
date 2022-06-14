@@ -19,7 +19,7 @@ const recordingIndicatorVariants: Variants = {
 };
 
 const TimerButton = () => {
-  const { recordingStatus, recordingSecondsRemaining, countdownStatus, setCountdownStatus } = useRecorderContext();
+  const { recordingStatus, countdownSecondsRemaining, countdownStatus, setCountdownStatus } = useRecorderContext();
 
   const startCountdown = useCallback(() => {
     setCountdownStatus(CountdownStatus.COUNTING);
@@ -43,7 +43,7 @@ const TimerButton = () => {
           className={`text-2xl sm:text-4xl font-bold grow ${recordingStatus === RecordingStatus.RECORDING ? "animate-pulse" : ""
             }`}
         >
-          {recordingSecondsRemaining}
+          {countdownSecondsRemaining}
         </motion.div>
       )}
       <motion.div
