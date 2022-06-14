@@ -22,7 +22,7 @@ export enum RecordingStatus {
   STOPPING = "stopping"
 };
 
-export const COUNTDOWN_DURATION = 2;
+export const COUNTDOWN_DURATION = 3;
 export const RECORDING_DURATION = 3;
 
 type RecorderContextValue = {
@@ -86,6 +86,8 @@ const RecorderProvider = ({ children }: ProviderProps) => {
         // Transition from countdown to recording
         setRecordingSecondsRemaining(RECORDING_DURATION);
         setRecordingStatus(RecordingStatus.RECORDING);
+
+        setCountdownStatus(CountdownStatus.READY);
       }
     }, 1000);
 
