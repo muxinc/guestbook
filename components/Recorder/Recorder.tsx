@@ -12,6 +12,7 @@ import { MessageType, useConsoleContext } from "contexts/ConsoleContext";
 import { useRecorderContext, RecordingStatus } from "contexts/RecorderContext";
 
 import RecordButton from "./RecordButton";
+import PreRecordCountdown from "./PreRecordCountdown";
 
 import formatBytes from "utils/formatBytes";
 
@@ -167,6 +168,7 @@ const Recorder = ({ className = "" }: Props) => {
 
   return (
     <div className={`relative bg-black ${className}`}>
+      <PreRecordCountdown />
       <video
         className="w-full h-full scale-x-[-1] pointer-events-none"
         ref={videoRef}
