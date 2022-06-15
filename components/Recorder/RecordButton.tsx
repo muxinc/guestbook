@@ -1,9 +1,5 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useEffect } from "react";
 import { AnimatePresence, motion, Variants } from "framer-motion";
-
-import useSound from "use-sound";
-import { useEffect } from "react";
-import { usePreferenceContext } from "contexts/PreferenceContext";
 import { useRecorderContext, CountdownStatus, RecordingStatus, RECORDING_DURATION } from "contexts/RecorderContext";
 
 const recordingIndicatorVariants: Variants = {
