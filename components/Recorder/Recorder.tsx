@@ -1,6 +1,5 @@
 import * as React from "react";
 
-import RecordingStatus from "constants/RecordingStatus";
 import {
   MIME_TYPE_STACK,
   NUMBER_AUDIO_BITS_PER_SECOND,
@@ -10,8 +9,9 @@ import {
 import { useDeviceIdContext } from "contexts/DeviceIdContext";
 import { useVideoContext } from "contexts/VideoContext";
 import { MessageType, useConsoleContext } from "contexts/ConsoleContext";
+import { useRecorderContext, RecordingStatus } from "contexts/RecorderContext";
 
-import TimerButton from "./TimerButton";
+import RecordButton from "./RecordButton";
 
 import formatBytes from "utils/formatBytes";
 
@@ -29,21 +29,12 @@ const Recorder = ({ className = "" }: Props) => {
   const { videoDeviceId, audioDeviceId } = useDeviceIdContext();
   const { submitUpload } = useVideoContext();
   const { setMessage } = useConsoleContext();
+  const { recordingStatus, setRecordingStatus } = useRecorderContext();
 
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = React.useRef<MediaRecorder>();
 
-  const [recordingStatus, setRecordingStatus] = React.useState(
-    RecordingStatus.INITIALIZING
-  );
   const [chunks, setChunks] = React.useState<Blob[]>([]);
-
-  React.useEffect(() => {
-    setMessage({
-      content: recordingStatus,
-      type: MessageType.RECORDER,
-    });
-  }, [recordingStatus, setMessage]);
 
   React.useEffect(() => {
     // This hook should run under two circumstances:
@@ -129,30 +120,18 @@ const Recorder = ({ className = "" }: Props) => {
     videoDeviceId,
   ]);
 
-  // Pass these three functions to our countdown button.
-  // They'll handle updating the
-  const startCountdown = React.useCallback(() => {
-    if (!mediaRecorderRef.current) return false;
-    if (recordingStatus !== RecordingStatus.READY) {
-      setMessage({
-        content: `Recorder not ready!`,
-        type: MessageType.RECORDER,
-      });
-      return false;
-    }
-    setRecordingStatus(RecordingStatus.COUNTING);
-    return true;
-  }, [recordingStatus, setMessage, setRecordingStatus]);
-
-  const startRecording = React.useCallback(() => {
-    setRecordingStatus(RecordingStatus.RECORDING);
+  React.useEffect(() => {
+    if (!mediaRecorderRef.current) return;
+    if (recordingStatus !== RecordingStatus.RECORDING) return;
     mediaRecorderRef.current?.start(500);
-  }, [setRecordingStatus]);
+  }, [recordingStatus])
 
-  const stopRecording = React.useCallback(() => {
+  React.useEffect(() => {
+    if (!mediaRecorderRef.current) return;
+    if (recordingStatus !== RecordingStatus.STOPPING) return;
     mediaRecorderRef.current?.stop();
     // The useEffect down below will handle the rest.
-  }, []);
+  }, [recordingStatus])
 
   // Create a file on MediaRecorder's stop event
   React.useEffect(() => {
@@ -175,9 +154,8 @@ const Recorder = ({ className = "" }: Props) => {
       );
 
       setMessage({
-        content: `Created file: ${formatBytes(createdFile.size)}, ${
-          createdFile.type
-        }`,
+        content: `Created file: ${formatBytes(createdFile.size)}, ${createdFile.type
+          }`,
         type: MessageType.RECORDER,
       });
 
@@ -198,13 +176,7 @@ const Recorder = ({ className = "" }: Props) => {
         controls={false}
       />
       <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center">
-        <TimerButton
-          onCountdownStart={startCountdown}
-          countdownDuration={2}
-          onCountdownEnd={startRecording}
-          recordingDuration={3}
-          onRecordingEnd={stopRecording}
-        />
+        <RecordButton />
       </div>
     </div>
   );
