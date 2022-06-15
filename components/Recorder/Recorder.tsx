@@ -12,6 +12,7 @@ import { MessageType, useConsoleContext } from "contexts/ConsoleContext";
 import { useRecorderContext, RecordingStatus } from "contexts/RecorderContext";
 
 import RecordButton from "./RecordButton";
+import RecordingProgress from "./RecordingProgress";
 import PreRecordCountdown from "./PreRecordCountdown";
 
 import formatBytes from "utils/formatBytes";
@@ -167,20 +168,23 @@ const Recorder = ({ className = "" }: Props) => {
   }, [chunks, setChunks, setMessage, setRecordingStatus, submitUpload]);
 
   return (
-    <div className={`relative bg-black ${className}`}>
-      <PreRecordCountdown />
-      <video
-        className="w-full h-full scale-x-[-1] pointer-events-none"
-        ref={videoRef}
-        autoPlay
-        muted
-        playsInline
-        controls={false}
-      />
-      <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center">
-        <RecordButton />
+    <>
+      <RecordingProgress />
+      <div className={`relative bg-black ${className}`}>
+        <PreRecordCountdown />
+        <video
+          className="w-full h-full scale-x-[-1] pointer-events-none"
+          ref={videoRef}
+          autoPlay
+          muted
+          playsInline
+          controls={false}
+        />
+        <div className="absolute bottom-2 left-0 right-0 flex items-center justify-center">
+          <RecordButton />
+        </div>
       </div>
-    </div>
+    </>
   );
 };
 
