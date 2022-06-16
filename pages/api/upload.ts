@@ -38,7 +38,7 @@ export default async function handler(
       first_name: firstName || null,
       last_name: lastName || null,
       email: email || null,
-      event_id: 1,
+      event_id: 2,
     },
   ]);
 
