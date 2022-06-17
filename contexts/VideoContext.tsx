@@ -145,7 +145,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
               playbackId: playback_id,
             });
 
-            setHash(id);
+            setHash(id.toString());
           }
         }
         setMessage({
