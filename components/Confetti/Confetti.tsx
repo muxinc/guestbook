@@ -21,11 +21,7 @@ const Confetti = () => {
     const interval = setTimeout(() => {
       shouldRun(false);
     }, 5000);
-
-    return () => {
-      clearTimeout(interval);
-    };
-  }, [recordingStatus]);
+  }, [recordingStatus, shouldRun]);
 
   return (
     <>
