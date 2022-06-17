@@ -31,11 +31,11 @@ type ContextValue = ConsoleContextValue | DefaultValue;
 export const ConsoleContext = createContext<ContextValue>(undefined);
 
 const consoleColors: Record<MessageType, string> = {
-  [MessageType.RECORDER]: "red",
-  [MessageType.UPCHUNK]: "orange",
-  [MessageType.NEXT]: "green",
-  [MessageType.SUPABASE]: "blue",
-  [MessageType.MUX]: "magenta",
+  [MessageType.RECORDER]: "#fb2491",
+  [MessageType.UPCHUNK]: "#fb501d",
+  [MessageType.NEXT]: "#00C5A7",
+  [MessageType.SUPABASE]: "#1ca0fd",
+  [MessageType.MUX]: "#fb3c4e",
 };
 
 interface ProviderProps {

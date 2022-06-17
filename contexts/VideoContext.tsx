@@ -12,6 +12,7 @@ import { supabase } from "../utils/supabaseClient";
 import SignupDialog, { Form, SignupDismissFn } from "components/SignupDialog";
 import { MessageType, useConsoleContext } from "./ConsoleContext";
 import formatBytes from "utils/formatBytes";
+import useHash from "utils/useHash";
 
 export enum Status {
   INITIALIZING = "INITIALIZING", // about to upload
@@ -69,6 +70,7 @@ const supabaseToVideoStatus: Record<SupabaseStatus, Status> = {
 
 const VideoProvider = ({ children }: ProviderProps) => {
   const { setMessage } = useConsoleContext();
+  const [, setHash] = useHash();
 
   const [videos, setVideos] = useState<Video[]>([]);
   const setVideo = useCallback((newVideo: Video) => {
@@ -93,6 +95,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
       let { data: entries, error } = await supabase
         .from<SupabaseEntry>("entries")
         .select("*")
+        .eq('event_id', 2)
         .order("created_at", { ascending: false });
       // .abortSignal(ac.signal);
 
@@ -128,18 +131,22 @@ const VideoProvider = ({ children }: ProviderProps) => {
       .from<SupabaseEntry>("entries")
       .on("*", ({ new: { status, id, asset_id, playback_id }, eventType }) => {
         switch (status) {
-          case "preparing":
+          case "preparing": {
             setVideo({
               id: id,
               status: Status.PREPARING,
             });
-          case "ready":
+          }
+          case "ready": {
             setVideo({
               id: id,
               status: Status.READY,
               assetId: asset_id,
               playbackId: playback_id,
             });
+
+            setHash(id.toString());
+          }
         }
         setMessage({
           content: `(${eventType})`,
