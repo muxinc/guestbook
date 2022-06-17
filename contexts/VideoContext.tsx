@@ -93,6 +93,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
       let { data: entries, error } = await supabase
         .from<SupabaseEntry>("entries")
         .select("*")
+        .eq('event_id', 2)
         .order("created_at", { ascending: false });
       // .abortSignal(ac.signal);
 
