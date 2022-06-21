@@ -1,6 +1,6 @@
-import { useEffect, useState } from "react";
-
+import { useState } from "react";
 import { motion } from "framer-motion";
+import { QRCodeSVG } from 'qrcode.react';
 import MuxVideo from "@mux-elements/mux-video-react";
 
 import { Video, Status } from "contexts/VideoContext";
@@ -25,6 +25,9 @@ type Props = {
 const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
   const [rotate] = useState(() => -4 + Math.random() * 8);
   const [isLoaded, setIsLoaded] = useState(() => false);
+
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const link = `${origin}/entry/${video.id}`;
 
   return (
     <motion.div
@@ -77,7 +80,7 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
                 animate={{
                   pathLength:
                     video.status === Status.UPLOADING &&
-                    typeof video.uploadStatus === "number"
+                      typeof video.uploadStatus === "number"
                       ? (0.9 * video.uploadStatus) / 100
                       : 0.9,
                   rotate:
@@ -94,7 +97,7 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
             </svg>
             <div className="absolute w-full h-full inset-0 flex items-center justify-center">
               {video.status === Status.UPLOADING &&
-              typeof video.uploadStatus === "number"
+                typeof video.uploadStatus === "number"
                 ? `${video.uploadStatus.toFixed()}%`
                 : null}
             </div>
@@ -147,12 +150,23 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
             />
           ))}
       </div>
-      <div
-        className="font-mono h-full flex items-center justify-center text-gray-700"
-        style={{ gridArea: "label" }}
-      >
-        {video.status}
-      </div>
+
+      {fullscreen ? (
+        <div className="my-5 flex gap-8 px-5">
+          <QRCodeSVG value={link} />
+          <div className="flex flex-col justify-center">
+            <h2 className="font-bold text-xl sm:text-3xl mb-1 text-gray-700">Scan for link</h2>
+            <p className="sm:text-xl text-gray-600">Take your video with you!</p>
+          </div>
+        </div>
+      ) : (
+        <div
+          className="font-mono h-full flex items-center justify-center text-gray-700"
+          style={{ gridArea: "label" }}
+        >
+          {video.status}
+        </div>
+      )}
     </motion.div>
   );
 };
