@@ -26,6 +26,9 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
   const [rotate] = useState(() => -4 + Math.random() * 8);
   const [isLoaded, setIsLoaded] = useState(() => false);
 
+  const origin = typeof window !== 'undefined' ? window.location.origin : '';
+  const link = `${origin}/entry/${video.id}`;
+
   return (
     <motion.div
       aria-label={label}
@@ -150,10 +153,10 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
 
       {fullscreen ? (
         <div className="my-5 flex gap-8 px-5">
-          <QRCodeSVG value={`https://mux-guestbook.vercel.app/#${video.id}`} />
-          <div>
-            <h2 className="font-bold text-3xl mb-1 text-gray-700">Scan for permalink</h2>
-            <p className="text-xl text-gray-600">Take your video with you!</p>
+          <QRCodeSVG value={link} />
+          <div className="flex flex-col justify-center">
+            <h2 className="font-bold text-xl sm:text-3xl mb-1 text-gray-700">Scan for link</h2>
+            <p className="sm:text-xl text-gray-600">Take your video with you!</p>
           </div>
         </div>
       ) : (
