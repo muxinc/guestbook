@@ -76,7 +76,10 @@ const Entry: NextPage<Props> = ({ entry: { playback_id } }) => {
         >
           Tweet
         </a>
-        {canShare && <button onClick={shareIt}>Share</button>}
+        <a href={`https://stream.mux.com/${playback_id}/high.mp4`} download>
+          Download
+        </a>
+        {canShare && <button onClick={shareIt}>Share Link</button>}
       </div>
     </>
   );
