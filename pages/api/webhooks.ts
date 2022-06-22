@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import supabaseAdmin from "../../utils/supabaseAdmin";
+import supabaseAdmin from "utils/supabaseAdmin";
 
 type Data = {
   status: string;

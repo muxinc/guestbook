@@ -1,4 +1,4 @@
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 
 import { motion } from "framer-motion";
 
@@ -14,11 +14,8 @@ type Props = {
 
 const Grid = ({ className = "" }: Props) => {
   const { videos } = useVideoContext();
-  const [hash, setHash] = useHash();
-  const openVideo = useMemo(
-    () => videos.find((video) => video.id.toString() === hash),
-    [hash, videos]
-  );
+
+  const [openVideo, setOpenVideo] = useState<Video | null>(null);
 
   return (
     <>
@@ -32,7 +29,7 @@ const Grid = ({ className = "" }: Props) => {
           {videos.map((video) => (
             <motion.button
               key={video.id}
-              onClick={() => setHash(video.id.toString())}
+              onClick={() => setOpenVideo(video)}
               whileHover={{ scale: 1.04 }}
               whileFocus={{ scale: 1.04 }}
               whileTap={{ scale: 0.9 }}
@@ -44,8 +41,8 @@ const Grid = ({ className = "" }: Props) => {
         </motion.div>
       </section>
       <Dialog
-        isDialogOpen={typeof openVideo !== "undefined"}
-        onDismiss={() => setHash("")}
+        isDialogOpen={openVideo !== null}
+        onDismiss={() => setOpenVideo(null)}
         label="Video"
         styledDialog={false}
         className="w-[95vw] max-w-xl p-0 bg-transparent mx-auto my-16 outline-none"

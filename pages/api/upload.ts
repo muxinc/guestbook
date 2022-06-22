@@ -1,6 +1,6 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
 import type { NextApiRequest, NextApiResponse } from "next";
-import supabaseAdmin from "../../utils/supabaseAdmin";
+import supabaseAdmin from "utils/supabaseAdmin";
 
 const Mux = require("@mux/mux-node").default;
 import { createClient, PostgrestResponse } from "@supabase/supabase-js";
