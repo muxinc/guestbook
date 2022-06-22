@@ -3,7 +3,6 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import supabaseAdmin from "utils/supabaseAdmin";
 
 const Mux = require("@mux/mux-node").default;
-import { createClient, PostgrestResponse } from "@supabase/supabase-js";
 
 type Data = {
   id: number | null;

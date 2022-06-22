@@ -1,10 +1,9 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 
 import { motion } from "framer-motion";
 
-import { Status, useVideoContext, Video } from "contexts/VideoContext";
+import { useVideoContext, Video } from "contexts/VideoContext";
 import Dialog from "components/Dialog";
-import useHash from "utils/useHash";
 
 import VideoCard from "./Video";
 
