@@ -51,6 +51,7 @@ export default async function handler(
     cors_origin: "https://your-app.com",
     new_asset_settings: {
       playback_policy: "public",
+      mp4_support: "standard",
       passthrough: data ? JSON.stringify({ entry_id: data[0].id }) : null,
     },
   });
