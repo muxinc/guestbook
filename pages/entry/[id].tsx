@@ -107,10 +107,14 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
     .select("*")
     .eq("id", params.id);
 
-  if (error) {
+  if (!Array.isArray(data) || data.length === 0) {
     return {
       notFound: true,
     };
+  }
+  if (error) {
+    console.error(error);
+    throw new Error(error?.message);
   }
 
   const { playback_id, aspect_ratio } = data[0];
