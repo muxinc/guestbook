@@ -70,13 +70,18 @@ const Entry: NextPage<Props> = ({ entry: { playback_id } }) => {
       </div>
       <div className="flex justify-center space-x-4 p-4 sm:p-8">
         <a
+          className="underline hover:no-underline"
           href={`https://twitter.com/share?text=${shareData.text}&url=${shareData.url}`}
           target="_blank"
           rel="noopener noreferrer"
         >
           Tweet
         </a>
-        <a href={`https://stream.mux.com/${playback_id}/low.mp4`} download>
+        <a
+          className="underline hover:no-underline"
+          href={`https://stream.mux.com/${playback_id}/low.mp4`}
+          download
+        >
           Download
         </a>
         {canShare && <button onClick={shareIt}>Share Link</button>}
