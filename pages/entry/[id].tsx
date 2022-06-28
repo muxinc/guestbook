@@ -70,6 +70,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
           controls
           muted
           loop
+          playsInline
         />
       </div>
       <div className="flex justify-center space-x-4 p-4 sm:p-8">

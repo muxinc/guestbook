@@ -114,6 +114,7 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
               streamType="on-demand"
               loop
               autoPlay
+              playsInline
               onLoadedData={() => setIsLoaded(true)}
               animate={{ opacity: isLoaded ? 1 : 0 }}
               transition={{ duration: 0.5 }}
