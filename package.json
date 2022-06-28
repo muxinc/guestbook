@@ -9,7 +9,6 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@mux-elements/mux-player-react": "^0.1.0-beta.19",
     "@mux-elements/mux-video-react": "^0.4.2",
     "@mux/mux-node": "^5.0.0-rc.5",
     "@mux/upchunk": "^2.3.1",

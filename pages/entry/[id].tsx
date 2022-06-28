@@ -2,7 +2,7 @@ import * as React from "react";
 import { supabase } from "utils/supabaseClient";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 
-import MuxPlayer from "@mux-elements/mux-player-react";
+import MuxVideo from "@mux-elements/mux-video-react";
 
 import { SupabaseEntry } from "contexts/VideoContext";
 import event from "constants/event";
@@ -55,7 +55,7 @@ const Entry: NextPage<Props> = ({ entry: { playback_id } }) => {
       <SEO image={`https://image.mux.com/${playback_id}/thumbnail.jpg`} />
       <Navbar withSettings={false} />
       <div className="max-w-[120vh] mx-auto px-4 sm:px-8">
-        <MuxPlayer
+        <MuxVideo
           style={{ width: "100%" }}
           playbackId={playback_id}
           metadata={{
@@ -64,6 +64,7 @@ const Entry: NextPage<Props> = ({ entry: { playback_id } }) => {
           }}
           streamType="on-demand"
           autoPlay
+          controls
           muted
           loop
         />
