@@ -1,13 +1,21 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 
-import supabaseAdmin from "../../utils/supabaseAdmin";
+import supabaseAdmin from "utils/supabaseAdmin";
 
 type Data = {
   status: string;
 };
 
 type Metadata = {
-  entry_id?: number;
+  entry_id: number;
+};
+
+type Payload = {
+  id: number;
+  asset_id: string;
+  playback_id: string;
+  status: string;
+  aspect_ratio?: string;
 };
 
 const EVENTS = ["video.asset.created", "video.asset.ready"];
@@ -26,23 +34,32 @@ export default async function handler(
     return;
   }
 
-  const { id: asset_id, passthrough, status, playback_ids } = data;
+  const {
+    id: asset_id,
+    passthrough,
+    status,
+    playback_ids,
+    aspect_ratio,
+  } = data;
 
   const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
 
-  const { data: result, error } = await supabaseAdmin.from("entries").insert(
-    [
-      {
-        id: metadata.entry_id,
-        asset_id,
-        playback_id: playback_ids[0].id,
-        status,
-      },
-    ],
-    {
+  let payload: Payload = {
+    id: metadata.entry_id,
+    asset_id,
+    playback_id: playback_ids[0].id,
+    status,
+  };
+
+  if (aspect_ratio) {
+    payload.aspect_ratio = aspect_ratio;
+  }
+
+  const { data: result, error } = await supabaseAdmin
+    .from("entries")
+    .insert([payload], {
       upsert: true,
-    }
-  );
+    });
 
   // Store payload
   await supabaseAdmin

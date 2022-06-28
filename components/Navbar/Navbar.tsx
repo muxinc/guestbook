@@ -2,7 +2,10 @@ import * as React from "react";
 import SelectDevice from "./SettingsDialog";
 import Mux from "./Mux";
 
-const Navbar = () => (
+type Props = {
+  withSettings?: boolean;
+};
+const Navbar = ({ withSettings = true }: Props) => (
   <div className="p-4 sm:p-8 relative text-center">
     <h1>
       <a href="https://mux.com">
@@ -10,7 +13,9 @@ const Navbar = () => (
       </a>
       <div className="text-xl">Sign our Guestbook!</div>
     </h1>
-    <SelectDevice className="absolute right-0 sm:right-4 top-1/2 -translate-y-1/2" />
+    {withSettings && (
+      <SelectDevice className="absolute right-0 sm:right-4 top-1/2 -translate-y-1/2" />
+    )}
   </div>
 );
 

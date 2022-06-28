@@ -7,12 +7,12 @@ import {
 } from "react";
 
 import * as UpChunk from "@mux/upchunk";
-import { supabase } from "../utils/supabaseClient";
+import { supabase } from "utils/supabaseClient";
 
 import SignupDialog, { Form, SignupDismissFn } from "components/SignupDialog";
-import { MessageType, useConsoleContext } from "./ConsoleContext";
 import formatBytes from "utils/formatBytes";
 import useHash from "utils/useHash";
+import { MessageType, useConsoleContext } from "./ConsoleContext";
 
 export enum Status {
   INITIALIZING = "INITIALIZING", // about to upload
@@ -50,8 +50,7 @@ enum SupabaseStatus {
   PREPARING = "preparing",
   READY = "ready",
 }
-type SupabaseEntry = {
-  // TODO: generate types
+export type SupabaseEntry = {
   id: number;
   event_id: number;
   asset_id: string;
@@ -61,6 +60,7 @@ type SupabaseEntry = {
   email: string | null;
   first_name: string | null;
   last_name: string | null;
+  aspect_ratio: `${string}:${string}` | null;
 };
 const supabaseToVideoStatus: Record<SupabaseStatus, Status> = {
   [SupabaseStatus.PENDING]: Status.PENDING,
@@ -95,7 +95,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
       let { data: entries, error } = await supabase
         .from<SupabaseEntry>("entries")
         .select("*")
-        .eq('event_id', 2)
+        .eq("event_id", 2)
         .order("created_at", { ascending: false });
       // .abortSignal(ac.signal);
 
@@ -169,7 +169,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
   const [onSignupDialogDismiss, setOnSignupDialogDismiss] =
     // This is an initializer function that returns () => {}
     // so the initial state is actually just going to be () => {}. Just to be clear.
-    useState<SignupDismissFn>(() => () => { });
+    useState<SignupDismissFn>(() => () => {});
 
   const submitUpload = useCallback(
     async (file: File, form?: Form) => {

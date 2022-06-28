@@ -3,7 +3,7 @@
 // This enables autocomplete, go to definition, etc.
 
 import { serve } from "https://deno.land/std@0.131.0/http/server.ts"
-import { supabaseAdmin } from '../_shared/supabaseAdmin.ts'
+import { supabaseAdmin } from 'supabase/functions/_shared/supabaseAdmin.ts'
 
 type Metadata = {
   first_name?: string;

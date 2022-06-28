@@ -1,7 +1,7 @@
 import Head from "next/head";
 
-import "../styles/globals.css";
-import Store from "contexts/Store";
+import "styles/globals.css";
+import GlobalStore from "contexts/GlobalStore";
 
 import type { AppProps } from "next/app";
 
@@ -17,9 +17,9 @@ function App({ Component, pageProps }: AppProps) {
           crossOrigin="true"
         />
       </Head>
-      <Store>
+      <GlobalStore>
         <Component {...pageProps} />
-      </Store>
+      </GlobalStore>
     </>
   );
 }
