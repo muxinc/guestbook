@@ -11,14 +11,12 @@ import SEO from "components/SEO";
 
 import useHref from "utils/useHref";
 
-type Entry = {
-  playback_id: string;
-};
 type Props = {
-  entry: Entry;
+  playback_id: string;
+  aspect_ratio: `${string}:${string}` | null;
 };
 
-const Entry: NextPage<Props> = ({ entry: { playback_id } }) => {
+const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
   const href = useHref();
 
   const shareData = React.useMemo(
@@ -50,13 +48,18 @@ const Entry: NextPage<Props> = ({ entry: { playback_id } }) => {
     }
   }, [canShare, shareData]);
 
+  const [aspectWidth, aspectHeight] = aspect_ratio
+    ? aspect_ratio.split(":")
+    : [16, 9];
+
   return (
     <>
       <SEO image={`https://image.mux.com/${playback_id}/thumbnail.jpg`} />
       <Navbar withSettings={false} />
-      <div className="max-w-[120vh] mx-auto px-4 sm:px-8">
+      <div className="relative px-4 sm:px-8">
         <MuxVideo
-          style={{ width: "100%" }}
+          className="w-full max-w-screen-xl mx-auto max-h-[70vh]"
+          style={{ aspectRatio: `${aspectWidth}/${aspectHeight}` }}
           playbackId={playback_id}
           metadata={{
             video_id: `video-guestbook-entry-${playback_id}`,
@@ -109,11 +112,12 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
     };
   }
 
-  const entry = data[0];
+  const { playback_id, aspect_ratio } = data[0];
 
   return {
     props: {
-      entry,
+      playback_id,
+      aspect_ratio,
     },
   };
 };

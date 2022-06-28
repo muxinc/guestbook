@@ -51,7 +51,6 @@ enum SupabaseStatus {
   READY = "ready",
 }
 export type SupabaseEntry = {
-  // TODO: generate types
   id: number;
   event_id: number;
   asset_id: string;
@@ -61,6 +60,7 @@ export type SupabaseEntry = {
   email: string | null;
   first_name: string | null;
   last_name: string | null;
+  aspect_ratio: `${string}:${string}` | null;
 };
 const supabaseToVideoStatus: Record<SupabaseStatus, Status> = {
   [SupabaseStatus.PENDING]: Status.PENDING,
