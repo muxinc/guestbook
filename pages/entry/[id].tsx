@@ -124,6 +124,8 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       playback_id,
       aspect_ratio,
     },
+    // keep in cache for 10 seconds
+    revalidate: 10,
   };
 };
 
