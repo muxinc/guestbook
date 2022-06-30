@@ -9,7 +9,6 @@ import {
 import * as UpChunk from "@mux/upchunk";
 import { supabase } from "utils/supabaseClient";
 
-import SignupDialog, { Form, SignupDismissFn } from "components/SignupDialog";
 import formatBytes from "utils/formatBytes";
 import useHash from "utils/useHash";
 import { MessageType, useConsoleContext } from "./ConsoleContext";
@@ -163,16 +162,8 @@ const VideoProvider = ({ children }: ProviderProps) => {
     };
   }, [setMessage, setVideo]);
 
-  // Here's some state that doesn't get passed down.
-  // When a user submits an upload, we pop up the signup dialog
-  const [isSignupDialogOpen, setIsSignupDialogOpen] = useState<boolean>(false);
-  const [onSignupDialogDismiss, setOnSignupDialogDismiss] =
-    // This is an initializer function that returns () => {}
-    // so the initial state is actually just going to be () => {}. Just to be clear.
-    useState<SignupDismissFn>(() => () => {});
-
   const submitUpload = useCallback(
-    async (file: File, form?: Form) => {
+    async (file: File) => {
       try {
         setMessage({
           content:
@@ -180,8 +171,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
           type: MessageType.NEXT,
         });
 
-        const body = new URLSearchParams(form);
-        const response = await fetch("/api/upload", { method: "POST", body });
+        const response = await fetch("/api/upload", { method: "POST" });
         const { id, url } = await response.json();
 
         setMessage({
@@ -244,22 +234,6 @@ const VideoProvider = ({ children }: ProviderProps) => {
     [setMessage, setVideo]
   );
 
-  const preSubmitUpload = useCallback(
-    (file: File) => {
-      // Before we submit our upload,
-      // let's offer the user a chance to sign up
-      setIsSignupDialogOpen(true);
-      // We can't just say (form) => { ... }
-      // because setState accepts an updater function.
-      // So we use that updater function to return (form) => { ... }
-      const onDismiss = (form?: Form) => {
-        submitUpload(file, form);
-        setIsSignupDialogOpen(false);
-      };
-      setOnSignupDialogDismiss(() => onDismiss);
-    },
-    [submitUpload]
-  );
 
   const value: VideoContextValue = {
     videos,
@@ -270,10 +244,6 @@ const VideoProvider = ({ children }: ProviderProps) => {
   return (
     <VideoContext.Provider value={value}>
       {children}
-      <SignupDialog
-        isDialogOpen={isSignupDialogOpen}
-        onDismiss={onSignupDialogDismiss}
-      />
     </VideoContext.Provider>
   );
 };
