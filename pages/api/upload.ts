@@ -52,6 +52,17 @@ export default async function handler(
       playback_policy: "public",
       mp4_support: "standard",
       passthrough: data ? JSON.stringify({ entry_id: data[0].id }) : null,
+      inputs: [{
+        url: "https://mux-guestbook-git-cascadiajs-mux.vercel.app/images/cjs-guestbook-logo.png",
+        overlay_settings: {
+          vertical_align: "bottom",
+          vertical_margin: "5%",
+          horizontal_align: "right",
+          horizontal_margin: "15%",
+          width: "15%",
+          opacity: "90%"
+        }
+      }]
     },
   });
 
