@@ -84,8 +84,8 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
         </a>
         <a
           className="underline hover:no-underline"
-          href={`https://stream.mux.com/${playback_id}/low.mp4?download=cascadiajs`}
-          download
+          href={`https://stream.mux.com/${playback_id}/low.mp4`}
+          download="cascadiajs"
         >
           Download
         </a>
