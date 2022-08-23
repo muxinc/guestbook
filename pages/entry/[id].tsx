@@ -19,10 +19,19 @@ type Props = {
 const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
   const href = useHref();
 
-  const shareData = React.useMemo(
+  const navigatorShareData = React.useMemo(
     () => ({
       title: event.title,
-      text: event.shareText,
+      text: event.navigatorShareText,
+      url: href,
+    }),
+    [href]
+  );
+
+  const twitterShareData = React.useMemo(
+    () => ({
+      title: event.title,
+      text: event.twitterShareText,
       url: href,
     }),
     [href]
@@ -32,21 +41,21 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
   React.useEffect(() => {
     if (typeof navigator?.share !== "undefined") {
       if (typeof navigator.canShare !== "undefined") {
-        setCanShare(navigator.canShare(shareData));
+        setCanShare(navigator.canShare(navigatorShareData));
       } else {
         setCanShare(true);
       }
     }
-  }, [shareData]);
+  }, [navigatorShareData]);
 
   const shareIt = React.useCallback(() => {
     if (canShare) {
       navigator
-        .share(shareData)
+        .share(navigatorShareData)
         .then(() => console.log("Successful share"))
         .catch((error) => console.log("Error sharing", error));
     }
-  }, [canShare, shareData]);
+  }, [canShare, navigatorShareData]);
 
   const [aspectWidth, aspectHeight] = aspect_ratio
     ? aspect_ratio.split(":")
@@ -76,7 +85,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
       <div className="flex justify-center space-x-4 p-4 sm:p-8">
         <a
           className="underline hover:no-underline"
-          href={`https://twitter.com/share?text=${shareData.text}&url=${shareData.url}`}
+          href={`https://twitter.com/share?text=${twitterShareData.text}&url=${twitterShareData.url}`}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -85,7 +94,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
         <a
           className="underline hover:no-underline"
           href={`https://stream.mux.com/${playback_id}/low.mp4`}
-          download
+          download="cascadiajs.mp4"
         >
           Download
         </a>
