@@ -32,14 +32,17 @@ export default async function handler(
     process.env.MUX_SECRET_TOKEN
   );
 
-  const { data, error } = await supabaseAdmin.from("entries").insert([
-    {
-      first_name: firstName || null,
-      last_name: lastName || null,
-      email: email || null,
-      event_id: 2,
-    },
-  ]);
+  const { data, error } = await supabaseAdmin
+    .from("entries")
+    .insert([
+      {
+        first_name: firstName || null,
+        last_name: lastName || null,
+        email: email || null,
+        event_id: 2,
+      },
+    ])
+    .select();
 
   if (error) {
     res.status(500).end("could not create record");

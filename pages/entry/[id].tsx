@@ -13,7 +13,7 @@ import useHref from "utils/useHref";
 
 type Props = {
   playback_id: string;
-  aspect_ratio: `${string}:${string}` | null;
+  aspect_ratio: string | null;
 };
 
 const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
@@ -118,6 +118,12 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   }
 
   const { playback_id, aspect_ratio } = data[0];
+
+  if (!playback_id) {
+    return {
+      notFound: true,
+    };
+  }
 
   return {
     props: {
