@@ -59,27 +59,31 @@ const ConsoleProvider = ({ children }: ProviderProps) => {
 
   useEffect(() => {
     const channel = supabase
-      .channel('activity')
+      .channel("activity")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'activity',
+          event: "*",
+          schema: "public",
+          table: "activity",
         },
-        ({ new: { payload } }: { new: Database["public"]["Tables"]["activity"]["Row"] }) => {
+        ({
+          new: { payload },
+        }: {
+          new: Database["public"]["Tables"]["activity"]["Row"];
+        }) => {
           setMessage({
             content: "(Webhook)",
-            data: JSON.parse(payload),
+            data: payload ? JSON.parse(payload) : null,
             type: MessageType.MUX,
           });
         }
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      supabase.removeChannel(channel)
-    }
+      supabase.removeChannel(channel);
+    };
   });
 
   /* Finally, we wrap this all up in a provider to give it to our children */

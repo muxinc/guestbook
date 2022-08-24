@@ -110,7 +110,7 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
           (fullscreen ? (
             <MotionMuxVideo
               className="h-full w-full object-cover cursor-pointer"
-              playbackId={video.playbackId}
+              playbackId={video.playbackId || undefined}
               streamType="on-demand"
               loop
               autoPlay

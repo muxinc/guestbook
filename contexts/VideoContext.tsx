@@ -103,7 +103,11 @@ const VideoProvider = ({ children }: ProviderProps) => {
         const entryVideos: Video[] = entries
           .map((entry) => ({
             id: entry.id,
-            status: supabaseToVideoStatus[entry.status] || Status.UNKNOWN,
+            status: Object.values(SupabaseStatus).includes(
+              entry.status as SupabaseStatus
+            )
+              ? supabaseToVideoStatus[entry.status as SupabaseStatus]
+              : Status.UNKNOWN,
             assetId: entry.asset_id,
             playbackId: entry.playback_id,
           }))
@@ -128,15 +132,21 @@ const VideoProvider = ({ children }: ProviderProps) => {
   // And let's listen to updates from the db, too
   useEffect(() => {
     const channel = supabase
-      .channel('entries')
+      .channel("entries")
       .on(
-        'postgres_changes',
+        "postgres_changes",
         {
-          event: '*',
-          schema: 'public',
-          table: 'entries',
+          event: "*",
+          schema: "public",
+          table: "entries",
         },
-        ({ new: { status, id, asset_id, playback_id }, eventType }: { new: Database["public"]["Tables"]["entries"]["Row"], eventType: string }) => {
+        ({
+          new: { status, id, asset_id, playback_id },
+          eventType,
+        }: {
+          new: Database["public"]["Tables"]["entries"]["Row"];
+          eventType: string;
+        }) => {
           switch (status) {
             case "preparing": {
               setVideo({
@@ -162,11 +172,11 @@ const VideoProvider = ({ children }: ProviderProps) => {
           });
         }
       )
-      .subscribe()
+      .subscribe();
 
     return () => {
-      supabase.removeChannel(channel)
-    }
+      supabase.removeChannel(channel);
+    };
   }, [setMessage, setVideo, setHash]);
 
   const submitUpload = useCallback(
@@ -241,7 +251,6 @@ const VideoProvider = ({ children }: ProviderProps) => {
     [setMessage, setVideo]
   );
 
-
   const value: VideoContextValue = {
     videos,
     setVideo,
@@ -249,9 +258,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
   };
 
   return (
-    <VideoContext.Provider value={value}>
-      {children}
-    </VideoContext.Provider>
+    <VideoContext.Provider value={value}>{children}</VideoContext.Provider>
   );
 };
 
