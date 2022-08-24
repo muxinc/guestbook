@@ -5,11 +5,13 @@ type Props = {
   title?: string;
   description?: string;
   image?: string;
+  video?: string;
 };
 const SEO = ({
   title = "Mux Video Guestbook",
   description = "For all those good memories, from your friends at Mux.",
   image = "https://mux.com/files/mux-video-logo-square.png",
+  video,
 }: Props) => {
   return (
     <Head>
@@ -38,6 +40,7 @@ const SEO = ({
         content={description}
       />
       <meta key="og:image" property="og:image" content={image} />
+      {video && <meta key="og:video" property="og:video" content={video} />}
       <meta key="og:locale" property="og:locale" content="en_US" />
     </Head>
   );

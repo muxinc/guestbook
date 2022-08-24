@@ -54,7 +54,10 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
 
   return (
     <>
-      <SEO image={`https://image.mux.com/${playback_id}/animated.gif`} />
+      <SEO
+        image={`https://image.mux.com/${playback_id}/animated.gif`}
+        video={`https://stream.mux.com/${playback_id}/low.mp4`}
+      />
       <Navbar withSettings={false} />
       <div className="relative px-4 sm:px-8">
         <MuxVideo
@@ -89,7 +92,11 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
         >
           Download
         </a>
-        {canShare && <button className="underline hover:no-underline" onClick={shareIt}>Share</button>}
+        {canShare && (
+          <button className="underline hover:no-underline" onClick={shareIt}>
+            Share
+          </button>
+        )}
       </div>
     </>
   );
