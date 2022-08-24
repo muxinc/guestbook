@@ -19,19 +19,10 @@ type Props = {
 const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
   const href = useHref();
 
-  const navigatorShareData = React.useMemo(
+  const shareData = React.useMemo(
     () => ({
       title: event.title,
-      text: event.navigatorShareText,
-      url: href,
-    }),
-    [href]
-  );
-
-  const twitterShareData = React.useMemo(
-    () => ({
-      title: event.title,
-      text: event.twitterShareText,
+      text: event.shareText,
       url: href,
     }),
     [href]
@@ -41,21 +32,21 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
   React.useEffect(() => {
     if (typeof navigator?.share !== "undefined") {
       if (typeof navigator.canShare !== "undefined") {
-        setCanShare(navigator.canShare(navigatorShareData));
+        setCanShare(navigator.canShare(shareData));
       } else {
         setCanShare(true);
       }
     }
-  }, [navigatorShareData]);
+  }, [shareData]);
 
   const shareIt = React.useCallback(() => {
     if (canShare) {
       navigator
-        .share(navigatorShareData)
+        .share(shareData)
         .then(() => console.log("Successful share"))
         .catch((error) => console.log("Error sharing", error));
     }
-  }, [canShare, navigatorShareData]);
+  }, [canShare, shareData]);
 
   const [aspectWidth, aspectHeight] = aspect_ratio
     ? aspect_ratio.split(":")
@@ -85,7 +76,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
       <div className="flex justify-center space-x-4 p-4 sm:p-8">
         <a
           className="underline hover:no-underline"
-          href={`https://twitter.com/share?text=${twitterShareData.text}&url=${twitterShareData.url}`}
+          href={`https://twitter.com/share?text=${encodeURIComponent(shareData.text)}}&url=${shareData.url}`}
           target="_blank"
           rel="noopener noreferrer"
         >
