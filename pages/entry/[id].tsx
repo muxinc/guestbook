@@ -79,7 +79,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
       <div className="flex justify-center space-x-4 p-4 sm:p-8">
         <a
           className="underline hover:no-underline"
-          href={`https://twitter.com/share?text=${shareData.text}&url=${shareData.url}`}
+          href={`https://twitter.com/share?text=${encodeURIComponent(shareData.text)}&url=${shareData.url}`}
           target="_blank"
           rel="noopener noreferrer"
         >

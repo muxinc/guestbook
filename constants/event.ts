@@ -1,5 +1,5 @@
 const event = {
-  title: 'AWS Summit NYC',
-  shareText: 'OMG! We had so much fun at AWS Summit NYC!',
+  title: 'CascadiaJS 2022 Family Reunion',
+  shareText: 'OMG! We had so much fun at #CascadiaJS 2022!'
 }
 export default event
