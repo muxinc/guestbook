@@ -25,7 +25,7 @@
   }
 
   * {
-    @apply outline-pink-500;
+    @apply outline-pink-500 accent-pink-500;
   }
   ::selection {
     @apply bg-pink-600/30;

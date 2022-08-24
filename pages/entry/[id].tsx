@@ -4,12 +4,12 @@ import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 
 import MuxVideo from "@mux-elements/mux-video-react";
 
-import { SupabaseEntry } from "contexts/VideoContext";
 import event from "constants/event";
 import Navbar from "components/Navbar";
 import SEO from "components/SEO";
 
 import useHref from "utils/useHref";
+import OptInForm from "components/OptInForm";
 
 type Props = {
   playback_id: string;
@@ -79,7 +79,9 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
       <div className="flex justify-center space-x-4 p-4 sm:p-8">
         <a
           className="underline hover:no-underline"
-          href={`https://twitter.com/share?text=${encodeURIComponent(shareData.text)}&url=${shareData.url}`}
+          href={`https://twitter.com/share?text=${encodeURIComponent(
+            shareData.text
+          )}&url=${shareData.url}`}
           target="_blank"
           rel="noopener noreferrer"
         >
@@ -98,6 +100,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
           </button>
         )}
       </div>
+      <OptInForm className="p-4 sm:p-8 w-full max-w-screen-lg mx-auto" />
     </>
   );
 };

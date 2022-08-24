@@ -10,22 +10,28 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<ResponseData>
 ) {
-  const { firstName, lastName, email } = req.body;
+  const { firstName, lastName, email, consent } = req.body;
 
-  const { data, error } = await supabaseAdmin.from("leads").insert([
-    {
-      first_name: firstName || null,
-      last_name: lastName || null,
-      email: email || null,
-      event_id: 2,
-    },
-  ]).select();
+  if (consent !== "on") {
+    // front-end validation should prevent this!
+    return res.status(400).end("user did not opt-in to emails");
+  }
+  const { data, error } = await supabaseAdmin
+    .from("leads")
+    .insert([
+      {
+        first_name: firstName || null,
+        last_name: lastName || null,
+        email: email || null,
+        event_id: 2,
+      },
+    ])
+    .select();
 
   if (error) {
-    res.status(500).end("could not create record");
+    return res.status(500).end("Could not create record");
   }
-
-  res.status(201).json({
+  return res.status(201).json({
     id: data ? data[0].id : null,
   });
 }
