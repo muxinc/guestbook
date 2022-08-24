@@ -89,7 +89,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
         >
           Download
         </a>
-        {canShare && <button onClick={shareIt}>Share Link</button>}
+        {canShare && <button className="underline hover:no-underline" onClick={shareIt}>Share</button>}
       </div>
     </>
   );
