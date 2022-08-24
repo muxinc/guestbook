@@ -6,8 +6,7 @@ import MuxVideo from "@mux-elements/mux-video-react";
 import { Video, Status } from "contexts/VideoContext";
 import Link from "next/link";
 import VisuallyHidden from "@reach/visually-hidden";
-
-const MotionMuxVideo = motion(MuxVideo);
+import Image from "next/image";
 
 const transitionStatuses = [
   // these are the statuses that are initialized by the client
@@ -25,7 +24,6 @@ type Props = {
 };
 
 const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
-  const [rotate] = useState(() => -4 + Math.random() * 8);
   const [isLoaded, setIsLoaded] = useState(() => false);
 
   const origin = typeof window !== "undefined" ? window.location.origin : "";
@@ -42,15 +40,15 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
       initial={
         transitionStatuses.includes(video.status)
           ? { y: "-160%" } // new video? slide in!
-          : { opacity: 0, scale: 0.9, rotate } // just fade in if these videos are already initialized
+          : { opacity: 0, scale: 0.9, rotate: video.rotation } // just fade in if these videos are already initialized
       }
       animate={{
         y: transitionStatuses.includes(video.status)
           ? ["-160%", "-50%", "0%"]
           : "0%",
         rotate: transitionStatuses.includes(video.status)
-          ? [0, 0, rotate]
-          : rotate,
+          ? [0, 0, video.rotation]
+          : video.rotation,
         opacity: 1,
         scale: 1,
       }}
@@ -69,7 +67,6 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
         {/* Loading Spinner */}
         {!isLoaded && (
           <>
-            {" "}
             <svg
               viewBox="0 0 100 100"
               className="absolute w-full h-full inset-0"
@@ -106,52 +103,45 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
           </>
         )}
         {/* image or video element */}
-        {video.status === Status.READY &&
-          (fullscreen && video.playbackId ? (
-            <MotionMuxVideo
-              className="h-full w-full object-cover cursor-pointer"
-              playbackId={video.playbackId}
-              streamType="on-demand"
-              loop
-              autoPlay
-              playsInline
-              onLoadedData={() => setIsLoaded(true)}
-              animate={{ opacity: isLoaded ? 1 : 0 }}
-              transition={{ duration: 0.5 }}
-              onClick={(e) => {
-                // Fallback functionality in case autoplay fails
-                const videoElement = e.currentTarget as HTMLVideoElement;
-                // I feel like there's a more accessible way to do this.
-                if (videoElement.paused) {
-                  videoElement.play();
-                } else {
-                  videoElement.pause();
-                }
-              }}
-            />
-          ) : (
-            <motion.img
-              animate={{
-                opacity: isLoaded ? 1 : 0,
-              }}
-              transition={{
-                duration: 1,
-              }}
-              src={`https://image.mux.com/${video.playbackId}/animated.gif`}
-              data-src={`https://image.mux.com/${video.playbackId}/animated.gif`}
-              alt=""
-              className="object-cover w-full h-full"
-              loading="lazy"
-              onLoad={() => setIsLoaded(true)}
-              onError={(e) => {
-                const image = e.currentTarget as HTMLImageElement;
-                image.src = "";
-                setTimeout(() => {
-                  image.src = image.dataset.src ?? "";
-                }, 2000);
-              }}
-            />
-          ))}
+        {video.status === Status.READY && (
+          <motion.div
+            className="relative h-full w-full"
+            initial={{ opacity: 0 }}
+            animate={{ opacity: isLoaded ? 1 : 0 }}
+            transition={{ duration: 0.5 }}
+          >
+            {fullscreen && video.playbackId ? (
+              <MuxVideo
+                className="h-full w-full object-cover cursor-pointer"
+                playbackId={video.playbackId}
+                streamType="on-demand"
+                loop
+                autoPlay
+                playsInline
+                onLoadedData={() => setIsLoaded(true)}
+                onLoadedMetadata={() => setIsLoaded(true)}
+                onClick={(e) => {
+                  // Fallback functionality in case autoplay fails
+                  const videoElement = e.currentTarget as HTMLVideoElement;
+                  // I feel like there's a more accessible way to do this.
+                  if (videoElement.paused) {
+                    videoElement.play();
+                  } else {
+                    videoElement.pause();
+                  }
+                }}
+              />
+            ) : (
+              <Image
+                src={`https://image.mux.com/${video.playbackId}/animated.gif`}
+                alt=""
+                layout="fill"
+                objectFit="cover"
+                onLoad={() => setIsLoaded(true)}
+              />
+            )}
+          </motion.div>
+        )}
       </div>
 
       {fullscreen ? (
@@ -162,7 +152,7 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
               <VisuallyHidden>Go to Video</VisuallyHidden>
               <div className="flex flex-col justify-center">
                 <h2 className="font-bold text-xl sm:text-3xl mb-1 text-gray-700">
-                  Scan for link
+                  Scan or Click
                 </h2>
                 <p className="sm:text-xl text-gray-600">
                   Take your video with you!
