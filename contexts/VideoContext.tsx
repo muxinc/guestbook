@@ -10,8 +10,10 @@ import * as UpChunk from "@mux/upchunk";
 import { supabase } from "utils/supabaseClient";
 
 import formatBytes from "utils/formatBytes";
-import useHash from "utils/useHash";
 import { MessageType, useConsoleContext } from "./ConsoleContext";
+import { GetStaticProps } from "next";
+
+export const getVideoRotation = () => -4 + Math.random() * 8;
 import { Database } from "utils/DatabaseDefinitions";
 
 export enum Status {
@@ -31,6 +33,10 @@ export interface Video {
   uploadStatus?: number;
   assetId?: string | null;
   playbackId?: string | null;
+  // despite being a UI concern, the amount that a video card is rotated lives here in data
+  // so that both he server and the client would rotate the video the same way.
+  // This prevents hydration errors.
+  rotation: number;
 }
 type VideoContextValue = {
   videos: Video[];
@@ -42,9 +48,12 @@ type ContextValue = VideoContextValue | DefaultValue;
 
 export const VideoContext = createContext<ContextValue>(undefined);
 
-type ProviderProps = {
+interface ProviderDataProps {
+  initialVideos: Video[];
+}
+interface ProviderProps extends ProviderDataProps {
   children: React.ReactNode;
-};
+}
 enum SupabaseStatus {
   PENDING = "pending",
   PREPARING = "preparing",
@@ -68,12 +77,11 @@ const supabaseToVideoStatus: Record<SupabaseStatus, Status> = {
   [SupabaseStatus.READY]: Status.READY,
 };
 
-const VideoProvider = ({ children }: ProviderProps) => {
+const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
   const { setMessage } = useConsoleContext();
-  const [, setHash] = useHash();
 
-  const [videos, setVideos] = useState<Video[]>([]);
-  const setVideo = useCallback((newVideo: Video) => {
+  const [videos, setVideos] = useState<Video[]>(initialVideos);
+  const setVideo = useCallback((newVideo: Omit<Video, "rotation">) => {
     setVideos((videos) => {
       const ids = videos.map((video) => video.id);
       if (ids.includes(newVideo.id)) {
@@ -83,51 +91,14 @@ const VideoProvider = ({ children }: ProviderProps) => {
         );
       } else {
         // ADD
-        return [newVideo, ...videos];
+        const newVideoWithRotation = {
+          ...newVideo,
+          rotation: getVideoRotation(),
+        };
+        return [newVideoWithRotation, ...videos];
       }
     });
   }, []);
-
-  // On load, let's get the backlog of videos
-  useEffect(() => {
-    const ac = new AbortController();
-    const initialize = async () => {
-      let { data: entries, error } = await supabase
-        .from("entries")
-        .select("*")
-        .eq("event_id", 2)
-        .order("created_at", { ascending: false });
-      // .abortSignal(ac.signal);
-
-      if (entries) {
-        const entryVideos: Video[] = entries
-          .map((entry) => ({
-            id: entry.id,
-            status: Object.values(SupabaseStatus).includes(
-              entry.status as SupabaseStatus
-            )
-              ? supabaseToVideoStatus[entry.status as SupabaseStatus]
-              : Status.UNKNOWN,
-            assetId: entry.asset_id,
-            playbackId: entry.playback_id,
-          }))
-          .filter((video) => video.status !== Status.PENDING);
-        setMessage({
-          content: `Loaded ${entryVideos.length} videos`,
-          type: MessageType.SUPABASE,
-        });
-        // I want this to be setVideos(videos => [...videos, ...entryVideos]) in case this operation is slow
-        // but react strict mode calls this effect twice
-        // meaning that we have 2x entryVideos.
-        // React is trying to tell me I'm doing something wrong
-        // But I don't know what.
-        // TODO: figure it out
-        setVideos(entryVideos);
-      }
-    };
-    initialize();
-    return () => ac.abort();
-  }, [setMessage]);
 
   // And let's listen to updates from the db, too
   useEffect(() => {
@@ -161,8 +132,6 @@ const VideoProvider = ({ children }: ProviderProps) => {
                 assetId: asset_id,
                 playbackId: playback_id,
               });
-
-              setHash(id.toString());
             }
           }
           setMessage({
@@ -177,7 +146,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [setMessage, setVideo, setHash]);
+  }, [setMessage, setVideo]);
 
   const submitUpload = useCallback(
     async (file: File) => {
@@ -196,11 +165,10 @@ const VideoProvider = ({ children }: ProviderProps) => {
           type: MessageType.NEXT,
         });
 
-        const video: Video = {
+        setVideo({
           id,
           status: Status.INITIALIZING,
-        };
-        setVideo(video);
+        });
 
         setMessage({
           content: `Uploading with chunk size ${formatBytes(30720)}.`,
@@ -262,6 +230,52 @@ const VideoProvider = ({ children }: ProviderProps) => {
   );
 };
 
+export default VideoProvider;
+
+// Any consumers of this context can use this handy hook
+// to get going in a type-safe manner
 export const useVideoContext = () =>
   useContext(VideoContext) as VideoContextValue;
-export default VideoProvider;
+
+// One last thought:
+// this context is initialized by means of getStaticProps.
+export const getStaticVideoProps: GetStaticProps<
+  ProviderDataProps
+> = async () => {
+  // On load, let's get the backlog of videos
+  let { data: entries, error } = await supabase
+    .from("entries")
+    .select("*")
+    .eq("event_id", 2)
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    throw new Error(error?.message);
+  }
+
+  if (entries) {
+    const entryVideos: Video[] = entries
+      .map((entry) => ({
+        id: entry.id,
+        status: Object.values(SupabaseStatus).includes(
+          entry.status as SupabaseStatus
+        )
+          ? supabaseToVideoStatus[entry.status as SupabaseStatus]
+          : Status.UNKNOWN,
+        assetId: entry.asset_id,
+        playbackId: entry.playback_id,
+        rotation: getVideoRotation(),
+      }))
+      .filter((video) => video.status !== Status.PENDING);
+    return {
+      props: {
+        initialVideos: entryVideos,
+      },
+    };
+  }
+  return {
+    props: {
+      initialVideos: [],
+    },
+  };
+};
