@@ -167,13 +167,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
     return () => {
       supabase.removeChannel(channel)
     }
-
-    // const subscription = supabase
-    //   .from<SupabaseEntry>("entries")
-    //   .on("*", ({ new: { status, id, asset_id, playback_id }, eventType }) => {
-    //     console.log("coming atcha.")
-
-  }, [setMessage, setVideo]);
+  }, [setMessage, setVideo, setHash]);
 
   const submitUpload = useCallback(
     async (file: File) => {
