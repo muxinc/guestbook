@@ -12,6 +12,7 @@ import { supabase } from "utils/supabaseClient";
 import formatBytes from "utils/formatBytes";
 import useHash from "utils/useHash";
 import { MessageType, useConsoleContext } from "./ConsoleContext";
+import { Database } from "utils/DatabaseDefinitions";
 
 export enum Status {
   INITIALIZING = "INITIALIZING", // about to upload
@@ -126,8 +127,6 @@ const VideoProvider = ({ children }: ProviderProps) => {
 
   // And let's listen to updates from the db, too
   useEffect(() => {
-    console.log("subscribing...")
-
     const channel = supabase
       .channel('entries')
       .on(
@@ -137,7 +136,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
           schema: 'public',
           table: 'entries',
         },
-        ({ new: { status, id, asset_id, playback_id }, eventType }) => {
+        ({ new: { status, id, asset_id, playback_id }, eventType }: { new: Database["public"]["Tables"]["entries"]["Row"], eventType: string }) => {
           switch (status) {
             case "preparing": {
               setVideo({

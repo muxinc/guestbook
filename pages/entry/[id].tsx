@@ -103,7 +103,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   }
 
   const { data, error } = await supabase
-    .from<SupabaseEntry>("entries")
+    .from("entries")
     .select("*")
     .eq("id", params.id);
 
