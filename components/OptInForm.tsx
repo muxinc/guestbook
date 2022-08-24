@@ -55,7 +55,7 @@ const OptInForm = ({ className = "" }: Props) => {
     <section className={className}>
       <h2 className="text-lg mb-6">Wanna learn more about Mux?</h2>
       {formState === FormState.SUCCESS ? (
-        <p>Success! We can&apis;t wait to see what you make with Mux!</p>
+        <p>Success! We can&apos;t wait to see what you make with Mux!</p>
       ) : formState === FormState.FAILURE ? (
         <p>Something went wrong. Please try again?</p>
       ) : (
