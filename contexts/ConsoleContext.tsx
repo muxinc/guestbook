@@ -55,24 +55,24 @@ const ConsoleProvider = ({ children }: ProviderProps) => {
     setMessages((m) => [message, ...m]);
   }, []);
   /* We listen for messages from the database to slip on in here */
-  useEffect(() => {
-    const subscription = supabase
-      .from<SupabaseActivity>("activity")
-      .on("*", (payload) => {
-        setMessage({
-          content: "(Webhook)",
-          data: JSON.parse(payload.new.payload),
-          type: MessageType.MUX,
-        });
-      })
-      .subscribe();
-    const unsubscribe = async () => {
-      await supabase.removeSubscription(subscription);
-    };
-    return () => {
-      unsubscribe();
-    };
-  });
+  // useEffect(() => {
+  //   const subscription = supabase
+  //     .from<SupabaseActivity>("activity")
+  //     .on("*", (payload) => {
+  //       setMessage({
+  //         content: "(Webhook)",
+  //         data: JSON.parse(payload.new.payload),
+  //         type: MessageType.MUX,
+  //       });
+  //     })
+  //     .subscribe();
+  //   const unsubscribe = async () => {
+  //     await supabase.removeSubscription(subscription);
+  //   };
+  //   return () => {
+  //     unsubscribe();
+  //   };
+  // });
 
   /* Finally, we wrap this all up in a provider to give it to our children */
   const value = {

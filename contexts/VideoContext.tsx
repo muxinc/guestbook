@@ -28,8 +28,8 @@ export interface Video {
   status: Status;
   // TODO: conditional fields based on type
   uploadStatus?: number;
-  assetId?: string;
-  playbackId?: string;
+  assetId?: string | null;
+  playbackId?: string | null;
 }
 type VideoContextValue = {
   videos: Video[];
@@ -92,7 +92,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
     const ac = new AbortController();
     const initialize = async () => {
       let { data: entries, error } = await supabase
-        .from<SupabaseEntry>("entries")
+        .from("entries")
         .select("*")
         .eq("event_id", 2)
         .order("created_at", { ascending: false });
@@ -126,40 +126,54 @@ const VideoProvider = ({ children }: ProviderProps) => {
 
   // And let's listen to updates from the db, too
   useEffect(() => {
-    const subscription = supabase
-      .from<SupabaseEntry>("entries")
-      .on("*", ({ new: { status, id, asset_id, playback_id }, eventType }) => {
-        switch (status) {
-          case "preparing": {
-            setVideo({
-              id: id,
-              status: Status.PREPARING,
-            });
-          }
-          case "ready": {
-            setVideo({
-              id: id,
-              status: Status.READY,
-              assetId: asset_id,
-              playbackId: playback_id,
-            });
+    console.log("subscribing...")
 
-            setHash(id.toString());
+    const channel = supabase
+      .channel('entries')
+      .on(
+        'postgres_changes',
+        {
+          event: '*',
+          schema: 'public',
+          table: 'entries',
+        },
+        ({ new: { status, id, asset_id, playback_id }, eventType }) => {
+          switch (status) {
+            case "preparing": {
+              setVideo({
+                id: id,
+                status: Status.PREPARING,
+              });
+            }
+            case "ready": {
+              setVideo({
+                id: id,
+                status: Status.READY,
+                assetId: asset_id,
+                playbackId: playback_id,
+              });
+
+              setHash(id.toString());
+            }
           }
+          setMessage({
+            content: `(${eventType})`,
+            data: { id, status, asset_id, playback_id },
+            type: MessageType.SUPABASE,
+          });
         }
-        setMessage({
-          content: `(${eventType})`,
-          data: { id, status, asset_id, playback_id },
-          type: MessageType.SUPABASE,
-        });
-      })
-      .subscribe();
-    const unsubscribe = async () => {
-      await supabase.removeSubscription(subscription);
-    };
+      )
+      .subscribe()
+
     return () => {
-      unsubscribe();
-    };
+      supabase.removeChannel(channel)
+    }
+
+    // const subscription = supabase
+    //   .from<SupabaseEntry>("entries")
+    //   .on("*", ({ new: { status, id, asset_id, playback_id }, eventType }) => {
+    //     console.log("coming atcha.")
+
   }, [setMessage, setVideo]);
 
   const submitUpload = useCallback(
