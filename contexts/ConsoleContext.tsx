@@ -6,6 +6,7 @@ import {
   useCallback,
 } from "react";
 import { supabase } from "utils/supabaseClient";
+import { Database } from "utils/DatabaseDefinitions";
 
 type SupabaseActivity = any;
 
@@ -55,22 +56,33 @@ const ConsoleProvider = ({ children }: ProviderProps) => {
     setMessages((m) => [message, ...m]);
   }, []);
   /* We listen for messages from the database to slip on in here */
+
   useEffect(() => {
-    const subscription = supabase
-      .from<SupabaseActivity>("activity")
-      .on("*", (payload) => {
-        setMessage({
-          content: "(Webhook)",
-          data: JSON.parse(payload.new.payload),
-          type: MessageType.MUX,
-        });
-      })
+    const channel = supabase
+      .channel("activity")
+      .on(
+        "postgres_changes",
+        {
+          event: "*",
+          schema: "public",
+          table: "activity",
+        },
+        ({
+          new: { payload },
+        }: {
+          new: Database["public"]["Tables"]["activity"]["Row"];
+        }) => {
+          setMessage({
+            content: "(Webhook)",
+            data: payload ? JSON.parse(payload) : null,
+            type: MessageType.MUX,
+          });
+        }
+      )
       .subscribe();
-    const unsubscribe = async () => {
-      await supabase.removeSubscription(subscription);
-    };
+
     return () => {
-      unsubscribe();
+      supabase.removeChannel(channel);
     };
   });
 

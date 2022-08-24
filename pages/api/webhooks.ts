@@ -57,9 +57,7 @@ export default async function handler(
 
   const { data: result, error } = await supabaseAdmin
     .from("entries")
-    .insert([payload], {
-      upsert: true,
-    });
+    .upsert([payload]);
 
   // Store payload
   await supabaseAdmin

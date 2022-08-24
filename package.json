@@ -14,7 +14,7 @@
     "@mux/upchunk": "^2.3.1",
     "@reach/dialog": "^0.16.2",
     "@reach/visually-hidden": "^0.16.0",
-    "@supabase/supabase-js": "^1.33.3",
+    "@supabase/supabase-js": "^2.0.0-rc.5",
     "framer-motion": "^6.2.9",
     "next": "12.1.4",
     "qrcode.react": "^3.0.2",

@@ -32,14 +32,17 @@ export default async function handler(
     process.env.MUX_SECRET_TOKEN
   );
 
-  const { data, error } = await supabaseAdmin.from<Entry>("entries").insert([
-    {
-      first_name: firstName || null,
-      last_name: lastName || null,
-      email: email || null,
-      event_id: 2,
-    },
-  ]);
+  const { data, error } = await supabaseAdmin
+    .from("entries")
+    .insert([
+      {
+        first_name: firstName || null,
+        last_name: lastName || null,
+        email: email || null,
+        event_id: 2,
+      },
+    ])
+    .select();
 
   if (error) {
     res.status(500).end("could not create record");
@@ -52,17 +55,19 @@ export default async function handler(
       playback_policy: "public",
       mp4_support: "standard",
       passthrough: data ? JSON.stringify({ entry_id: data[0].id }) : null,
-      inputs: [{
-        url: "https://guestbook.mux.dev/images/cjs-guestbook-logo.png",
-        overlay_settings: {
-          vertical_align: "bottom",
-          vertical_margin: "5%",
-          horizontal_align: "right",
-          horizontal_margin: "15%",
-          width: "15%",
-          opacity: "90%"
-        }
-      }]
+      inputs: [
+        {
+          url: "https://guestbook.mux.dev/images/cjs-guestbook-logo.png",
+          overlay_settings: {
+            vertical_align: "bottom",
+            vertical_margin: "5%",
+            horizontal_align: "right",
+            horizontal_margin: "15%",
+            width: "15%",
+            opacity: "90%",
+          },
+        },
+      ],
     },
   });
 

@@ -107,7 +107,7 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
         )}
         {/* image or video element */}
         {video.status === Status.READY &&
-          (fullscreen ? (
+          (fullscreen && video.playbackId ? (
             <MotionMuxVideo
               className="h-full w-full object-cover cursor-pointer"
               playbackId={video.playbackId}
