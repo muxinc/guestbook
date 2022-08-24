@@ -54,7 +54,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
 
   return (
     <>
-      <SEO image={`https://image.mux.com/${playback_id}/thumbnail.jpg`} />
+      <SEO image={`https://image.mux.com/${playback_id}/animated.gif`} />
       <Navbar withSettings={false} />
       <div className="relative px-4 sm:px-8">
         <MuxVideo
