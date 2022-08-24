@@ -10,7 +10,13 @@ const CascadiaOptIn = () => (
     <div className="p-4 w-full max-w-sm mx-auto grid grid-cols-[1fr_auto_1fr] gap-4 sm:gap-6 items-center">
       <Mux />
       <span>&hearts;</span>
-      <Image src={cascadiaLogo} alt="CascadiaJs: Family Reunion" />
+      <Image
+        src={cascadiaLogo}
+        priority
+        layout="responsive"
+        sizes="288px"
+        alt="CascadiaJs: Family Reunion"
+      />
     </div>
     <OptInForm className="p-4 sm:p-8 w-full max-w-screen-lg mx-auto" />
   </>
