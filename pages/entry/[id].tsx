@@ -59,7 +59,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
         video={`https://stream.mux.com/${playback_id}/low.mp4`}
       />
       <Navbar withSettings={false} />
-      <div className="relative px-4 sm:px-8">
+      <div className="relative py-4 sm:py-0 px-4 sm:px-8">
         <MuxVideo
           className="w-full max-w-screen-xl mx-auto max-h-[70vh]"
           style={{ aspectRatio: `${aspectWidth}/${aspectHeight}` }}
@@ -76,7 +76,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
           playsInline
         />
       </div>
-      <div className="flex justify-center space-x-4 p-4 sm:p-8">
+      <div className="flex justify-center space-x-4 py-8 px-4 sm:px-8">
         <a
           className="underline hover:no-underline"
           href={`https://twitter.com/share?text=${encodeURIComponent(
@@ -100,7 +100,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
           </button>
         )}
       </div>
-      <OptInForm className="p-4 sm:p-8 w-full max-w-screen-lg mx-auto" />
+      <OptInForm className="py-8 px-4 sm:px-8 text-sm sm:text-base w-full max-w-screen-lg mx-auto" />
     </>
   );
 };

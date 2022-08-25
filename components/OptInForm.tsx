@@ -53,14 +53,14 @@ const OptInForm = ({ className = "" }: Props) => {
   };
   return (
     <section className={className}>
-      <h2 className="text-lg mb-6">Wanna learn more about Mux?</h2>
+      <h2 className="text-base sm:text-lg mb-6">Wanna learn more about Mux?</h2>
       {formState === FormState.SUCCESS ? (
         <p>Success! We can&apos;t wait to see what you make with Mux!</p>
       ) : formState === FormState.FAILURE ? (
         <p>Something went wrong. Please try again?</p>
       ) : (
         <form onSubmit={onFormSubmit}>
-          <div className="grid grid-cols-2 gap-x-2 gap-y-4 mb-6">
+          <div className="grid sm:grid-cols-2 gap-x-2 gap-y-4 mb-6">
             <div>
               <label className="block mb-1" htmlFor="opt-in-first-name">
                 First Name
@@ -87,7 +87,7 @@ const OptInForm = ({ className = "" }: Props) => {
                 placeholder="Lasso"
               />
             </div>
-            <div className="col-span-2">
+            <div className="sm:col-span-2">
               <label className="block mb-1" htmlFor="opt-in-email">
                 Email
               </label>
@@ -100,9 +100,9 @@ const OptInForm = ({ className = "" }: Props) => {
                 placeholder="biscuits@mux.com"
               />
             </div>
-            <div className="col-span-2 flex">
+            <div className="sm:col-span-2 flex items-center">
               <input
-                className="mr-2"
+                className="mr-4"
                 id="opt-in"
                 name="consent"
                 type="checkbox"

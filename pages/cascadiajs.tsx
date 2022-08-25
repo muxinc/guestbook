@@ -7,7 +7,7 @@ import cascadiaLogo from "public/images/cjs-guestbook-logo.png";
 
 const CascadiaOptIn = () => (
   <>
-    <div className="p-4 w-full max-w-sm mx-auto grid grid-cols-[1fr_auto_1fr] gap-4 sm:gap-6 items-center">
+    <div className="px-8 py-4 w-full max-w-sm mx-auto grid grid-cols-[1fr_auto_1fr] gap-4 sm:gap-6 items-center">
       <Mux />
       <span>&hearts;</span>
       <Image
