@@ -100,7 +100,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
           </button>
         )}
       </div>
-      <OptInForm className="py-8 px-4 sm:px-8 text-sm sm:text-base w-full max-w-screen-lg mx-auto" />
+      <OptInForm className="py-8 px-4 sm:px-8 text-sm w-full max-w-screen-lg mx-auto" />
     </>
   );
 };

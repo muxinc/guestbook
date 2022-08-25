@@ -53,7 +53,9 @@ const OptInForm = ({ className = "" }: Props) => {
   };
   return (
     <section className={className}>
-      <h2 className="text-base sm:text-lg mb-6">Wanna learn more about Mux?</h2>
+      <h2 className="text-base sm:text-lg mb-6">
+        Wanna learn more about Mux? Want $50 to get started?
+      </h2>
       {formState === FormState.SUCCESS ? (
         <p>Success! We can&apos;t wait to see what you make with Mux!</p>
       ) : formState === FormState.FAILURE ? (
@@ -108,7 +110,7 @@ const OptInForm = ({ className = "" }: Props) => {
                 type="checkbox"
                 required
               />
-              <label className="text-sm" htmlFor="opt-in">
+              <label htmlFor="opt-in">
                 Yes, I do want you to send me emails related to products and
                 events
               </label>
