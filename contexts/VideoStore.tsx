@@ -1,16 +1,15 @@
 import DeviceIdProvider from "contexts/DeviceIdContext";
-import VideoProvider from "contexts/VideoContext";
+import VideoProvider, { Video } from "contexts/VideoContext";
 import RecorderProvider from "contexts/RecorderContext";
 
-import { MotionConfig } from "framer-motion";
-
-type Props = {
+interface Props {
+  initialVideos: Video[];
   children: React.ReactNode;
 };
 
-const VideoStore = ({ children }: Props) => (
+const VideoStore = ({ initialVideos, children }: Props) => (
   <DeviceIdProvider>
-    <VideoProvider>
+    <VideoProvider initialVideos={initialVideos}>
       <RecorderProvider>{children}</RecorderProvider>
     </VideoProvider>
   </DeviceIdProvider>

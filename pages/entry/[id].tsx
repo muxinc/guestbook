@@ -3,7 +3,6 @@ import { supabase } from "utils/supabaseClient";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 
 import MuxVideo from "@mux-elements/mux-video-react";
-
 import event from "constants/event";
 import Navbar from "components/Navbar";
 import SEO from "components/SEO";
@@ -140,8 +139,6 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       playback_id,
       aspect_ratio,
     },
-    // keep in cache for 10 seconds
-    revalidate: 10,
   };
 };
 
