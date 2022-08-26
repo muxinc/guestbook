@@ -12,9 +12,7 @@ type Props = {
 };
 
 const Grid = ({ className = "" }: Props) => {
-  const { videos } = useVideoContext();
-
-  const [openVideo, setOpenVideo] = useState<Video | null>(null);
+  const { videos, openVideo, setOpenVideo } = useVideoContext();
 
   return (
     <>
@@ -32,7 +30,7 @@ const Grid = ({ className = "" }: Props) => {
               whileHover={{ scale: 1.04 }}
               whileFocus={{ scale: 1.04 }}
               whileTap={{ scale: 0.9 }}
-              className="cursor-pointer"
+              className={`cursor-pointer entry-${video.id}`}
             >
               <VideoCard video={video} label="Open Video" />
             </motion.button>
