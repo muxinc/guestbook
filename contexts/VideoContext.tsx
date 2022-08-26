@@ -103,6 +103,11 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
     });
   }, []);
 
+  const removeVideo = useCallback((id: number) => {
+    const updated = videos.filter(v => v.id !== id);
+    setVideos(updated);
+  }, [videos])
+
   // And let's listen to updates from the db, too
   useEffect(() => {
     const channel = supabase
@@ -115,12 +120,19 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
           table: "entries",
         },
         ({
+          old,
           new: { status, id, asset_id, playback_id },
           eventType,
         }: {
+          old: { id: number; };
           new: Database["public"]["Tables"]["entries"]["Row"];
           eventType: string;
         }) => {
+          if (eventType === 'DELETE') {
+            removeVideo(old.id);
+            return;
+          }
+
           switch (status) {
             case "preparing": {
               setVideo({
