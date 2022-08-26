@@ -8,10 +8,21 @@ const Confetti = () => {
   const [isClient, setClient] = React.useState(false);
 
   const { recordingStatus } = useRecorderContext();
+  const [show, shouldShow] = React.useState(false)
   const [run, shouldRun] = React.useState(false);
 
   React.useEffect(() => {
+    // Hey look the app loaded!
     setClient(true);
+
+    // To prevent the confetti from firing on load,
+    // we block it for the first five seconds of the app.
+    const interval = setTimeout(() => {
+      shouldShow(true)
+    }, 5000)
+    return () => {
+      clearInterval(interval)
+    }
   }, []);
 
   React.useEffect(() => {
@@ -25,7 +36,7 @@ const Confetti = () => {
 
   return (
     <>
-      {isClient && <Celebration width={width} height={height} recycle={run} />}
+      {isClient && <Celebration width={width} height={height} style={{opacity: show ? 1 : 0}}  recycle={run} />}
     </>
   )
 }
