@@ -53,8 +53,8 @@ const OptInForm = ({ className = "" }: Props) => {
   };
   return (
     <section className={className}>
-      <h2 className="text-base sm:text-lg mb-6">
-        Wanna learn more about Mux? Want $50 to get started?
+      <h2 className="text-base sm:text-lg mb-6 font-bold">
+        Build live and on-demand video into your app. Get a $50 credit, on us.
       </h2>
       {formState === FormState.SUCCESS ? (
         <p>Success! We can&apos;t wait to see what you make with Mux!</p>
