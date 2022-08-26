@@ -57,7 +57,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
         image={`https://image.mux.com/${playback_id}/animated.gif`}
         video={`https://stream.mux.com/${playback_id}/low.mp4`}
       />
-      <Navbar withSettings={false} />
+      <Navbar subheading={`Thanks for signing the guestbook!`} withSettings={false} />
       <div className="relative py-4 sm:py-0 px-4 sm:px-8">
         <MuxVideo
           className="w-full max-w-screen-xl mx-auto max-h-[70vh]"
