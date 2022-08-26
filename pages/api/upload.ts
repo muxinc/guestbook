@@ -62,7 +62,7 @@ export default async function handler(
             vertical_align: "bottom",
             vertical_margin: "5%",
             horizontal_align: "right",
-            horizontal_margin: "8%",
+            horizontal_margin: "15%",
             width: "15%",
             opacity: "90%",
           },
