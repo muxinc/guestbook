@@ -41,7 +41,9 @@ export interface Video {
 type VideoContextValue = {
   videos: Video[];
   setVideo: (video: Video) => void;
+  setOpenVideo: (video: Video | null) => void;
   submitUpload: (file: File) => void;
+  openVideo: Video | null;
 };
 type DefaultValue = undefined;
 type ContextValue = VideoContextValue | DefaultValue;
@@ -79,6 +81,7 @@ const supabaseToVideoStatus: Record<SupabaseStatus, Status> = {
 
 const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
   const { setMessage } = useConsoleContext();
+  const [openVideo, setOpenVideo] = useState<Video | null>(null);
 
   const [videos, setVideos] = useState<Video[]>(initialVideos);
   const setVideo = useCallback((newVideo: Omit<Video, "rotation">) => {
@@ -124,14 +127,30 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
                 id: id,
                 status: Status.PREPARING,
               });
+              break;
             }
             case "ready": {
-              setVideo({
+              const videoData = {
                 id: id,
                 status: Status.READY,
                 assetId: asset_id,
                 playbackId: playback_id,
-              });
+              }
+
+              setVideo(videoData);
+
+              setOpenVideo(v => {
+                if (!v) return v;
+                if (v.id !== id) return v;
+
+                return {
+                  id,
+                  status: Status.READY,
+                  assetId: asset_id,
+                  playbackId: playback_id,
+                  rotation: v.rotation
+                };
+              })
             }
           }
           setMessage({
@@ -146,7 +165,7 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [setMessage, setVideo]);
+  }, [setMessage, setVideo, setOpenVideo]);
 
   const submitUpload = useCallback(
     async (file: File) => {
@@ -209,6 +228,11 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
             id,
             status: Status.UPLOADED,
           });
+          setOpenVideo({
+            id,
+            status: Status.UPLOADED,
+            rotation: getVideoRotation()
+          })
         });
       } catch (error) {
         console.error("Failed to get upload URL");
@@ -216,13 +240,15 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
         return;
       }
     },
-    [setMessage, setVideo]
+    [setMessage, setVideo, setOpenVideo]
   );
 
   const value: VideoContextValue = {
     videos,
     setVideo,
     submitUpload,
+    openVideo,
+    setOpenVideo
   };
 
   return (
@@ -271,11 +297,13 @@ export const getStaticVideoProps: GetStaticProps<
       props: {
         initialVideos: entryVideos,
       },
+      revalidate: process.env.VERCEL_ENV !== 'production' && 30
     };
   }
   return {
     props: {
       initialVideos: [],
     },
+    revalidate: process.env.VERCEL_ENV !== 'production' && 30
   };
 };
