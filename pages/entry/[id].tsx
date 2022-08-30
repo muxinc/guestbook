@@ -21,8 +21,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
   const shareData = React.useMemo(
     () => ({
       title: event.title,
-      text: event.shareText,
-      url: href,
+      text: `${event.shareText} ${href}`,
     }),
     [href]
   );
@@ -79,8 +78,8 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
         <a
           className="underline hover:no-underline"
           href={`https://twitter.com/share?text=${encodeURIComponent(
-            shareData.text
-          )}&url=${shareData.url}`}
+            event.shareText
+          )}&url=${href}`}
           target="_blank"
           rel="noopener noreferrer"
         >
