@@ -13,8 +13,6 @@ export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
-  const { firstName, lastName, email } = req.body;
-
   const { Video } = new Mux(
     process.env.MUX_ACCESS_TOKEN,
     process.env.MUX_SECRET_TOKEN
@@ -24,9 +22,6 @@ export default async function handler(
     .from("entries")
     .insert([
       {
-        first_name: firstName || null,
-        last_name: lastName || null,
-        email: email || null,
         event_id: 2,
       },
     ])
