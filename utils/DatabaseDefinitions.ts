@@ -55,26 +55,6 @@ export interface Database {
           entry_id?: number | null;
         };
       };
-      assets: {
-        Row: {
-          id: number;
-          entry_id: number | null;
-          asset_id: string | null;
-          created_at: string | null;
-        };
-        Insert: {
-          id?: number;
-          entry_id?: number | null;
-          asset_id?: string | null;
-          created_at?: string | null;
-        };
-        Update: {
-          id?: number;
-          entry_id?: number | null;
-          asset_id?: string | null;
-          created_at?: string | null;
-        };
-      };
       entries: {
         Row: {
           id: number;
@@ -99,6 +79,29 @@ export interface Database {
           event_id?: number | null;
           status?: string | null;
           aspect_ratio?: string | null;
+        };
+      };
+      assets: {
+        Row: {
+          id: number;
+          entry_id: number | null;
+          asset_id: string | null;
+          created_at: string | null;
+          delete_key: string | null;
+        };
+        Insert: {
+          id?: number;
+          entry_id?: number | null;
+          asset_id?: string | null;
+          created_at?: string | null;
+          delete_key?: string | null;
+        };
+        Update: {
+          id?: number;
+          entry_id?: number | null;
+          asset_id?: string | null;
+          created_at?: string | null;
+          delete_key?: string | null;
         };
       };
       events: {
