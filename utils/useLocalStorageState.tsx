@@ -3,6 +3,8 @@ import { useState } from "react";
 
 export const booleanValidator = (value: unknown): value is boolean =>
   typeof value === "boolean";
+export const objectValidator = (value: unknown): value is object =>
+  typeof value === "object";
 
 type Config<T> = {
   initialValue: T;

@@ -2,6 +2,7 @@ import PreferenceProvider from "contexts/PreferenceContext";
 import ConsoleProvider from "contexts/ConsoleContext";
 
 import { MotionConfig } from "framer-motion";
+import DeleteKeyProvider from "./DeleteKeyContext";
 
 type Props = {
   children: React.ReactNode;
@@ -10,7 +11,9 @@ type Props = {
 const Store = ({ children }: Props) => (
   <ConsoleProvider>
     <PreferenceProvider>
-      <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      <DeleteKeyProvider>
+        <MotionConfig reducedMotion="user">{children}</MotionConfig>
+      </DeleteKeyProvider>
     </PreferenceProvider>
   </ConsoleProvider>
 );

@@ -4,18 +4,23 @@ import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 
 import MuxVideo from "@mux-elements/mux-video-react";
 import event from "constants/event";
+import { useDeleteKeyContext } from "contexts/DeleteKeyContext";
 import Navbar from "components/Navbar";
 import SEO from "components/SEO";
 
 import useHref from "utils/useHref";
 import OptInForm from "components/OptInForm";
+import { useRouter } from "next/router";
 
 type Props = {
+  id: string;
   playback_id: string;
   aspect_ratio: string | null;
 };
 
-const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
+const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
+  const router = useRouter();
+  const { deleteKeys } = useDeleteKeyContext();
   const href = useHref();
 
   const shareData = React.useMemo(
@@ -46,6 +51,21 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
     }
   }, [canShare, shareData]);
 
+  const deleteAsset = React.useCallback(
+    (deleteKey: string) => {
+      fetch("/api/delete", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ delete_key: deleteKey }),
+      }).then(() => {
+        router.push("/delete/success");
+      });
+    },
+    [router]
+  );
+
   const [aspectWidth, aspectHeight] = aspect_ratio
     ? aspect_ratio.split(":")
     : [16, 9];
@@ -56,7 +76,10 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
         image={`https://image.mux.com/${playback_id}/animated.gif`}
         video={`https://stream.mux.com/${playback_id}/low.mp4`}
       />
-      <Navbar subheading={`Thanks for signing the guestbook!`} withSettings={false} />
+      <Navbar
+        subheading={`Thanks for signing the guestbook!`}
+        withSettings={false}
+      />
       <div className="relative py-4 sm:py-0 px-4 sm:px-8">
         <MuxVideo
           className="w-full max-w-screen-xl mx-auto max-h-[70vh]"
@@ -74,7 +97,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
           playsInline
         />
       </div>
-      <div className="flex justify-center space-x-4 py-8 px-4 sm:px-8">
+      <div className="flex flex-wrap justify-center space-x-4 py-8 px-4 sm:px-8">
         <a
           className="underline hover:no-underline"
           href={`https://twitter.com/share?text=${encodeURIComponent(
@@ -95,6 +118,14 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
         {canShare && (
           <button className="underline hover:no-underline" onClick={shareIt}>
             Share
+          </button>
+        )}
+        {Object.keys(deleteKeys).includes(id) && (
+          <button
+            className="underline hover:no-underline"
+            onClick={() => deleteAsset(deleteKeys[id])}
+          >
+            Delete
           </button>
         )}
       </div>
@@ -135,10 +166,11 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
   return {
     props: {
+      id: params.id,
       playback_id,
       aspect_ratio,
     },
-    revalidate: process.env.VERCEL_ENV !== 'production' && 30
+    revalidate: process.env.VERCEL_ENV !== "production" && 30,
   };
 };
 
