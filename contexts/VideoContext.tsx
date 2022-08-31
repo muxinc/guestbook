@@ -31,7 +31,6 @@ export interface Video {
   status: Status;
   // TODO: conditional fields based on type
   uploadStatus?: number;
-  assetId?: string | null;
   playbackId?: string | null;
   // despite being a UI concern, the amount that a video card is rotated lives here in data
   // so that both he server and the client would rotate the video the same way.
@@ -64,7 +63,6 @@ enum SupabaseStatus {
 export type SupabaseEntry = {
   id: number;
   event_id: number;
-  asset_id: string;
   created_at: string;
   playback_id: string;
   status: SupabaseStatus;
@@ -103,10 +101,13 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
     });
   }, []);
 
-  const removeVideo = useCallback((id: number) => {
-    const updated = videos.filter(v => v.id !== id);
-    setVideos(updated);
-  }, [videos])
+  const removeVideo = useCallback(
+    (id: number) => {
+      const updated = videos.filter((v) => v.id !== id);
+      setVideos(updated);
+    },
+    [videos]
+  );
 
   // And let's listen to updates from the db, too
   useEffect(() => {
@@ -121,14 +122,14 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
         },
         ({
           old,
-          new: { status, id, asset_id, playback_id },
+          new: { status, id, playback_id },
           eventType,
         }: {
-          old: { id: number; };
+          old: { id: number };
           new: Database["public"]["Tables"]["entries"]["Row"];
           eventType: string;
         }) => {
-          if (eventType === 'DELETE') {
+          if (eventType === "DELETE") {
             removeVideo(old.id);
             return;
           }
@@ -145,29 +146,27 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
               const videoData = {
                 id: id,
                 status: Status.READY,
-                assetId: asset_id,
                 playbackId: playback_id,
-              }
+              };
 
               setVideo(videoData);
 
-              setOpenVideo(v => {
+              setOpenVideo((v) => {
                 if (!v) return v;
                 if (v.id !== id) return v;
 
                 return {
                   id,
                   status: Status.READY,
-                  assetId: asset_id,
                   playbackId: playback_id,
-                  rotation: v.rotation
+                  rotation: v.rotation,
                 };
-              })
+              });
             }
           }
           setMessage({
             content: `(${eventType})`,
-            data: { id, status, asset_id, playback_id },
+            data: { id, status, playback_id },
             type: MessageType.SUPABASE,
           });
         }
@@ -243,8 +242,8 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
           setOpenVideo({
             id,
             status: Status.UPLOADED,
-            rotation: getVideoRotation()
-          })
+            rotation: getVideoRotation(),
+          });
         });
       } catch (error) {
         console.error("Failed to get upload URL");
@@ -260,7 +259,7 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
     setVideo,
     submitUpload,
     openVideo,
-    setOpenVideo
+    setOpenVideo,
   };
 
   return (
@@ -300,7 +299,6 @@ export const getStaticVideoProps: GetStaticProps<
         )
           ? supabaseToVideoStatus[entry.status as SupabaseStatus]
           : Status.UNKNOWN,
-        assetId: entry.asset_id,
         playbackId: entry.playback_id,
         rotation: getVideoRotation(),
       }))
@@ -309,13 +307,13 @@ export const getStaticVideoProps: GetStaticProps<
       props: {
         initialVideos: entryVideos,
       },
-      revalidate: process.env.VERCEL_ENV !== 'production' && 30
+      revalidate: process.env.VERCEL_ENV !== "production" && 30,
     };
   }
   return {
     props: {
       initialVideos: [],
     },
-    revalidate: process.env.VERCEL_ENV !== 'production' && 30
+    revalidate: process.env.VERCEL_ENV !== "production" && 30,
   };
 };

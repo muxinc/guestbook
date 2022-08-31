@@ -35,44 +35,6 @@ export interface Database {
           created_at?: string | null;
         };
       };
-      entries: {
-        Row: {
-          id: number;
-          first_name: string | null;
-          last_name: string | null;
-          email: string | null;
-          asset_id: string | null;
-          created_at: string | null;
-          playback_id: string | null;
-          event_id: number | null;
-          status: string | null;
-          aspect_ratio: string | null;
-        };
-        Insert: {
-          id?: number;
-          first_name?: string | null;
-          last_name?: string | null;
-          email?: string | null;
-          asset_id?: string | null;
-          created_at?: string | null;
-          playback_id?: string | null;
-          event_id?: number | null;
-          status?: string | null;
-          aspect_ratio?: string | null;
-        };
-        Update: {
-          id?: number;
-          first_name?: string | null;
-          last_name?: string | null;
-          email?: string | null;
-          asset_id?: string | null;
-          created_at?: string | null;
-          playback_id?: string | null;
-          event_id?: number | null;
-          status?: string | null;
-          aspect_ratio?: string | null;
-        };
-      };
       activity: {
         Row: {
           id: number;
@@ -91,6 +53,52 @@ export interface Database {
           created_at?: string | null;
           payload?: string | null;
           entry_id?: number | null;
+        };
+      };
+      assets: {
+        Row: {
+          id: number;
+          entry_id: number | null;
+          asset_id: string | null;
+          created_at: string | null;
+        };
+        Insert: {
+          id?: number;
+          entry_id?: number | null;
+          asset_id?: string | null;
+          created_at?: string | null;
+        };
+        Update: {
+          id?: number;
+          entry_id?: number | null;
+          asset_id?: string | null;
+          created_at?: string | null;
+        };
+      };
+      entries: {
+        Row: {
+          id: number;
+          created_at: string | null;
+          playback_id: string | null;
+          event_id: number | null;
+          status: string | null;
+          aspect_ratio: string | null;
+        };
+        Insert: {
+          id?: number;
+          created_at?: string | null;
+          playback_id?: string | null;
+          event_id?: number | null;
+          status?: string | null;
+          aspect_ratio?: string | null;
+        };
+        Update: {
+          id?: number;
+          created_at?: string | null;
+          playback_id?: string | null;
+          event_id?: number | null;
+          status?: string | null;
+          aspect_ratio?: string | null;
         };
       };
       events: {

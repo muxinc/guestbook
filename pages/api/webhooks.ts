@@ -12,7 +12,6 @@ type Metadata = {
 
 type Payload = {
   id: number;
-  asset_id: string;
   playback_id: string;
   status: string;
   aspect_ratio?: string;
@@ -25,9 +24,6 @@ export default async function handler(
   res: NextApiResponse<Data>
 ) {
   const { type, data } = req.body;
-
-  console.log(type);
-  console.log(data);
 
   if (!EVENTS.includes(type)) {
     res.status(200).json({ status: "ignored." });
@@ -46,7 +42,6 @@ export default async function handler(
 
   let payload: Payload = {
     id: metadata.entry_id,
-    asset_id,
     playback_id: playback_ids[0].id,
     status,
   };
@@ -55,9 +50,20 @@ export default async function handler(
     payload.aspect_ratio = aspect_ratio;
   }
 
+  const { data: entry } = await supabaseAdmin.from("entries").select("*").eq('id', metadata.entry_id);
+
+  if (entry && entry[0].status === "ready") {
+    return;
+  }
+
   const { data: result, error } = await supabaseAdmin
     .from("entries")
     .upsert([payload]);
+
+  // Store asset
+  if (type === "video.asset.created") {
+    await supabaseAdmin.from("assets").insert([{ entry_id: metadata.entry_id, asset_id }])
+  }
 
   // Store payload
   await supabaseAdmin
