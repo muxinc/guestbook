@@ -23,7 +23,7 @@ export default async function handler(
     .from("entries")
     .insert([
       {
-        event_id: 2,
+        event_id: 2468,
       },
     ])
     .select();
