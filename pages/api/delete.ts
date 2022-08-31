@@ -12,14 +12,27 @@ export default async function handler(
 ) {
   const { delete_key } = req.body;
 
-  const { data, error } = await supabaseAdmin
+  const { data: assets, error } = await supabaseAdmin
     .from('assets')
-    .delete()
+    .select("*")
     .eq('delete_key', delete_key)
 
-  if (error) {
-    res.status(500).end("could not delete record");
+  if (error || !assets) {
+    res.status(404).end("could not find record");
   }
 
-  res.status(204).end("deleted.");
+  if (assets) {
+    const asset = assets[0];
+
+    const { data, error } = await supabaseAdmin
+      .from('entries')
+      .delete()
+      .eq('id', asset.entry_id)
+
+    if (error) {
+      res.status(500).end("could not delete record");
+    }
+
+    res.status(204).end("deleted.");
+  }
 }
