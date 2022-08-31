@@ -17,13 +17,16 @@ type Payload = {
   aspect_ratio?: string;
 };
 
-const EVENTS = ["video.asset.created", "video.asset.ready"];
+const EVENTS = ["video.asset.created", "video.asset.ready", "video.upload.asset_created"];
 
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) {
   const { type, data } = req.body;
+
+  console.log(data);
+  console.log(type);
 
   if (!EVENTS.includes(type)) {
     res.status(200).json({ status: "ignored." });
