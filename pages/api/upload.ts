@@ -9,18 +9,6 @@ type Data = {
   url: string;
 };
 
-type Entry = {
-  id: number;
-  first_name?: string;
-  last_name?: string;
-  email?: string;
-  asset_id?: string;
-  created_at: string;
-  playback_id?: string;
-  event_id: number;
-  status: "pending";
-};
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse<Data>
