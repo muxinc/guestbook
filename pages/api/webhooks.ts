@@ -31,7 +31,7 @@ export default async function handler(
       const { id, asset_id, new_asset_settings: { passthrough } } = data;
       const metadata: Metadata = passthrough ? JSON.parse(passthrough) : {};
       await supabaseAdmin.from("assets").insert([{ entry_id: metadata.entry_id, asset_id, delete_key: id }])
-      break;
+      return res.status(200).json({ status: "ok" });
     }
 
     case "video.asset.created":
