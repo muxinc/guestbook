@@ -133,10 +133,11 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
               />
             ) : (
               <Image
-                src={`https://image.mux.com/${video.playbackId}/animated.gif`}
+                src={`https://image.mux.com/${video.playbackId}/animated.gif?width=240`}
                 alt=""
                 layout="fill"
                 objectFit="cover"
+                sizes="240px"
                 onLoad={() => setIsLoaded(true)}
               />
             )}
