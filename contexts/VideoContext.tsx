@@ -184,7 +184,7 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [setMessage, setVideo, setOpenVideo]);
+  }, [setMessage, setVideo, setOpenVideo, removeVideo]);
 
   const submitUpload = useCallback(
     async (file: File) => {
