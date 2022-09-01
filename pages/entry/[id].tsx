@@ -9,6 +9,7 @@ import SEO from "components/SEO";
 
 import useHref from "utils/useHref";
 import OptInForm from "components/OptInForm";
+import DownloadBlobButton from "components/DownloadBlobButton";
 
 type Props = {
   playback_id: string;
@@ -56,7 +57,10 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
         image={`https://image.mux.com/${playback_id}/animated.gif`}
         video={`https://stream.mux.com/${playback_id}/low.mp4`}
       />
-      <Navbar subheading={`Thanks for signing the guestbook!`} withSettings={false} />
+      <Navbar
+        subheading={`Thanks for signing the guestbook!`}
+        withSettings={false}
+      />
       <div className="relative py-4 sm:py-0 px-4 sm:px-8">
         <MuxVideo
           className="w-full max-w-screen-xl mx-auto max-h-[70vh]"
@@ -85,13 +89,11 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
         >
           Tweet
         </a>
-        <a
-          className="underline hover:no-underline"
+        <DownloadBlobButton
+          className="underline hover:no-underline disabled:text-gray-700 disabled:no-underline"
           href={`https://stream.mux.com/${playback_id}/low.mp4`}
-          download="cascadiajs.mp4"
-        >
-          Download
-        </a>
+          filename="cascadiajs.mp4"
+        />
         {canShare && (
           <button className="underline hover:no-underline" onClick={shareIt}>
             Share
@@ -138,7 +140,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       playback_id,
       aspect_ratio,
     },
-    revalidate: process.env.VERCEL_ENV !== 'production' && 30
+    revalidate: process.env.VERCEL_ENV !== "production" && 30,
   };
 };
 
