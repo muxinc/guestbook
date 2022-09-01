@@ -122,7 +122,7 @@ const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
         )}
         {Object.keys(deleteKeys).includes(id) && (
           <button
-            className="underline hover:no-underline"
+            className="underline hover:no-underline text-red-700"
             onClick={() => deleteAsset(deleteKeys[id])}
           >
             Delete
