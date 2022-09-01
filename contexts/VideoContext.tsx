@@ -287,7 +287,7 @@ export const getStaticVideoProps: GetStaticProps<
   let { data: entries, error } = await supabase
     .from("entries")
     .select("*")
-    .eq("event_id", 2468)
+    .eq("event_id", 2)
     .order("created_at", { ascending: false });
 
   if (error) {
