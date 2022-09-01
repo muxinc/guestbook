@@ -319,13 +319,13 @@ export const getStaticVideoProps: GetStaticProps<
       props: {
         initialVideos: entryVideos,
       },
-      revalidate: process.env.VERCEL_ENV !== "production" && 30,
+      revalidate: process.env.VERCEL_URL !== "guestbook.mux.dev" && 30,
     };
   }
   return {
     props: {
       initialVideos: [],
     },
-    revalidate: process.env.VERCEL_ENV !== "production" && 30,
+    revalidate: process.env.VERCEL_URL !== "guestbook.mux.dev" && 30,
   };
 };

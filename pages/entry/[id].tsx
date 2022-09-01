@@ -178,7 +178,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
       playback_id,
       aspect_ratio,
     },
-    revalidate: process.env.VERCEL_ENV !== "production" && 30,
+    revalidate: process.env.VERCEL_URL !== "guestbook.mux.dev" && 30,
   };
 };
 
