@@ -15,6 +15,7 @@ import { GetStaticProps } from "next";
 
 export const getVideoRotation = () => -4 + Math.random() * 8;
 import { Database } from "utils/DatabaseDefinitions";
+import { eventId } from "constants/event";
 import { useDeleteKeyContext } from "./DeleteKeyContext";
 
 export enum Status {
@@ -124,7 +125,7 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
         },
         ({
           old,
-          new: { status, id, playback_id },
+          new: { status, id, playback_id, event_id },
           eventType,
         }: {
           old: { id: number };
@@ -133,6 +134,13 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
         }) => {
           if (eventType === "DELETE") {
             removeVideo(old.id);
+            return;
+          }
+
+          if (event_id !== eventId) {
+            // ignore uploads from other events
+            // todo: can we do this in a filter up in the .on() function?
+            // https://supabase.com/docs/reference/javascript/subscribe#listening-to-row-level-changes
             return;
           }
 
@@ -178,7 +186,7 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
     return () => {
       supabase.removeChannel(channel);
     };
-  }, [setMessage, setVideo, setOpenVideo]);
+  }, [setMessage, setVideo, setOpenVideo, removeVideo]);
 
   const submitUpload = useCallback(
     async (file: File) => {
@@ -287,7 +295,7 @@ export const getStaticVideoProps: GetStaticProps<
   let { data: entries, error } = await supabase
     .from("entries")
     .select("*")
-    .eq("event_id", 2)
+    .eq("event_id", eventId)
     .order("created_at", { ascending: false });
 
   if (error) {

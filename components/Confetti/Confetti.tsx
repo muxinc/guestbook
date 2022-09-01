@@ -14,16 +14,15 @@ const Confetti = () => {
   React.useEffect(() => {
     // Hey look the app loaded!
     setClient(true);
-
-    // To prevent the confetti from firing on load,
-    // we block it for the first five seconds of the app.
-    const interval = setTimeout(() => {
-      shouldShow(true)
-    }, 5000)
-    return () => {
-      clearInterval(interval)
-    }
   }, []);
+
+  React.useEffect(() => {
+    // To prevent the confetti from firing on load,
+    // we block it from rendering until we're recording
+    if (recordingStatus === RecordingStatus.RECORDING) {
+      shouldShow(true)
+    }
+  }, [recordingStatus])
 
   React.useEffect(() => {
     if (recordingStatus !== RecordingStatus.STOPPING) return;

@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { eventId } from "constants/event";
 import type { NextApiRequest, NextApiResponse } from "next";
 import supabaseAdmin from "utils/supabaseAdmin";
 
@@ -23,12 +24,13 @@ export default async function handler(
         first_name: firstName || null,
         last_name: lastName || null,
         email: email || null,
-        event_id: 2,
+        event_id: eventId,
       },
     ])
     .select();
 
   if (error) {
+    console.error({ error });
     return res.status(500).end("Could not create record");
   }
   return res.status(201).json({

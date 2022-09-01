@@ -163,10 +163,10 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
               <VisuallyHidden>Go to Video</VisuallyHidden>
               <div className="flex flex-col justify-center">
                 <h2 className="font-bold text-xl sm:text-3xl mb-1 text-gray-700">
-                  Scan or Click
+                  Take your video with you!
                 </h2>
                 <p className="sm:text-xl text-gray-600">
-                  Take your video with you!
+                  Scan or Click
                 </p>
               </div>
             </div>

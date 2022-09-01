@@ -3,13 +3,14 @@ import { supabase } from "utils/supabaseClient";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 
 import MuxVideo from "@mux-elements/mux-video-react";
-import event from "constants/event";
+import event, { eventId } from "constants/event";
 import { useDeleteKeyContext } from "contexts/DeleteKeyContext";
 import Navbar from "components/Navbar";
 import SEO from "components/SEO";
 
 import useHref from "utils/useHref";
 import OptInForm from "components/OptInForm";
+import DownloadBlobButton from "components/DownloadBlobButton";
 import { useRouter } from "next/router";
 
 type Props = {
@@ -108,13 +109,11 @@ const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
         >
           Tweet
         </a>
-        <a
-          className="underline hover:no-underline"
+        <DownloadBlobButton
+          className="underline hover:no-underline disabled:text-gray-700 disabled:no-underline"
           href={`https://stream.mux.com/${playback_id}/low.mp4`}
-          download="cascadiajs.mp4"
-        >
-          Download
-        </a>
+          filename={`CascadiaJS-[${id}].mp4`}
+        />
         {canShare && (
           <button className="underline hover:no-underline" onClick={shareIt}>
             Share
@@ -136,6 +135,7 @@ const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   if (!params?.id || typeof params.id !== "string") {
+    console.warn("params do not contain an id of type string", params);
     return {
       notFound: true,
     };
@@ -156,9 +156,17 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
     throw new Error(error?.message);
   }
 
-  const { playback_id, aspect_ratio } = data[0];
+  const { playback_id, aspect_ratio, event_id } = data[0];
+
+  if (event_id !== eventId) {
+    console.warn("Entry is not for this event");
+    return {
+      notFound: true,
+    };
+  }
 
   if (!playback_id) {
+    console.warn("Entry has no playback id");
     return {
       notFound: true,
     };
