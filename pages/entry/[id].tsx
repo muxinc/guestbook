@@ -3,7 +3,7 @@ import { supabase } from "utils/supabaseClient";
 import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 
 import MuxVideo from "@mux-elements/mux-video-react";
-import event from "constants/event";
+import event, { eventId } from "constants/event";
 import Navbar from "components/Navbar";
 import SEO from "components/SEO";
 
@@ -108,6 +108,7 @@ const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
   if (!params?.id || typeof params.id !== "string") {
+    console.warn("params do not contain an id of type string", params);
     return {
       notFound: true,
     };
@@ -128,9 +129,17 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
     throw new Error(error?.message);
   }
 
-  const { playback_id, aspect_ratio } = data[0];
+  const { playback_id, aspect_ratio, event_id } = data[0];
+
+  if (event_id !== eventId) {
+    console.warn("Entry is not for this event");
+    return {
+      notFound: true,
+    };
+  }
 
   if (!playback_id) {
+    console.warn("Entry has no playback id");
     return {
       notFound: true,
     };
