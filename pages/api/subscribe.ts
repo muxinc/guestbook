@@ -30,6 +30,7 @@ export default async function handler(
     .select();
 
   if (error) {
+    console.error({ error });
     return res.status(500).end("Could not create record");
   }
   return res.status(201).json({

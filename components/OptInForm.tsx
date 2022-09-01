@@ -11,6 +11,7 @@ type Props = {
   className?: string;
 };
 const OptInForm = ({ className = "" }: Props) => {
+  const [isOptInChecked, setIsOptInChecked] = useState(false);
   const [formState, setFormState] = useState<FormState>(
     () => FormState.INITIALIZING
   );
@@ -54,7 +55,9 @@ const OptInForm = ({ className = "" }: Props) => {
   return (
     <section className={className}>
       <h2 className="text-base sm:text-lg mb-6 font-bold">
-        Build live and on-demand video into your app. Get a $50 credit, on us.
+        Build live and on-demand video into your app.
+        <br />
+        Get a $100 credit, on us.
       </h2>
       {formState === FormState.SUCCESS ? (
         <p>Success! We can&apos;t wait to see what you make with Mux!</p>
@@ -102,22 +105,24 @@ const OptInForm = ({ className = "" }: Props) => {
                 placeholder="biscuits@mux.com"
               />
             </div>
-            <div className="sm:col-span-2 flex items-center">
-              <input
-                className="mr-4"
-                id="opt-in"
-                name="consent"
-                type="checkbox"
-                required
-              />
-              <label htmlFor="opt-in">
-                Yes, I do want you to send me emails related to products and
-                events
-              </label>
-            </div>
+          </div>
+          <div className="sm:col-span-2 flex items-center mb-6">
+            <input
+              className="mr-4"
+              id="opt-in"
+              name="consent"
+              type="checkbox"
+              checked={isOptInChecked}
+              onChange={(e) => setIsOptInChecked(e.target.checked)}
+              required
+            />
+            <label htmlFor="opt-in">
+              Yes, it&apos;s cool if Mux follows up with me by email with that
+              $100 credit
+            </label>
           </div>
           <button
-            disabled={formState !== FormState.IDLE}
+            disabled={formState !== FormState.IDLE || !isOptInChecked}
             className="px-8 py-2 rounded text-white bg-pink-500 hover:bg-pink-400 disabled:bg-pink-200 transition"
             type="submit"
           >
