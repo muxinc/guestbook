@@ -1,4 +1,5 @@
 // Next.js API route support: https://nextjs.org/docs/api-routes/introduction
+import { eventId } from "constants/event";
 import type { NextApiRequest, NextApiResponse } from "next";
 import supabaseAdmin from "utils/supabaseAdmin";
 
@@ -22,7 +23,7 @@ export default async function handler(
     .from("entries")
     .insert([
       {
-        event_id: 2,
+        event_id: eventId,
       },
     ])
     .select();

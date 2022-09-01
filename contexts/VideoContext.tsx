@@ -15,6 +15,7 @@ import { GetStaticProps } from "next";
 
 export const getVideoRotation = () => -4 + Math.random() * 8;
 import { Database } from "utils/DatabaseDefinitions";
+import { eventId } from "constants/event";
 
 export enum Status {
   INITIALIZING = "INITIALIZING", // about to upload
@@ -283,7 +284,7 @@ export const getStaticVideoProps: GetStaticProps<
   let { data: entries, error } = await supabase
     .from("entries")
     .select("*")
-    .eq("event_id", 2)
+    .eq("event_id", eventId)
     .order("created_at", { ascending: false });
 
   if (error) {
