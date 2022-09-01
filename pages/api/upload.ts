@@ -8,6 +8,7 @@ const Mux = require("@mux/mux-node").default;
 type Data = {
   id: number | null;
   url: string;
+  delete_key: string;
 };
 
 export default async function handler(
@@ -60,5 +61,6 @@ export default async function handler(
   res.status(201).json({
     id: data ? data[0].id : null,
     url: upload.url,
+    delete_key: upload.id
   });
 }

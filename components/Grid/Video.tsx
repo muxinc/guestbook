@@ -60,6 +60,11 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
         default: { duration: 0.1 },
       }}
     >
+      {/* 
+          at the top of the video card, of course is the video.
+          in fullscreen, this video is actually a video
+          in grid, this video is just a gif
+      */}
       <div
         className="relative bg-gray-400 h-full overflow-hidden"
         style={{ gridArea: "photo" }}
@@ -145,6 +150,11 @@ const Video = ({ video, label, fullscreen = false, className = "" }: Props) => {
         )}
       </div>
 
+      {/* 
+        the footer of the video can have one of two things:
+        in fullscreen, a QR code.
+        in the grid, ust the video status
+      */}
       {fullscreen ? (
         <Link href={link}>
           <a>

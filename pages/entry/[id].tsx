@@ -4,12 +4,14 @@ import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
 
 import MuxVideo from "@mux-elements/mux-video-react";
 import event, { eventId } from "constants/event";
+import { useDeleteKeyContext } from "contexts/DeleteKeyContext";
 import Navbar from "components/Navbar";
 import SEO from "components/SEO";
 
 import useHref from "utils/useHref";
 import OptInForm from "components/OptInForm";
 import DownloadBlobButton from "components/DownloadBlobButton";
+import { useRouter } from "next/router";
 
 type Props = {
   id: string;
@@ -18,6 +20,8 @@ type Props = {
 };
 
 const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
+  const router = useRouter();
+  const { deleteKeys } = useDeleteKeyContext();
   const href = useHref();
 
   const shareData = React.useMemo(
@@ -47,6 +51,21 @@ const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
         .catch((error) => console.log("Error sharing", error));
     }
   }, [canShare, shareData]);
+
+  const deleteAsset = React.useCallback(
+    (deleteKey: string) => {
+      fetch("/api/delete", {
+        method: "post",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ delete_key: deleteKey }),
+      }).then(() => {
+        router.push("/delete/success");
+      });
+    },
+    [router]
+  );
 
   const [aspectWidth, aspectHeight] = aspect_ratio
     ? aspect_ratio.split(":")
@@ -79,7 +98,7 @@ const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
           playsInline
         />
       </div>
-      <div className="flex justify-center space-x-4 py-8 px-4 sm:px-8">
+      <div className="flex flex-wrap justify-center space-x-4 py-8 px-4 sm:px-8">
         <a
           className="underline hover:no-underline"
           href={`https://twitter.com/share?text=${encodeURIComponent(
@@ -98,6 +117,14 @@ const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
         {canShare && (
           <button className="underline hover:no-underline" onClick={shareIt}>
             Share
+          </button>
+        )}
+        {Object.keys(deleteKeys).includes(id) && (
+          <button
+            className="underline hover:no-underline text-red-700"
+            onClick={() => deleteAsset(deleteKeys[id])}
+          >
+            Delete
           </button>
         )}
       </div>

@@ -16,6 +16,7 @@ import { GetStaticProps } from "next";
 export const getVideoRotation = () => -4 + Math.random() * 8;
 import { Database } from "utils/DatabaseDefinitions";
 import { eventId } from "constants/event";
+import { useDeleteKeyContext } from "./DeleteKeyContext";
 
 export enum Status {
   INITIALIZING = "INITIALIZING", // about to upload
@@ -80,6 +81,7 @@ const supabaseToVideoStatus: Record<SupabaseStatus, Status> = {
 
 const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
   const { setMessage } = useConsoleContext();
+  const { setDeleteKey } = useDeleteKeyContext();
   const [openVideo, setOpenVideo] = useState<Video | null>(null);
 
   const [videos, setVideos] = useState<Video[]>(initialVideos);
@@ -196,7 +198,7 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
         });
 
         const response = await fetch("/api/upload", { method: "POST" });
-        const { id, url } = await response.json();
+        const { id, url, delete_key } = await response.json();
 
         setMessage({
           content: `Received authenticated url from Mux: ${url}.`,
@@ -207,6 +209,8 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
           id,
           status: Status.INITIALIZING,
         });
+
+        setDeleteKey(id, delete_key);
 
         setMessage({
           content: `Uploading with chunk size ${formatBytes(30720)}.`,
