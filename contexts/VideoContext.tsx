@@ -123,7 +123,7 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
         },
         ({
           old,
-          new: { status, id, playback_id },
+          new: { status, id, playback_id, event_id },
           eventType,
         }: {
           old: { id: number };
@@ -132,6 +132,13 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
         }) => {
           if (eventType === "DELETE") {
             removeVideo(old.id);
+            return;
+          }
+
+          if (event_id !== eventId) {
+            // ignore uploads from other events
+            // todo: can we do this in a filter up in the .on() function?
+            // https://supabase.com/docs/reference/javascript/subscribe#listening-to-row-level-changes
             return;
           }
 
