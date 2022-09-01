@@ -12,11 +12,12 @@ import OptInForm from "components/OptInForm";
 import DownloadBlobButton from "components/DownloadBlobButton";
 
 type Props = {
+  id: string;
   playback_id: string;
   aspect_ratio: string | null;
 };
 
-const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
+const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
   const href = useHref();
 
   const shareData = React.useMemo(
@@ -92,7 +93,7 @@ const Entry: NextPage<Props> = ({ playback_id, aspect_ratio }) => {
         <DownloadBlobButton
           className="underline hover:no-underline disabled:text-gray-700 disabled:no-underline"
           href={`https://stream.mux.com/${playback_id}/low.mp4`}
-          filename="cascadiajs.mp4"
+          filename={`CascadiaJS-[${id}].mp4`}
         />
         {canShare && (
           <button className="underline hover:no-underline" onClick={shareIt}>
@@ -137,6 +138,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
   return {
     props: {
+      id: params.id,
       playback_id,
       aspect_ratio,
     },
