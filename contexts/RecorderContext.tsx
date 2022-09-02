@@ -23,7 +23,7 @@ export enum RecordingStatus {
 };
 
 export const COUNTDOWN_DURATION = 3;
-export const RECORDING_DURATION = 4;
+export const RECORDING_DURATION = 3;
 
 type RecorderContextValue = {
   recordingStatus: RecordingStatus;
