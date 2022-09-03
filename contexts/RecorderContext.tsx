@@ -3,7 +3,6 @@ import {
   useContext,
   useState,
   useEffect,
-  useCallback,
 } from "react";
 
 import useSound from "use-sound";
@@ -23,7 +22,7 @@ export enum RecordingStatus {
 };
 
 export const COUNTDOWN_DURATION = 3;
-export const RECORDING_DURATION = 3;
+export const RECORDING_DURATION = 3.5;
 
 type RecorderContextValue = {
   recordingStatus: RecordingStatus;
