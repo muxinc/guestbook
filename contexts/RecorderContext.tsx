@@ -3,7 +3,6 @@ import {
   useContext,
   useState,
   useEffect,
-  useCallback,
 } from "react";
 
 import useSound from "use-sound";
@@ -23,12 +22,11 @@ export enum RecordingStatus {
 };
 
 export const COUNTDOWN_DURATION = 3;
-export const RECORDING_DURATION = 3;
+export const RECORDING_DURATION = 3.5;
 
 type RecorderContextValue = {
   recordingStatus: RecordingStatus;
   setRecordingStatus: (status: RecordingStatus) => void;
-  recordingSecondsRemaining: number;
   countdownSecondsRemaining: number;
   countdownStatus: CountdownStatus;
   setCountdownStatus: (status: CountdownStatus) => void;
@@ -67,8 +65,6 @@ const RecorderProvider = ({ children }: ProviderProps) => {
   const [countdownSecondsRemaining, setCountdownSecondsRemaining] =
     useState<number>(COUNTDOWN_DURATION);
 
-  const [recordingSecondsRemaining, setRecordingSecondsRemaining] = useState<number>(RECORDING_DURATION);
-
   // Update the console with a message any time the recording status changes.
   useEffect(() => {
     setMessage({
@@ -85,9 +81,7 @@ const RecorderProvider = ({ children }: ProviderProps) => {
       setCountdownSecondsRemaining(nextSecond);
       if (nextSecond === 0) {
         // Transition from countdown to recording
-        setRecordingSecondsRemaining(RECORDING_DURATION);
         setRecordingStatus(RecordingStatus.RECORDING);
-
         setCountdownStatus(CountdownStatus.READY);
       }
     }, 1000);
@@ -95,29 +89,25 @@ const RecorderProvider = ({ children }: ProviderProps) => {
     return () => {
       clearTimeout(interval);
     };
-  }, [countdownStatus, countdownSecondsRemaining, setCountdownSecondsRemaining, setRecordingSecondsRemaining]);
+  }, [countdownStatus, countdownSecondsRemaining, setCountdownSecondsRemaining]);
 
   // Manage the recording timer
   useEffect(() => {
     if (recordingStatus !== RecordingStatus.RECORDING) return;
-    const nextSecond = recordingSecondsRemaining - 1;
     const interval = setTimeout(() => {
-      setRecordingSecondsRemaining(nextSecond);
-      if (nextSecond === 0) {
-        // Transition from recording to finished
-        setRecordingStatus(RecordingStatus.STOPPING);
+      // Transition from recording to finished
+      setRecordingStatus(RecordingStatus.STOPPING);
 
-        // Reset the pre-recording countdown state
-        setCountdownStatus(CountdownStatus.READY);
-        setCountdownSecondsRemaining(COUNTDOWN_DURATION);
-        playDing();
-      }
-    }, 1000);
+      // Reset the pre-recording countdown state
+      setCountdownStatus(CountdownStatus.READY);
+      setCountdownSecondsRemaining(COUNTDOWN_DURATION);
+      playDing();
+    }, RECORDING_DURATION * 1000);
 
     return () => {
       clearTimeout(interval);
     };
-  }, [recordingStatus, recordingSecondsRemaining, setCountdownSecondsRemaining, setRecordingSecondsRemaining, playDing]);
+  }, [recordingStatus, setCountdownSecondsRemaining, playDing]);
 
   // After the countdown number has changed, we play a sound if appropriate
   useEffect(() => {
@@ -132,7 +122,6 @@ const RecorderProvider = ({ children }: ProviderProps) => {
     setRecordingStatus,
     countdownStatus,
     setCountdownStatus,
-    recordingSecondsRemaining,
     countdownSecondsRemaining,
     setCountdownSecondsRemaining
   };
