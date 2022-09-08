@@ -1,6 +1,6 @@
 import * as React from "react";
 import { supabase } from "utils/supabaseClient";
-import type { GetStaticPaths, GetStaticProps, NextPage } from "next";
+import type { GetStaticPaths, GetStaticPropsResult, GetStaticProps, NextPage } from "next";
 
 import MuxVideo from "@mux-elements/mux-video-react";
 import event, { eventId } from "constants/event";
@@ -134,11 +134,14 @@ const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
 };
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
+  const notFoundResp : GetStaticPropsResult<Props> = {
+    notFound: true,
+    revalidate: 5, 
+  }
+
   if (!params?.id || typeof params.id !== "string") {
     console.warn("params do not contain an id of type string", params);
-    return {
-      notFound: true,
-    };
+    return notFoundResp;
   }
 
   const { data, error } = await supabase
@@ -147,9 +150,7 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
     .eq("id", params.id);
 
   if (!Array.isArray(data) || data.length === 0) {
-    return {
-      notFound: true,
-    };
+    return notFoundResp;
   }
   if (error) {
     console.error(error);
@@ -160,16 +161,12 @@ export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
 
   if (event_id !== eventId) {
     console.warn("Entry is not for this event");
-    return {
-      notFound: true,
-    };
+    return notFoundResp;
   }
 
   if (!playback_id) {
     console.warn("Entry has no playback id");
-    return {
-      notFound: true,
-    };
+    return notFoundResp;
   }
 
   return {
