@@ -112,7 +112,7 @@ const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
         <DownloadBlobButton
           className="underline hover:no-underline disabled:text-gray-700 disabled:no-underline"
           href={`https://stream.mux.com/${playback_id}/low.mp4`}
-          filename={`CascadiaJS-[${id}].mp4`}
+          filename={`${event.utmCampaign}-[${id}].mp4`}
         />
         {canShare && (
           <button className="underline hover:no-underline" onClick={shareIt}>
@@ -134,9 +134,9 @@ const Entry: NextPage<Props> = ({ id, playback_id, aspect_ratio }) => {
 };
 
 export const getStaticProps: GetStaticProps<Props> = async ({ params }) => {
-  const notFoundResp : GetStaticPropsResult<Props> = {
+  const notFoundResp: GetStaticPropsResult<Props> = {
     notFound: true,
-    revalidate: 5, 
+    revalidate: 5,
   }
 
   if (!params?.id || typeof params.id !== "string") {
