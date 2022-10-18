@@ -1,5 +1,5 @@
-import { useState, useCallback, useEffect } from "react";
-import { AnimatePresence, motion, Variants } from "framer-motion";
+import { useCallback } from "react";
+import { motion, Variants } from "framer-motion";
 import {
   useRecorderContext,
   CountdownStatus,

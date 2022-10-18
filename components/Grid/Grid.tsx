@@ -1,8 +1,6 @@
-import { useState } from "react";
-
 import { motion } from "framer-motion";
 
-import { useVideoContext, Video } from "contexts/VideoContext";
+import { useVideoContext } from "contexts/VideoContext";
 import Dialog from "components/Dialog";
 
 import VideoCard from "./Video";

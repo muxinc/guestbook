@@ -8,8 +8,6 @@ import {
 import { supabase } from "utils/supabaseClient";
 import { Database } from "utils/DatabaseDefinitions";
 
-type SupabaseActivity = any;
-
 export enum MessageType {
   RECORDER = "MediaRecorder",
   NEXT = "Next.JS",

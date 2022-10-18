@@ -1,4 +1,3 @@
-import * as React from "react";
 import SelectDevice from "./SettingsDialog";
 import Mux from "./Mux";
 
