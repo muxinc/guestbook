@@ -14,10 +14,11 @@ export enum MessageType {
   UPCHUNK = "Mux UpChunk",
   SUPABASE = "Supabase",
   MUX = "Mux Video",
+  ERROR = "Error",
 }
 type Message = {
   content: string;
-  data?: any;
+  data?: unknown;
   type: MessageType;
 };
 type ConsoleContextValue = {
@@ -35,6 +36,7 @@ const consoleColors: Record<MessageType, string> = {
   [MessageType.NEXT]: "#00C5A7",
   [MessageType.SUPABASE]: "#1ca0fd",
   [MessageType.MUX]: "#fb3c4e",
+  [MessageType.ERROR]: "#ff0000",
 };
 
 interface ProviderProps {

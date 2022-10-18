@@ -28,7 +28,7 @@ type Props = {
 };
 
 const Recorder = ({ className = "" }: Props) => {
-  const { videoDeviceId, audioDeviceId } = useDeviceIdContext();
+  const { videoDeviceId, audioDeviceId, requestUserMedia } = useDeviceIdContext();
   const { submitUpload } = useVideoContext();
   const { setMessage } = useConsoleContext();
   const { recordingStatus, setRecordingStatus } = useRecorderContext();
@@ -172,6 +172,19 @@ const Recorder = ({ className = "" }: Props) => {
       <RecordingProgress />
       <div className={`relative bg-black ${className}`}>
         <PreRecordCountdown />
+
+        {recordingStatus === RecordingStatus.INITIALIZING && (
+          <div className="absolute inset-0 flex items-center justify-center">
+            <div className="flex flex-col items-center justify-center space-y-4">
+              <div className="text-2xl text-white text-center">Connect your camera to begin</div>
+              <button className="bg-white text-gray-700 rounded px-3 py-2 flex items-center gap-2" onClick={requestUserMedia}>
+                <svg className="w-6 h-6 stroke-gray-700" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 10l4.553-2.276A1 1 0 0121 8.618v6.764a1 1 0 01-1.447.894L15 14M5 18h8a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v8a2 2 0 002 2z" /></svg>
+                Enable camera access
+              </button>
+            </div>
+          </div>
+        )}
+
         <video
           className="w-full h-full scale-x-[-1] pointer-events-none"
           ref={videoRef}
