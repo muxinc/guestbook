@@ -1,4 +1,3 @@
-import * as React from "react";
 import {
   useRecorderContext,
   RecordingStatus,
@@ -7,7 +6,7 @@ import {
 import { motion } from "framer-motion";
 
 const RecordingProgress = () => {
-  const { recordingStatus, setRecordingStatus } = useRecorderContext();
+  const { recordingStatus } = useRecorderContext();
 
   if (recordingStatus !== RecordingStatus.RECORDING) return null;
 

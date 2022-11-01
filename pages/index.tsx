@@ -19,7 +19,7 @@ const Home: NextPage<HomePageProps> = ({ initialVideos }) => {
       <main className="h-[100vh] h-[100svh] flex flex-col">
         <Confetti />
         <Navbar subheading={`Leave a 3 second video in the Guestbook!`} />
-        <Recorder className="max-h-[50vh]" />
+        <Recorder />
         <Grid className="grow" />
       </main>
     </VideoStore>

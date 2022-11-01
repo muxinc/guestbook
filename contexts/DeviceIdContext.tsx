@@ -26,6 +26,7 @@ type DeviceIdContextValue = {
   setAudioDeviceId: (id: string) => void;
   videoDevices: VideoDeviceInfo[] | undefined;
   audioDevices: AudioDeviceInfo[] | undefined;
+  requestUserMedia: () => Promise<void>;
 };
 type DefaultValue = undefined;
 type ContextValue = DeviceIdContextValue | DefaultValue;
@@ -55,9 +56,8 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
     setAudioDeviceId(id);
   }, []);
 
-  /* And when we load the page we want to load our preferences from localStorage */
-  useEffect(() => {
-    const setState = async () => {
+  const requestUserMedia = useCallback(async () => {
+    try {
       /* First we get a list of devices */
       await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -132,9 +132,13 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
       } else {
         setAudioDeviceIdLocalStorage(audioDevices[0].deviceId);
       }
-    };
-    setState();
-  }, [setAudioDeviceIdLocalStorage, setMessage, setVideoDeviceIdLocalStorage]);
+    } catch (error) {
+      setMessage({
+        type: MessageType.ERROR,
+        content: "Error requesting user media",
+      });
+    }
+  }, [setMessage, setVideoDeviceIdLocalStorage, setAudioDeviceIdLocalStorage]);
 
   /* These two effects alert us when the active device changes */
   useEffect(() => {
@@ -169,6 +173,7 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
     setAudioDeviceId: setAudioDeviceIdLocalStorage,
     videoDevices,
     audioDevices,
+    requestUserMedia,
   };
   return (
     <DeviceIdContext.Provider value={value}>
