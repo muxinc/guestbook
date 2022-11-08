@@ -1,4 +1,4 @@
-import { useCallback } from "react";
+import { useEffect, useCallback } from "react";
 import { motion, Variants } from "framer-motion";
 import {
   useRecorderContext,
@@ -34,6 +34,20 @@ const RecordButton = () => {
   const isButtonDisabled =
     countdownStatus !== CountdownStatus.READY ||
     recordingStatus !== RecordingStatus.READY;
+
+  useEffect(() => {
+    const shortcut = (evt: KeyboardEvent) => {
+      if (evt.key === 'r') {
+        startCountdown();
+      }
+    };
+
+    document.addEventListener('keyup', shortcut);
+
+    return function () {
+      document.removeEventListener('keyup', shortcut)
+    }
+  }, [startCountdown]);
 
   return (
     <motion.button
