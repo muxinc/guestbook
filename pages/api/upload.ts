@@ -42,7 +42,7 @@ export default async function handler(
       passthrough: data ? JSON.stringify({ entry_id: data[0].id }) : null,
       inputs: [
         {
-          url: "https://guestbook.mux.dev/images/Jamstack_Logo_Original_White.png",
+          url: "https://guestbook.mux.dev/images/react-miami.png",
           overlay_settings: {
             vertical_align: "bottom",
             vertical_margin: "5%",
