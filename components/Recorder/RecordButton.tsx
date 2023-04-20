@@ -37,7 +37,7 @@ const RecordButton = () => {
 
   useEffect(() => {
     const shortcut = (evt: KeyboardEvent) => {
-      if (evt.key === 'r') {
+      if (['r', ' '].includes(evt.key)) {
         startCountdown();
       }
     };
