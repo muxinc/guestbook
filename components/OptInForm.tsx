@@ -123,7 +123,7 @@ const OptInForm = ({ className = "" }: Props) => {
           </div>
           <button
             disabled={formState !== FormState.IDLE || !isOptInChecked}
-            className="px-8 py-2 rounded text-white bg-pink-500 hover:bg-pink-400 disabled:bg-pink-200 transition"
+            className="px-8 py-2 rounded text-white bg-pink hover:bg-pink-dark disabled:bg-pink/50 transition"
             type="submit"
           >
             {formState === FormState.SUBMITTING ? "Submitting..." : "Submit"}
