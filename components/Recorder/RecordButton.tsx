@@ -6,6 +6,7 @@ import {
   RecordingStatus,
   RECORDING_DURATION,
 } from "contexts/RecorderContext";
+import { useVideoContext } from "contexts/VideoContext";
 
 const recordingIndicatorVariants: Variants = {
   initial: {
@@ -26,6 +27,7 @@ const RecordButton = () => {
     countdownStatus,
     setCountdownStatus,
   } = useRecorderContext();
+  const { openVideo, setOpenVideo } = useVideoContext();
 
   const startCountdown = useCallback(() => {
     setCountdownStatus(CountdownStatus.COUNTING);
@@ -38,7 +40,9 @@ const RecordButton = () => {
   useEffect(() => {
     const shortcut = (evt: KeyboardEvent) => {
       if (['r', ' '].includes(evt.key)) {
-        startCountdown();
+        if (openVideo) setOpenVideo(null)
+        else startCountdown();
+        evt.preventDefault();
       }
     };
 
@@ -47,7 +51,7 @@ const RecordButton = () => {
     return function () {
       document.removeEventListener('keyup', shortcut)
     }
-  }, [startCountdown]);
+  }, [openVideo, setOpenVideo, startCountdown]);
 
   return (
     <motion.button
