@@ -10,7 +10,7 @@ type Props = {
 const SEO = ({
   title = "Mux Video Guestbook",
   description = "For all those good memories, from your friends at Mux.",
-  image = "https://mux.com/files/mux-video-logo-square.png",
+  image = "https://mux.com/api/og?color=pink",
   video,
 }: Props) => {
   return (

@@ -9,8 +9,10 @@ type Props = {
 const Navbar = ({ withSettings = true, subheading = "" }: Props) => (
   <div className="p-4 sm:p-8 relative text-center">
     <h1>
-      <a href={`https://mux.com?utm_source=mux-guestbook&utm_medium=conference&utm_campaign=${event.utmCampaign}`}>
-        <Mux className="inline-block h-7 sm:h-10 w-auto mb-2" />
+      <a
+        href={`https://www.mux.com?utm_source=mux-guestbook&utm_medium=conference&utm_campaign=${event.utmCampaign}`}
+      >
+        <Mux className="inline-block h-7 sm:h-10 w-auto mb-3" />
       </a>
       <div className="text-xl">{subheading}</div>
     </h1>

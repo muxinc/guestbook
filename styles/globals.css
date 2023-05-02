@@ -4,12 +4,15 @@
 
 @layer base {
   @font-face {
-    font-family: "LL Akkuratmono Regular Web";
-    src: url("/fonts/lineto-akkuratmono-regular.eot");
-    src: url("/fonts/lineto-akkuratmono-regular.woff2") format("woff2"),
-      url("/fonts/lineto-akkuratmono-regular.eot?#iefix")
-        format("embedded-opentype"),
-      url("/fonts/lineto-akkuratmono-regular.woff") format("woff");
+    font-family: "Aeonik";
+    src: url("/fonts/Aeonik-Regular.woff2") format("woff2"),
+      url("/fonts/Aeonik-Regular.woff") format("woff");
+    font-weight: normal;
+    font-style: normal;
+  }
+  @font-face {
+    font-family: "JetBrains Mono";
+    src: url("/fonts/JetBrainsMono-Regular.woff2") format("woff2");
     font-weight: normal;
     font-style: normal;
   }
@@ -25,10 +28,10 @@
   }
 
   * {
-    @apply outline-pink-500 accent-pink-500;
+    @apply outline-pink accent-pink;
   }
   ::selection {
-    @apply bg-pink-600/30;
+    @apply bg-yellow/30;
   }
 
   html,
@@ -36,7 +39,7 @@
     height: 100%;
     min-width: 320px;
     @apply font-body;
-    color: rgb(56, 56, 56);
+    color: black;
   }
 
   img,
@@ -63,50 +66,5 @@
   h5,
   h6 {
     overflow-wrap: break-word;
-  }
-}
-
-@layer utilities {
-  .bg-grid {
-    background-image: url("/images/graph-paper.svg");
-  }
-  .bg-brick {
-    background-image: url("/images/brick-wall.svg");
-  }
-  .bg-mux {
-    background: linear-gradient(to right, #ff3d30, #ff2c61);
-  }
-
-  .neon-pink-600 {
-    /*
-    You know what would be cool?
-    Writing a plugin that allowed any color to be used here 
-    */
-    color: #fff;
-    animation: neon-pink-600 2.5s infinite alternate;
-  }
-
-  @keyframes neon-pink-600 {
-    /* https://css-tricks.com/how-to-create-neon-text-with-css/ */
-    100% {
-      /* Larger blur radius */
-      filter: drop-shadow(0 0 0.01em rgba(255, 255, 255, 0.4))
-        drop-shadow(0 0 0.02em rgba(255, 255, 255, 0.4))
-        drop-shadow(0 0 0.04em rgba(219, 39, 119, 0.5))
-        drop-shadow(0 0 0.2em rgba(219, 39, 119, 0.5))
-        drop-shadow(0 0 0.3em rgba(219, 39, 119, 0.5))
-        drop-shadow(0 0 0.4em rgba(219, 39, 119, 0.5))
-        drop-shadow(0 0 0.5em rgba(219, 39, 119, 0.5));
-    }
-    0% {
-      /* Smaller blur radius */
-      filter: drop-shadow(0 0 0.01em rgba(255, 255, 255, 0.4))
-        drop-shadow(0 0 0.02em rgba(255, 255, 255, 0.4))
-        drop-shadow(0 0 0.05em rgba(219, 39, 119, 0.5))
-        drop-shadow(0 0 0.1em rgba(219, 39, 119, 0.5))
-        drop-shadow(0 0 0.15em rgba(219, 39, 119, 0.5))
-        drop-shadow(0 0 0.2em rgba(219, 39, 119, 0.5))
-        drop-shadow(0 0 0.25em rgba(219, 39, 119, 0.5));
-    }
   }
 }

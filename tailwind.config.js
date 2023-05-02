@@ -7,10 +7,21 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        pink: {
+          neon: "#fb68ec",
+          DEFAULT: "#fa50b5",
+          dark: "#b14886",
+        },
+        yellow: {
+          neon: "#ffdb08",
+          DEFAULT: "#ffb200",
+          dark: "#bd8209",
+        },
+      },
       fontFamily: {
-        header: "'Yellowtail', sans-serif",
-        body: ["LL Akkuratmono Regular Web", ...defaultTheme.fontFamily.sans],
-        mono: ["LL Akkuratmono Regular Web", ...defaultTheme.fontFamily.mono],
+        body: ["Aeonik", ...defaultTheme.fontFamily.sans],
+        mono: ["JetBrains Mono", ...defaultTheme.fontFamily.mono],
       },
     },
   },

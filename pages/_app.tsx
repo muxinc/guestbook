@@ -11,7 +11,7 @@ function App({ Component, pageProps }: AppProps) {
       <Head>
         <link
           rel="preload"
-          href="/fonts/lineto-akkuratmono-regular.woff2"
+          href="/fonts/Aeonik-Regular.woff2"
           as="font"
           type="font/woff2"
           crossOrigin="true"
