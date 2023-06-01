@@ -1,4 +1,4 @@
-export const eventId = parseInt(process.env.NEXT_PUBLIC_EVENT_ID || "5");
+export const eventId = parseInt(process.env.NEXT_PUBLIC_EVENT_ID || "6");
 
 type Event = {
   title: string;
@@ -25,6 +25,11 @@ const events: { [eventId: number]: Event } = {
     title: "Reactathon 2023",
     shareText: "OMG! Having so much fun at #reactathon in SF",
     utmCampaign: "reactathon-2023",
+  },
+  6: {
+    title: "Reactathon 2023",
+    shareText: "Living my best life at #RenderATL23",
+    utmCampaign: "renderatl-2023",
   },
   2468: {
     title: "Developer Mode",

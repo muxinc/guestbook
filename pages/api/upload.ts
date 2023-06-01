@@ -42,7 +42,7 @@ export default async function handler(
       passthrough: data ? JSON.stringify({ entry_id: data[0].id }) : null,
       inputs: [
         {
-          url: "https://guestbook.mux.dev/images/reactathon-2023.png",
+          url: "https://guestbook.mux.dev/images/renderatl-2023.png",
           overlay_settings: {
             vertical_align: "bottom",
             vertical_margin: "5%",
