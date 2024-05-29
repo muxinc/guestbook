@@ -42,7 +42,7 @@ export default async function handler(
       passthrough: data ? JSON.stringify({ entry_id: data[0].id }) : null,
       inputs: [
         {
-          url: "https://guestbook.mux.dev/images/renderatl-2023.png",
+          url: "https://guestbook.mux.dev/images/cjs-guestbook-logo.png",
           overlay_settings: {
             vertical_align: "bottom",
             vertical_margin: "5%",
@@ -61,6 +61,6 @@ export default async function handler(
   res.status(201).json({
     id: data ? data[0].id : null,
     url: upload.url,
-    delete_key: upload.id
+    delete_key: upload.id,
   });
 }
