@@ -12,7 +12,7 @@ const CascadiaOptIn = () => (
         <Mux />
       </a>
       <span>&hearts;</span>
-      <a href="https://2022.cascadiajs.com">
+      <a href="https://cascadiajs.com/2024">
         <Image
           src={cascadiaLogo}
           priority
