@@ -42,7 +42,7 @@ export default async function handler(
       passthrough: data ? JSON.stringify({ entry_id: data[0].id }) : null,
       inputs: [
         {
-          url: "https://guestbook.mux.dev/images/cjs-guestbook-logo.png",
+          url: "https://guestbook.mux.dev/images/cjs-wordmark-horizontal.png",
           overlay_settings: {
             vertical_align: "bottom",
             vertical_margin: "5%",
