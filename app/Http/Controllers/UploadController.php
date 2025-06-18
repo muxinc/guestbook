@@ -50,12 +50,12 @@ class UploadController extends Controller
         $createAssetRequest = new CreateAssetRequest([
             'playback_policy' => [PlaybackPolicy::_PUBLIC],
             'mp4_support' => 'standard',
-            'passthrough' => $request->has('data') ? json_encode(['entry_id' => $request->data[0]['id']]) : null,
+            'passthrough' => $entry->id ? json_encode(['entry_id' => $entry->id]) : null,
             'input' => [$input]
         ]);
 
         $createUploadRequest = new CreateUploadRequest([
-            'cors_origin' => 'https://your-app.com',
+            'cors_origin' => '*',
             'new_asset_settings' => $createAssetRequest
         ]);
 
