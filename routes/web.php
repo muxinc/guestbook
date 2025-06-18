@@ -12,6 +12,33 @@ Route::get('/', function () {
 })->name('home');
 
 Route::post('/upload', [UploadController::class, 'create'])->name('upload');
+Route::get('/entry/{id}', function ($id) {
+    return Inertia::render('entry', [
+        'entry' => Entry::find($id)
+    ]);
+})->name('entry');
+
+Route::get('/events', function () {
+    return response()->eventStream(function () {
+        $lastCheck = now();
+        
+        while (true) {
+            // Only get entries that have been updated since the last check
+            $entries = Entry::where('status', 'READY')
+                ->where('updated_at', '>', $lastCheck)
+                ->get();
+            
+            if ($entries->isNotEmpty()) {
+                foreach ($entries as $entry) {
+                    yield $entry->toJson();
+                }
+            }
+            
+            $lastCheck = now();
+            sleep(1);
+        }
+    });
+});
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

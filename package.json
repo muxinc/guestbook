@@ -25,6 +25,7 @@
     "dependencies": {
         "@headlessui/react": "^2.2.0",
         "@inertiajs/react": "^2.0.0",
+        "@laravel/stream-react": "^0.3.4",
         "@mux/mux-video-react": "^0.25.2",
         "@mux/upchunk": "^3.5.0",
         "@radix-ui/react-avatar": "^1.1.3",
