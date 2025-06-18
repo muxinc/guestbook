@@ -1,57 +1,35 @@
 import { FormEvent, useState, useEffect } from "react";
 
-enum FormState {
-  INITIALIZING,
-  IDLE,
-  SUBMITTING,
-  SUCCESS,
-  FAILURE,
-}
+import { useForm } from '@inertiajs/react'
+import { store } from '@/actions/App/Http/Controllers/LeadController'
+
 type Props = {
   className?: string;
 };
 const OptInForm = ({ className = "" }: Props) => {
+
+  const { setError, setData, post, data, processing, errors, submit } = useForm({
+    first_name: '',
+    last_name: '',
+    email: '',
+    event_id: 2468
+  })
+  
   const [isOptInChecked, setIsOptInChecked] = useState(false);
-  const [formState, setFormState] = useState<FormState>(
-    () => FormState.INITIALIZING
-  );
-  useEffect(() => {
-    // when the page loads, enable the form
-    setFormState(FormState.IDLE);
-  }, []);
 
   const onFormSubmit = (e: FormEvent<HTMLFormElement>) => {
-    setFormState(FormState.SUBMITTING);
     e.preventDefault();
-
-    const formElement = e.currentTarget;
-    const formData = new FormData(formElement);
-
-    const formDataJson: { [key: string]: string } = {};
-    formData.forEach((value, key) => {
-      if (typeof value === "string") formDataJson[key] = value;
-    });
-
-    fetch("/api/subscribe", {
-      method: "post",
-      headers: {
-        "Content-Type": "application/json",
+    const { method, url } = store();
+    submit(method, url, {
+      onSuccess: () => {
+        console.log('success')
       },
-      body: JSON.stringify(formDataJson),
+      onError: () => {
+        console.log('error')
+      }
     })
-      .then((response) => {
-        if (response.status < 400) {
-          setFormState(FormState.SUCCESS);
-        } else {
-          setFormState(FormState.FAILURE);
-          console.error(response);
-        }
-      })
-      .catch((error) => {
-        setFormState(FormState.FAILURE);
-        console.error(error);
-      });
   };
+
   return (
     <section className={className}>
       <h2 className="text-base sm:text-lg mb-6 font-bold">
@@ -59,11 +37,6 @@ const OptInForm = ({ className = "" }: Props) => {
         <br />
         Get a $100 credit, on us.
       </h2>
-      {formState === FormState.SUCCESS ? (
-        <p>Success! We can&apos;t wait to see what you make with Mux!</p>
-      ) : formState === FormState.FAILURE ? (
-        <p>Something went wrong. Please try again?</p>
-      ) : (
         <form onSubmit={onFormSubmit}>
           <div className="grid sm:grid-cols-2 gap-x-2 gap-y-4 mb-6">
             <div>
@@ -77,6 +50,8 @@ const OptInForm = ({ className = "" }: Props) => {
                 type="text"
                 required
                 placeholder="Ted"
+                value={data.first_name}
+                onChange={(e) => setData('first_name', e.target.value)}
               />
             </div>
             <div>
@@ -90,6 +65,8 @@ const OptInForm = ({ className = "" }: Props) => {
                 type="text"
                 required
                 placeholder="Lasso"
+                value={data.last_name}
+                onChange={(e) => setData('last_name', e.target.value)}
               />
             </div>
             <div className="sm:col-span-2">
@@ -103,6 +80,8 @@ const OptInForm = ({ className = "" }: Props) => {
                 type="email"
                 required
                 placeholder="biscuits@mux.com"
+                value={data.email}
+                onChange={(e) => setData('email', e.target.value)}
               />
             </div>
           </div>
@@ -115,6 +94,7 @@ const OptInForm = ({ className = "" }: Props) => {
               checked={isOptInChecked}
               onChange={(e) => setIsOptInChecked(e.target.checked)}
               required
+              disabled={processing}
             />
             <label htmlFor="opt-in">
               Yes, it&apos;s cool if Mux follows up with me by email with that
@@ -122,14 +102,13 @@ const OptInForm = ({ className = "" }: Props) => {
             </label>
           </div>
           <button
-            disabled={formState !== FormState.IDLE || !isOptInChecked}
-            className="px-8 py-2 rounded text-white bg-pink hover:bg-pink-dark disabled:bg-pink/50 transition"
+            disabled={!isOptInChecked}
+            className="px-8 py-2 rounded text-white bg-blue-500 hover:bg-blue-600 disabled:bg-blue-500/50 transition"
             type="submit"
           >
-            {formState === FormState.SUBMITTING ? "Submitting..." : "Submit"}
+            {processing ? "Submitting..." : "Submit"}
           </button>
         </form>
-      )}
     </section>
   );
 };

@@ -19,6 +19,12 @@ interface AudioDeviceInfo extends MediaDeviceInfo {
   kind: "audioinput";
 }
 
+type Message = {
+  content: string;
+  data?: unknown;
+  type: MessageType;
+};
+
 type DeviceIdContextValue = {
   videoDeviceId: string | undefined;
   setVideoDeviceId: (id: string) => void;
@@ -38,25 +44,33 @@ interface ProviderProps {
 }
 
 const DeviceIdProvider = ({ children }: ProviderProps) => {
-  const { setMessage } = useConsoleContext();
-
   const [videoDevices, setVideoDevices] = useState<VideoDeviceInfo[]>();
   const [audioDevices, setAudioDevices] = useState<AudioDeviceInfo[]>();
   const [videoDeviceId, setVideoDeviceId] = useState<string>();
   const [audioDeviceId, setAudioDeviceId] = useState<string>();
 
+  // Create a safe setMessage function that only works on client side
+  const setMessage = useCallback((message: Message) => {
+    if (typeof window === 'undefined') return;
+    const consoleContext = useConsoleContext();
+    consoleContext.setMessage(message);
+  }, []);
+
   /* We want our setters to keep state in sync with localStorage */
   const setVideoDeviceIdLocalStorage = useCallback((id: string) => {
+    if (typeof window === 'undefined') return;
     localStorage.setItem(LocalStorageKeys.VIDEO_DEVICE_ID, id);
     setVideoDeviceId(id);
   }, []);
 
   const setAudioDeviceIdLocalStorage = useCallback((id: string) => {
+    if (typeof window === 'undefined') return;
     localStorage.setItem(LocalStorageKeys.AUDIO_DEVICE_ID, id);
     setAudioDeviceId(id);
   }, []);
 
   const requestUserMedia = useCallback(async () => {
+    if (typeof window === 'undefined') return;
     try {
       /* First we get a list of devices */
       await navigator.mediaDevices.getUserMedia({
@@ -142,6 +156,7 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
 
   /* These two effects alert us when the active device changes */
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const videoDevice = videoDevices?.find(
       (device) => device.deviceId === videoDeviceId
     );
@@ -154,6 +169,7 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
   }, [setMessage, videoDeviceId, videoDevices]);
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const audioDevice = audioDevices?.find(
       (device) => device.deviceId === audioDeviceId
     );

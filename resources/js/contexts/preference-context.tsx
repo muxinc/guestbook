@@ -9,6 +9,7 @@ type PreferenceContextValue = {
   setIsSoundEnabled: (isSoundEnabled: boolean) => void;
   isMotionEnabled: boolean;
 };
+
 type DefaultValue = undefined;
 type ContextValue = PreferenceContextValue | DefaultValue;
 
@@ -32,6 +33,7 @@ const PreferenceProvider = ({ children }: ProviderProps) => {
 
   /* Let's listen for changes in reduceMotion */
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     const reduceMotionQuery = window.matchMedia("(prefers-reduced-motion)");
     const onQueryChange = (e: MediaQueryListEvent) => {
       setIsMotionEnabled(!e.matches);
@@ -40,7 +42,7 @@ const PreferenceProvider = ({ children }: ProviderProps) => {
     return () => {
       reduceMotionQuery.removeEventListener("change", onQueryChange);
     };
-  });
+  }, [setIsMotionEnabled]);
 
   /* Finally, we wrap this all up in a provider to give it to our children */
   const value = {
@@ -57,6 +59,9 @@ const PreferenceProvider = ({ children }: ProviderProps) => {
   );
 };
 
-export const usePreferenceContext = () =>
-  useContext(PreferenceContext) as PreferenceContextValue;
+export const usePreferenceContext = () => {
+  const context = useContext(PreferenceContext);
+  return context as PreferenceContextValue;
+};
+
 export default PreferenceProvider;

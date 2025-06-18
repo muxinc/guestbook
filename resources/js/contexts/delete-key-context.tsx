@@ -42,6 +42,15 @@ const DeleteKeyProvider = ({ children }: ProviderProps) => {
   );
 };
 
-export const useDeleteKeyContext = () =>
-  useContext(DeleteKeyContext) as DeleteKeyContextValue;
+export const useDeleteKeyContext = () => {
+  const context = useContext(DeleteKeyContext);
+  if (typeof window === 'undefined') {
+    // Return a no-op implementation for SSR
+    return {
+      deleteKeys: {},
+      setDeleteKey: () => {},
+    };
+  }
+  return context as DeleteKeyContextValue;
+};
 export default DeleteKeyProvider;

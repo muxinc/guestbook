@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Models\Entry;
 use Inertia\Inertia;
 use App\Http\Controllers\UploadController;
+use App\Http\Controllers\LeadController;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
@@ -17,6 +18,8 @@ Route::get('/entry/{id}', function ($id) {
         'entry' => Entry::find($id)
     ]);
 })->name('entry');
+
+Route::post('/lead', [LeadController::class, 'store'])->name('lead');
 
 Route::get('/events', function () {
     return response()->eventStream(function () {

@@ -96,6 +96,15 @@ const ConsoleProvider = ({ children }: ProviderProps) => {
   );
 };
 
-export const useConsoleContext = () =>
-  useContext(ConsoleContext) as ConsoleContextValue;
+export const useConsoleContext = () => {
+  const context = useContext(ConsoleContext);
+  if (typeof window === 'undefined') {
+    // Return a no-op implementation for SSR
+    return {
+      messages: [],
+      setMessage: () => {},
+    };
+  }
+  return context as ConsoleContextValue;
+};
 export default ConsoleProvider;

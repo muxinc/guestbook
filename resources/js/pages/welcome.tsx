@@ -44,21 +44,21 @@ export default function Welcome() {
                 <link rel="preconnect" href="https://fonts.bunny.net" />
                 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
             </Head>
-                <main className="h-[100vh] h-[100svh] flex flex-col">
-                    <Navbar subheading={`Leave a 3 second video in the Guestbook!`} />
-                    <VideoStore initialVideos={[]}>
-                        <Recorder />
-                    </VideoStore>
-                    {/* <Confetti /> */}
+            <main className="flex h-[100vh] h-[100svh] flex-col">
+                <Navbar subheading={`Leave a 3 second video in the Guestbook!`} />
+                <VideoStore initialVideos={[]}>
+                    <Recorder />
+                </VideoStore>
+                {/* <Confetti /> */}
 
-                    {entries.length > 0 ? (
-                        <Grid entries={entries} />
-                    ) : (
-                        <div className="flex-1 flex items-center justify-center text-gray-500">
-                            No entries yet. Be the first to record a message!
-                        </div>
-                    )}
-                </main>
+                {entries.length > 0 ? (
+                    <Grid entries={entries} />
+                ) : (
+                    <div className="flex-1 flex items-center justify-center text-gray-500">
+                        No entries yet. Be the first to record a message!
+                    </div>
+                )}
+            </main>
         </>
     );
 }

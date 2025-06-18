@@ -46,15 +46,16 @@ const RecorderProvider = ({ children }: ProviderProps) => {
   const { isSoundEnabled } = usePreferenceContext();
   const { setMessage } = useConsoleContext();
 
-  const [playBeep] = useSound("sounds/beep.mp3", {
+  // Only initialize sound on client side
+  const [playBeep] = typeof window !== 'undefined' ? useSound("sounds/beep.mp3", {
     volume: 0.5,
     soundEnabled: isSoundEnabled,
-  });
+  }) : [() => {}];
 
-  const [playDing] = useSound("sounds/ding.mp3", {
+  const [playDing] = typeof window !== 'undefined' ? useSound("sounds/ding.mp3", {
     volume: 0.8,
     soundEnabled: isSoundEnabled,
-  });
+  }) : [() => {}];
 
   // Recording status will always start off as INITIALIZING on page load.
   const [recordingStatus, setRecordingStatus] = useState(
@@ -67,6 +68,7 @@ const RecorderProvider = ({ children }: ProviderProps) => {
 
   // Update the console with a message any time the recording status changes.
   useEffect(() => {
+    if (typeof window === 'undefined') return;
     setMessage({
       content: recordingStatus,
       type: MessageType.RECORDER,
