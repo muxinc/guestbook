@@ -48,11 +48,11 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
   const [audioDevices, setAudioDevices] = useState<AudioDeviceInfo[]>();
   const [videoDeviceId, setVideoDeviceId] = useState<string>();
   const [audioDeviceId, setAudioDeviceId] = useState<string>();
+  const consoleContext = useConsoleContext();
 
   // Create a safe setMessage function that only works on client side
   const setMessage = useCallback((message: Message) => {
     if (typeof window === 'undefined') return;
-    const consoleContext = useConsoleContext();
     consoleContext.setMessage(message);
   }, []);
 
@@ -99,8 +99,8 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
       setVideoDevices(videoDevices);
       setAudioDevices(audioDevices);
 
-      /* 
-      Once we have a list of devices, 
+      /*
+      Once we have a list of devices,
       we use that and localstorage to set our initial device IDs
       */
       const videoDeviceId = localStorage.getItem(
