@@ -31,8 +31,24 @@ const Recorder = () => {
 
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = React.useRef<MediaRecorder>(null);
-
+  const chunksRef = React.useRef<Blob[]>([]);
   const [chunks, setChunks] = React.useState<Blob[]>([]);
+
+  // Store callbacks in ref to avoid dependency issues
+  const callbacksRef = React.useRef({
+    setMessage,
+    setRecordingStatus,
+    submitUpload,
+  });
+
+  // Update callbacks ref when they change
+  React.useEffect(() => {
+    callbacksRef.current = {
+      setMessage,
+      setRecordingStatus,
+      submitUpload,
+    };
+  }, [setMessage, setRecordingStatus, submitUpload]);
 
   React.useEffect(() => {
     // This hook should run under two circumstances:
@@ -86,7 +102,8 @@ const Recorder = () => {
         mimeType,
       };
       mediaRecorderRef.current = new MediaRecorder(stream, options);
-      setMessage({
+
+      callbacksRef.current.setMessage({
         content: "Configured Media Recorder",
         data: options,
         type: MessageType.RECORDER,
@@ -94,11 +111,58 @@ const Recorder = () => {
 
       mediaRecorderRef.current.ondataavailable = (e) => {
         const chunk = e.data;
-        setMessage({
+
+        callbacksRef.current.setMessage({
           content: `Saving chunk. (${formatBytes(chunk.size)}, ${chunk.type})`,
           type: MessageType.RECORDER,
         });
-        setChunks((c) => [...c, chunk]);
+
+        // Add to ref immediately (no async delays)
+        chunksRef.current.push(chunk);
+        // Update state for UI purposes
+        setChunks(prev => [...prev, chunk]);
+      };
+
+      // Set onstop handler here, when MediaRecorder is created
+      mediaRecorderRef.current.onstop = (e) => {
+        callbacksRef.current.setMessage({
+          content: `Stopping recording...`,
+          type: MessageType.RECORDER,
+        });
+
+        // Use chunks from ref (no race condition)
+        const allChunks = chunksRef.current;
+
+        console.log('All chunks:', allChunks.map(c => ({ size: c.size, type: c.type })));
+
+        if (allChunks.length === 0) {
+          console.error('No chunks available!');
+          return;
+        }
+
+        // Use the MIME type from the actual chunks
+        let finalBlob = new Blob(allChunks, { type: allChunks[0].type });
+
+        console.log('Final blob size:', finalBlob.size);
+        console.log('Total chunks size:', allChunks.reduce((sum, chunk) => sum + chunk.size, 0));
+
+        const createdFile = new File(
+          [finalBlob],
+          "video-recording-new-new-final-FORREAL_v2",
+          { type: finalBlob.type }
+        );
+
+        callbacksRef.current.setMessage({
+          content: `Created file: ${formatBytes(createdFile.size)}, ${createdFile.type}`,
+          type: MessageType.RECORDER,
+        });
+
+        callbacksRef.current.submitUpload(createdFile);
+
+        // Reset both ref and state
+        chunksRef.current = [];
+        setChunks([]);
+        callbacksRef.current.setRecordingStatus(RecordingStatus.READY);
       };
 
       videoRef.current.srcObject = stream;
@@ -113,9 +177,8 @@ const Recorder = () => {
   }, [
     audioDeviceId,
     recordingStatus,
-    setMessage,
-    setRecordingStatus,
     videoDeviceId,
+    // Don't include callback functions in dependencies
   ]);
 
   React.useEffect(() => {
@@ -128,40 +191,7 @@ const Recorder = () => {
     if (!mediaRecorderRef.current) return;
     if (recordingStatus !== RecordingStatus.STOPPING) return;
     mediaRecorderRef.current?.stop();
-    // The useEffect down below will handle the rest.
   }, [recordingStatus])
-
-  // Create a file on MediaRecorder's stop event
-  React.useEffect(() => {
-    if (!mediaRecorderRef.current) return;
-
-    mediaRecorderRef.current.onstop = (e) => {
-      setMessage({
-        content: `Stopping recording...`,
-        type: MessageType.RECORDER,
-      });
-
-      let finalBlob = new Blob(chunks, { type: getSupportedMimeType() });
-      const objUrl = URL.createObjectURL(finalBlob);
-
-      // you might instead create a new file from the aggregated chunk data
-      const createdFile = new File(
-        [finalBlob],
-        "video-recording-new-new-final-FORREAL_v2",
-        { type: finalBlob.type }
-      );
-
-      setMessage({
-        content: `Created file: ${formatBytes(createdFile.size)}, ${createdFile.type
-          }`,
-        type: MessageType.RECORDER,
-      });
-
-      submitUpload(createdFile);
-      setChunks([]);
-      setRecordingStatus(RecordingStatus.READY);
-    };
-  }, [chunks, setChunks, setMessage, setRecordingStatus, submitUpload]);
 
   return (
     <>
