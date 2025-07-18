@@ -6,6 +6,7 @@ import Grid from '@/components/guestbook/grid';
 import Navbar from '@/components/guestbook/nav-bar';
 import Recorder from '@/components/guestbook/recorder/recorder';
 import VideoStore from '@/contexts/video-store';
+import Confetti from '@/components/guestbook/confetti';
 import { useState } from 'react';
 
 export default function Welcome() {
@@ -48,8 +49,8 @@ export default function Welcome() {
                 <Navbar subheading={`Leave a 3 second video in the Guestbook!`} />
                 <VideoStore initialVideos={[]}>
                     <Recorder />
+                    <Confetti />
                 </VideoStore>
-                {/* <Confetti /> */}
 
                 {entries.length > 0 ? (
                     <Grid entries={entries} />

@@ -22,6 +22,8 @@ Route::get('/entry/{id}', function ($id) {
 Route::post('/lead', [LeadController::class, 'store'])->name('lead');
 
 Route::get('/events', function () {
+    set_time_limit(0);
+
     return response()->eventStream(function () {
         $lastCheck = now();
         
