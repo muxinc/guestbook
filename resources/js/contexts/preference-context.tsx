@@ -21,7 +21,7 @@ interface ProviderProps {
 
 const PreferenceProvider = ({ children }: ProviderProps) => {
   const [isSoundEnabled, setIsSoundEnabled] = useLocalStorageState({
-    initialValue: false,
+    initialValue: true,
     key: "isSoundEnabled",
     validator: booleanValidator,
   });
