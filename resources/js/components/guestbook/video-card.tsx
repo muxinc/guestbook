@@ -69,42 +69,50 @@ const VideoCard = ({ entry, label, fullscreen = false, className = "" }: Props) 
         className="relative bg-gray-400 h-full overflow-hidden"
         style={{ gridArea: "photo" }}
       >
-        {/* Loading Spinner */}
+        {/* Loading Spinner or Error State */}
         {!isLoaded && (
           <>
-            <svg
-              viewBox="0 0 100 100"
-              className="absolute w-full h-full inset-0"
-            >
-              <motion.circle
-                cx="50"
-                cy="50"
-                r="30"
-                strokeWidth={10}
-                animate={{
-                  pathLength:
-                  entry.status.toUpperCase() === Status.UPLOADING &&
-                    typeof entry.upload_progress === "number"
-                      ? (0.9 * entry.upload_progress) / 100
-                      : 0.9,
-                  rotate:
-                  entry.status.toUpperCase() === Status.UPLOADING ? 270 : [270, 270 + 360],
-                }}
-                transition={{
-                  rotate:
-                  entry.status.toUpperCase() === Status.UPLOADING
-                      ? {}
-                      : { duration: 1, ease: "linear", repeat: Infinity },
-                }}
-                className={`fill-transparent stroke-gray-500`}
-              />
-            </svg>
-            <div className="absolute w-full h-full inset-0 flex items-center justify-center">
-              {entry.status.toUpperCase() === Status.UPLOADING &&
-              typeof entry.upload_progress === "number"
-                ? `${entry.upload_progress.toFixed()}%`
-                : null}
-            </div>
+            {entry.status.toUpperCase() === Status.ERROR ? (
+              <div className="absolute w-full h-full inset-0 flex items-center justify-center text-4xl">
+                😵
+              </div>
+            ) : (
+              <>
+                <svg
+                  viewBox="0 0 100 100"
+                  className="absolute w-full h-full inset-0"
+                >
+                  <motion.circle
+                    cx="50"
+                    cy="50"
+                    r="30"
+                    strokeWidth={10}
+                    animate={{
+                      pathLength:
+                      entry.status.toUpperCase() === Status.UPLOADING &&
+                        typeof entry.upload_progress === "number"
+                          ? (0.9 * entry.upload_progress) / 100
+                          : 0.9,
+                      rotate:
+                      entry.status.toUpperCase() === Status.UPLOADING ? 270 : [270, 270 + 360],
+                    }}
+                    transition={{
+                      rotate:
+                      entry.status.toUpperCase() === Status.UPLOADING
+                          ? {}
+                          : { duration: 1, ease: "linear", repeat: Infinity },
+                    }}
+                    className={`fill-transparent stroke-gray-500`}
+                  />
+                </svg>
+                <div className="absolute w-full h-full inset-0 flex items-center justify-center">
+                  {entry.status.toUpperCase() === Status.UPLOADING &&
+                  typeof entry.upload_progress === "number"
+                    ? `${entry.upload_progress.toFixed()}%`
+                    : null}
+                </div>
+              </>
+            )}
           </>
         )}
         {/* image or video element */}
