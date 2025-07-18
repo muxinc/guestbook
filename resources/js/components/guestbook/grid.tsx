@@ -6,8 +6,8 @@ import { useVideoContext } from "@/contexts/video-context";
 
 import { Dialog, DialogContent, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
 
-const MotionDialogOverlay = motion(DialogOverlay);
-const MotionDialogContent = motion(DialogContent);
+const MotionDialogOverlay = motion.create(DialogOverlay);
+const MotionDialogContent = motion.create(DialogContent);
 
 const Grid = ({ entries }: { entries: Entry[] }) => {
   const { openVideo, setOpenVideo } = useVideoContext();
