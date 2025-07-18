@@ -5,14 +5,13 @@ import {
   useEffect,
   useCallback,
 } from "react";
-// import { supabase } from "utils/supabaseClient";
+
 // import { Database } from "utils/DatabaseDefinitions";
 
 export enum MessageType {
   RECORDER = "MediaRecorder",
-  NEXT = "Next.JS",
+  LARAVEL = "Laravel",
   UPCHUNK = "Mux UpChunk",
-  SUPABASE = "Supabase",
   MUX = "Mux Video",
   ERROR = "Error",
 }
@@ -33,10 +32,9 @@ export const ConsoleContext = createContext<ContextValue>(undefined);
 const consoleColors: Record<MessageType, string> = {
   [MessageType.RECORDER]: "#fb2491",
   [MessageType.UPCHUNK]: "#fb501d",
-  [MessageType.NEXT]: "#00C5A7",
-  [MessageType.SUPABASE]: "#1ca0fd",
   [MessageType.MUX]: "#fb3c4e",
   [MessageType.ERROR]: "#ff0000",
+  [MessageType.LARAVEL]: "#000000",
 };
 
 interface ProviderProps {

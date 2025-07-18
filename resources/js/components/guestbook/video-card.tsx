@@ -6,12 +6,7 @@ import { type Entry } from "@/types";
 import { Status } from "@/constants/status";
 
 import { Link } from '@inertiajs/react'
-
-
-// import { Video, Status } from "contexts/VideoContext";
-// import Link from "next/link";
 // import VisuallyHidden from "@reach/visually-hidden";
-// import Image from "next/image";
 
 const transitionStatuses = [
   // these are the statuses that are initialized by the client

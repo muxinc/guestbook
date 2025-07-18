@@ -1,15 +1,15 @@
 import DeviceIdProvider from "@/contexts/device-id-context";
-import VideoProvider, { Video } from "@/contexts/video-context";
+import VideoProvider from "@/contexts/video-context";
 import RecorderProvider from "@/contexts/recorder-context";
+import { Entry } from "@/types";
 
 interface Props {
-  initialVideos: Video[];
   children: React.ReactNode;
 };
 
-const VideoStore = ({ initialVideos = [], children }: Props) => (
+const VideoStore = ({ children }: Props) => (
   <DeviceIdProvider>
-    <VideoProvider initialVideos={initialVideos}>
+    <VideoProvider>
       <RecorderProvider>{children}</RecorderProvider>
     </VideoProvider>
   </DeviceIdProvider>

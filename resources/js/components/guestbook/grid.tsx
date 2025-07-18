@@ -2,7 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Entry } from "@/types";
 import VideoCard from "./video-card";
-// import { useVideoContext } from "contexts/VideoContext";
+import { useVideoContext } from "@/contexts/video-context";
 
 import { Dialog, DialogContent, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
 
@@ -10,7 +10,7 @@ const MotionDialogOverlay = motion(DialogOverlay);
 const MotionDialogContent = motion(DialogContent);
 
 const Grid = ({ entries }: { entries: Entry[] }) => {
-  const [openEntry, setOpenEntry] = useState<Entry | null>(null);
+  const { openVideo, setOpenVideo } = useVideoContext();
 
   return (
     <>
@@ -24,7 +24,7 @@ const Grid = ({ entries }: { entries: Entry[] }) => {
           {entries?.map((entry) => (
             <motion.button
               key={entry.id}
-              onClick={() => setOpenEntry(entry)}
+              onClick={() => setOpenVideo(entry)}
               whileHover={{ scale: 1.04 }}
               whileFocus={{ scale: 1.04 }}
               whileTap={{ scale: 0.9 }}
@@ -36,9 +36,9 @@ const Grid = ({ entries }: { entries: Entry[] }) => {
         </motion.div>
       </section>
 
-      <Dialog open={openEntry !== null} onOpenChange={(open) => !open && setOpenEntry(null)}>
+      <Dialog open={openVideo !== null} onOpenChange={(open) => !open && setOpenVideo(null)}>
         <AnimatePresence>
-          {openEntry && (
+          {openVideo && (
             <>
               <MotionDialogOverlay
                 className="bg-black/80 z-50"
@@ -57,7 +57,7 @@ const Grid = ({ entries }: { entries: Entry[] }) => {
                   Guestbook entry
                 </DialogTitle>
                 <VideoCard
-                  entry={openEntry}
+                  entry={openVideo}
                   label="Close Video"
                   fullscreen={true}
                   className="w-full h-full"

@@ -35,9 +35,22 @@ class MuxEventListener
 
     protected function handleVideoAssetErrored(array $payload): void
     {
-        // TODO: Retrieve associated video
-        // TODO: Update video status to 'errored'
-        // TODO: Notify user processing video errored
+        $passthrough = $payload['data']['passthrough'] ?? null;
+        $metadata = $passthrough ? json_decode($passthrough, true) : [];
+        
+        if (isset($metadata['entry_id'])) {
+            $updatePayload = [
+                'id' => $metadata['entry_id'],
+                'status' => 'ERROR',
+            ];
+
+            // Update the entry status to ERROR
+            Entry::upsert(
+                [$updatePayload],
+                ['id'],
+                ['status']
+            );
+        }
     }
 
     protected function handleVideoAssetSharedEvents(array $payload): void
