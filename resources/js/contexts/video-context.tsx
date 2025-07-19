@@ -146,7 +146,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
           playback_id: '',
           created_at: new Date().toISOString(),
           aspect_ratio: '',
-          event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "7"),
+          event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "8"),
         });
 
         setDeleteKey(id, delete_key);
@@ -169,7 +169,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
             playback_id: '',
             created_at: new Date().toISOString(),
             aspect_ratio: '',
-            event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "7"),
+            event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "8"),
           });
         });
 
@@ -185,7 +185,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
             playback_id: '',
             created_at: new Date().toISOString(),
             aspect_ratio: '',
-            event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "7"),
+            event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "8"),
           });
         });
 
@@ -200,7 +200,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
             playback_id: '',
             created_at: new Date().toISOString(),
             aspect_ratio: '',
-            event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "7"),
+            event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "8"),
           });
           setOpenVideo({
             id,
@@ -209,7 +209,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
             playback_id: '',
             created_at: new Date().toISOString(),
             aspect_ratio: '',
-            event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "7"),
+            event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "8"),
           });
         });
       } catch (error) {

@@ -1,4 +1,4 @@
-export const eventId = parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "7");
+export const eventId = parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "8");
 
 type Event = {
   title: string;
@@ -36,6 +36,11 @@ const events: { [eventId: number]: Event } = {
     title: "CascadiaJS 2024",
     shareText: "Hangin' with my besties at #CascadiaJS 2024",
     utmCampaign: "cascadiajs-2024",
+  },
+  8: {
+    title: "Laracon US 2025",
+    shareText: "Having a blast at #LaraconUS 2025",
+    utmCampaign: "laracon-us-2025",
   },
   2468: {
     title: "Developer Mode",
