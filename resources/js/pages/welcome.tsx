@@ -6,11 +6,7 @@ import VideoStore from '@/contexts/video-store';
 import Confetti from '@/components/guestbook/confetti';
 import EntryList from '@/components/guestbook/entry-list';
 
-import useVideoSubscription from '@/hooks/use-video-subscription';
-
 export default function Welcome() {
-
-    // useVideoSubscription();
 
     return (
         <>
