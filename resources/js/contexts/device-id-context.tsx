@@ -72,6 +72,7 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
   const requestUserMedia = useCallback(async () => {
     if (typeof window === 'undefined') return;
     try {
+      console.log('requestUserMedia: Starting...');
       /* First we get a list of devices */
       await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -79,6 +80,7 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
       }); // safari won't return a list of devices until we approve this
 
       const devices = await navigator.mediaDevices.enumerateDevices();
+      console.log('requestUserMedia: Enumerated devices:', devices.length);
 
       const videoDevices = devices.filter(
         (d) => d.kind === "videoinput"
@@ -86,6 +88,9 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
       const audioDevices = devices.filter(
         (d) => d.kind === "audioinput"
       ) as AudioDeviceInfo[];
+
+      console.log('requestUserMedia: Found video devices:', videoDevices.length);
+      console.log('requestUserMedia: Found audio devices:', audioDevices.length);
 
       setMessage({
         content: `Found ${videoDevices.length} video devices`,
@@ -98,6 +103,9 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
 
       setVideoDevices(videoDevices);
       setAudioDevices(audioDevices);
+
+      console.log('requestUserMedia: Set videoDevices state:', videoDevices);
+      console.log('requestUserMedia: Set audioDevices state:', audioDevices);
 
       /*
       Once we have a list of devices,
@@ -191,6 +199,10 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
     audioDevices,
     requestUserMedia,
   };
+
+  console.log('DeviceIdProvider: Current videoDevices:', videoDevices);
+  console.log('DeviceIdProvider: Current audioDevices:', audioDevices);
+
   return (
     <DeviceIdContext.Provider value={value}>
       {children}

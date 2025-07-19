@@ -19,8 +19,8 @@ export default function Welcome() {
                 <link href="https://fonts.bunny.net/css?family=instrument-sans:400,500,600" rel="stylesheet" />
             </Head>
             <main className="flex h-[100vh] h-[100svh] flex-col">
-                <Navbar subheading={`Leave a 3 second video in the Guestbook!`} />
                 <VideoStore>
+                    <Navbar subheading={`Leave a 3 second video in the Guestbook!`} />
                     <Recorder />
                     <Confetti />
                     <EntryList />
