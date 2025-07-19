@@ -2,7 +2,6 @@ import {
   useContext,
   createContext,
   useState,
-  useEffect,
   useCallback,
 } from "react";
 
@@ -81,9 +80,17 @@ const VideoProvider = ({ children }: ProviderProps) => {
     [videos]
   );
 
+  const [reconnectKey, setReconnectKey] = useState(0);
+
   // Listen to SSE updates for video status changes
-  const { message } = useEventStream('/events', {
+  const { message } = useEventStream(`/events?v=${reconnectKey}`, {
     eventName: 'update',
+    onError: () => {
+      // Reconnect after 3 seconds by changing the URL
+      setTimeout(() => {
+        setReconnectKey(prev => prev + 1);
+      }, 3000);
+    },
     onMessage: (event) => {
       console.log('SSE video update:', event);
       try {
