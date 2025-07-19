@@ -89,9 +89,6 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
         (d) => d.kind === "audioinput"
       ) as AudioDeviceInfo[];
 
-      console.log('requestUserMedia: Found video devices:', videoDevices.length);
-      console.log('requestUserMedia: Found audio devices:', audioDevices.length);
-
       setMessage({
         content: `Found ${videoDevices.length} video devices`,
         type: MessageType.RECORDER,
@@ -103,9 +100,6 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
 
       setVideoDevices(videoDevices);
       setAudioDevices(audioDevices);
-
-      console.log('requestUserMedia: Set videoDevices state:', videoDevices);
-      console.log('requestUserMedia: Set audioDevices state:', audioDevices);
 
       /*
       Once we have a list of devices,
@@ -199,9 +193,6 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
     audioDevices,
     requestUserMedia,
   };
-
-  console.log('DeviceIdProvider: Current videoDevices:', videoDevices);
-  console.log('DeviceIdProvider: Current audioDevices:', audioDevices);
 
   return (
     <DeviceIdContext.Provider value={value}>

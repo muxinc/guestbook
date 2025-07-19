@@ -27,7 +27,6 @@ const SettingsDialog = ({ className = "" }: Props) => {
     setAudioDeviceId,
   } = useDeviceIdContext();
 
-  console.log(videoDevices, audioDevices);
   const { isSoundEnabled, setIsSoundEnabled, isMotionEnabled } =
     usePreferenceContext();
 

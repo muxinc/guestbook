@@ -2,6 +2,7 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Entry } from "@/types";
 import VideoCard from "./video-card";
+import GridVideoCard from "./grid-video-card";
 import { useVideoContext } from "@/contexts/video-context";
 
 import { Dialog, DialogContent, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
@@ -18,19 +19,19 @@ const Grid = ({ entries }: { entries: Entry[] }) => {
         className={`bg-gray-200 p-8 overflow-y-scroll overflow-x-hidden grow`}
       >
         <motion.div
-          className="grid gap-6 justify-center grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fill,_minmax(160px,1fr))]"
+          className="grid grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fill,_minmax(160px,1fr))]"
           layoutScroll
         >
           {entries?.map((entry) => (
             <motion.button
               key={entry.id}
               onClick={() => setOpenVideo(entry)}
-              whileHover={{ scale: 1.04 }}
+              whileHover={{ scale: 1.04, zIndex: 100 }}
               whileFocus={{ scale: 1.04 }}
               whileTap={{ scale: 0.9 }}
               className={`cursor-pointer entry-${entry.id}`}
             >
-              <VideoCard entry={entry} label="Open Video" />
+              <GridVideoCard entry={entry} />
             </motion.button>
           ))}
         </motion.div>
@@ -51,7 +52,6 @@ const Grid = ({ entries }: { entries: Entry[] }) => {
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 exit={{ y: -100 }}
-
               >
                 <DialogTitle>
                   Guestbook entry
