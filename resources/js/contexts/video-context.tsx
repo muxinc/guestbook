@@ -3,6 +3,7 @@ import {
   createContext,
   useState,
   useCallback,
+  useEffect,
 } from "react";
 
 import * as UpChunk from "@mux/upchunk";
@@ -52,7 +53,7 @@ const VideoProvider = ({ children }: ProviderProps) => {
   const { entries: initialEntries } = usePage<SharedData>().props;
 
   const [videos, setVideos] = useState<Entry[]>(initialEntries);
-  
+
   const setVideo = useCallback((newVideo: Entry) => {
     setVideos((videos) => {
       const ids = videos.map((video) => video.id);
@@ -83,45 +84,53 @@ const VideoProvider = ({ children }: ProviderProps) => {
   const [reconnectKey, setReconnectKey] = useState(0);
 
   // Listen to SSE updates for video status changes
-  const { message } = useEventStream(`/events?v=${reconnectKey}`, {
-    eventName: 'update',
-    onError: () => {
-      // Reconnect after 3 seconds by changing the URL
-      setTimeout(() => {
-        setReconnectKey(prev => prev + 1);
-      }, 3000);
-    },
-    onMessage: (event) => {
-      console.log('SSE video update:', event);
+  useEffect(() => {
+    const pollEvents = async () => {
       try {
-        const entryData = JSON.parse(event.data);
-        console.log('SSE video update:', entryData);
-        
-        // Update the video in our state
-        setVideo(entryData);
+        const response = await fetch('/events-poll');
+        if (!response.ok) {
+          throw new Error('Failed to fetch events');
+        }
 
-        // Update open video if it's the same one
-        setOpenVideo((v) => {
-          if (!v) return v;
-          if (v.id !== entryData.id) return v;
+        const entries = await response.json();
 
-          return {
-            ...v,
-            ...entryData,
-          };
-        });
+        entries.forEach((entryData: Entry) => {
+          console.log('Polling video update:', entryData);
 
-        // Log the status change
-        setMessage({
-          content: `Video ${entryData.id} status: ${entryData.status}`,
-          data: { id: entryData.id, status: entryData.status, playback_id: entryData.playback_id },
-          type: MessageType.LARAVEL,
+          // Update the video in our state
+          setVideo(entryData);
+
+          // Update open video if it's the same one
+          setOpenVideo((v) => {
+            if (!v) return v;
+            if (v.id !== entryData.id) return v;
+
+            return {
+              ...v,
+              ...entryData,
+            };
+          });
+
+          // Log the status change
+          setMessage({
+            content: `Video ${entryData.id} status: ${entryData.status}`,
+            data: { id: entryData.id, status: entryData.status, playback_id: entryData.playback_id },
+            type: MessageType.LARAVEL,
+          });
         });
       } catch (error) {
-        console.error('Error parsing SSE video data:', error);
+        console.error('Error polling events:', error);
+        // Retry after 3 seconds on error
+        setTimeout(() => {
+          setReconnectKey(prev => prev + 1);
+        }, 3000);
       }
-    }
-  });
+    };
+
+    const interval = setInterval(pollEvents, 1000); // Poll every second
+
+    return () => clearInterval(interval);
+  }, [reconnectKey, setVideo, setMessage]);
 
   const submitUpload = useCallback(
     async (file: File) => {

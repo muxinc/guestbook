@@ -61,6 +61,16 @@ Route::get('/events', function () {
     });
 });
 
+Route::get('/events-poll', function () {
+    // Get entries that have been updated since the last check
+    $entries = Entry::where('status', 'READY')
+        ->orderBy('updated_at', 'asc')
+        ->get();
+
+    return response()->json($entries);
+});
+
+
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {
         return Inertia::render('dashboard');
