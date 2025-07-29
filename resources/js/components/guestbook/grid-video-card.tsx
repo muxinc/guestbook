@@ -48,7 +48,7 @@ const GridVideoCard = ({ entry }: Props) => {
             className="w-full h-full"
           >
             <img
-              src={`https://image.mux.com/${entry.playback_id}/thumbnail.jpg?time=0&width=240`}
+              src={`https://image.mux.com/${entry.playback_id}/animated.gif?width=240`}
               alt=""
               className="w-full h-full object-cover"
               onLoad={() => setIsLoaded(true)}
@@ -62,9 +62,9 @@ const GridVideoCard = ({ entry }: Props) => {
           initial={false}
         >
           <div className="w-12 h-12 rounded-full bg-orange-500 flex items-center justify-center shadow-lg">
-            <svg 
-              className="w-6 h-6 text-white ml-1" 
-              viewBox="0 0 24 24" 
+            <svg
+              className="w-6 h-6 text-white ml-1"
+              viewBox="0 0 24 24"
               fill="currentColor"
             >
               <path d="M8 5v14l11-7z" />
@@ -76,4 +76,4 @@ const GridVideoCard = ({ entry }: Props) => {
   );
 };
 
-export default GridVideoCard; 
+export default GridVideoCard;
