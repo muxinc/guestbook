@@ -24,36 +24,35 @@ Route::post('/lead', [LeadController::class, 'store'])->name('lead');
 
 Route::get('/events', function () {
     set_time_limit(0);
-    ignore_user_abort(true);
-    
+
     return response()->eventStream(function () {
         $lastCheck = now()->subMinutes(1); // Start 1 minute ago to catch any recent updates
         $iterations = 0;
-        
+
         while (true) {
             if (connection_aborted()) {
                 break;
             }
-            
+
             if ($iterations > 3600) {
                 break;
             }
-            
+
             // Get entries that have been updated since the last check
             $entries = Entry::where('status', 'READY')
                 ->where('updated_at', '>', $lastCheck)
                 ->orderBy('updated_at', 'asc')
                 ->get();
-            
+
             if ($entries->isNotEmpty()) {
                 foreach ($entries as $entry) {
                     yield $entry;
                 }
-                
+
                 // Update lastCheck to the latest entry's updated_at
                 $lastCheck = $entries->last()->updated_at;
             }
-            
+
             $iterations++;
             sleep(1);
         }
