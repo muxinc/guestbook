@@ -56,7 +56,7 @@ Route::get('/events', function () {
             $iterations++;
             sleep(1);
         }
-    })->header('X-Accel-Buffering', 'no');
+    });
 });
 
 Route::middleware(['auth', 'verified'])->group(function () {
