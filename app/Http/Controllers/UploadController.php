@@ -43,7 +43,7 @@ class UploadController extends Controller
         ]);
 
         $input = new InputSettings([
-            'url' => 'https://guestbook.mux.dev/images/cjs-wordmark-horizontal.png',
+            'url' => 'https://laracon.mux.community/logos/laracon.png',
             'overlay_settings' => $overlaySettings
         ]);
 

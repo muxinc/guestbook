@@ -2,15 +2,16 @@ import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Entry } from "@/types";
 import VideoCard from "./video-card";
-// import { useVideoContext } from "contexts/VideoContext";
+import GridVideoCard from "./grid-video-card";
+import { useVideoContext } from "@/contexts/video-context";
 
 import { Dialog, DialogContent, DialogOverlay, DialogTitle } from "@/components/ui/dialog";
 
-const MotionDialogOverlay = motion(DialogOverlay);
-const MotionDialogContent = motion(DialogContent);
+const MotionDialogOverlay = motion.create(DialogOverlay);
+const MotionDialogContent = motion.create(DialogContent);
 
 const Grid = ({ entries }: { entries: Entry[] }) => {
-  const [openEntry, setOpenEntry] = useState<Entry | null>(null);
+  const { openVideo, setOpenVideo } = useVideoContext();
 
   return (
     <>
@@ -18,27 +19,27 @@ const Grid = ({ entries }: { entries: Entry[] }) => {
         className={`bg-gray-200 p-8 overflow-y-scroll overflow-x-hidden grow`}
       >
         <motion.div
-          className="grid gap-6 justify-center grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fill,_minmax(160px,1fr))]"
+          className="grid grid-cols-[repeat(auto-fill,_minmax(140px,1fr))] sm:grid-cols-[repeat(auto-fill,_minmax(160px,1fr))]"
           layoutScroll
         >
           {entries?.map((entry) => (
             <motion.button
               key={entry.id}
-              onClick={() => setOpenEntry(entry)}
-              whileHover={{ scale: 1.04 }}
+              onClick={() => setOpenVideo(entry)}
+              whileHover={{ scale: 1.04, zIndex: 100 }}
               whileFocus={{ scale: 1.04 }}
               whileTap={{ scale: 0.9 }}
               className={`cursor-pointer entry-${entry.id}`}
             >
-              <VideoCard entry={entry} label="Open Video" />
+              <GridVideoCard entry={entry} />
             </motion.button>
           ))}
         </motion.div>
       </section>
 
-      <Dialog open={openEntry !== null} onOpenChange={(open) => !open && setOpenEntry(null)}>
+      <Dialog open={openVideo !== null} onOpenChange={(open) => !open && setOpenVideo(null)}>
         <AnimatePresence>
-          {openEntry && (
+          {openVideo && (
             <>
               <MotionDialogOverlay
                 className="bg-black/80 z-50"
@@ -51,13 +52,12 @@ const Grid = ({ entries }: { entries: Entry[] }) => {
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 exit={{ y: -100 }}
-
               >
                 <DialogTitle>
                   Guestbook entry
                 </DialogTitle>
                 <VideoCard
-                  entry={openEntry}
+                  entry={openVideo}
                   label="Close Video"
                   fullscreen={true}
                   className="w-full h-full"

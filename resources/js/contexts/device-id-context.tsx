@@ -72,6 +72,7 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
   const requestUserMedia = useCallback(async () => {
     if (typeof window === 'undefined') return;
     try {
+      console.log('requestUserMedia: Starting...');
       /* First we get a list of devices */
       await navigator.mediaDevices.getUserMedia({
         video: true,
@@ -79,6 +80,7 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
       }); // safari won't return a list of devices until we approve this
 
       const devices = await navigator.mediaDevices.enumerateDevices();
+      console.log('requestUserMedia: Enumerated devices:', devices.length);
 
       const videoDevices = devices.filter(
         (d) => d.kind === "videoinput"
@@ -191,6 +193,7 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
     audioDevices,
     requestUserMedia,
   };
+
   return (
     <DeviceIdContext.Provider value={value}>
       {children}

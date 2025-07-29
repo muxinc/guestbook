@@ -2,17 +2,20 @@ import {
   useContext,
   createContext,
   useState,
-  useEffect,
   useCallback,
 } from "react";
 
 import * as UpChunk from "@mux/upchunk";
 import formatBytes from "@/lib/utils";
 import { MessageType, useConsoleContext } from "./console-context";
+import { useEventStream } from "@laravel/stream-react";
+import { Entry } from "@/types";
+import { type SharedData } from '@/types';
 
 export const getVideoRotation = () => -4 + Math.random() * 8;
 import { eventId } from "@/constants/event";
 import { useDeleteKeyContext } from "./delete-key-context";
+import { usePage } from '@inertiajs/react';
 
 export enum Status {
   INITIALIZING = "INITIALIZING", // about to upload
@@ -24,64 +27,33 @@ export enum Status {
   ERROR = "ERROR",
   UNKNOWN = "UNKNOWN",
 }
-export interface Video {
-  id: number;
-  status: Status;
-  // TODO: conditional fields based on type
-  uploadStatus?: number;
-  playbackId?: string | null;
-  // despite being a UI concern, the amount that a video card is rotated lives here in data
-  // so that both he server and the client would rotate the video the same way.
-  // This prevents hydration errors.
-  rotation: number;
-}
+
 type VideoContextValue = {
-  videos: Video[];
-  setVideo: (video: Video) => void;
-  setOpenVideo: (video: Video | null) => void;
+  videos: Entry[];
+  setVideo: (video: Entry) => void;
+  setOpenVideo: (video: Entry | null) => void;
   submitUpload: (file: File) => void;
-  openVideo: Video | null;
+  openVideo: Entry | null;
 };
 type DefaultValue = undefined;
 type ContextValue = VideoContextValue | DefaultValue;
 
 export const VideoContext = createContext<ContextValue>(undefined);
 
-interface ProviderDataProps {
-  initialVideos: Video[];
-}
-interface ProviderProps extends ProviderDataProps {
+
+interface ProviderProps {
   children: React.ReactNode;
 }
-enum SupabaseStatus {
-  PENDING = "pending",
-  PREPARING = "preparing",
-  READY = "ready",
-}
-export type SupabaseEntry = {
-  id: number;
-  event_id: number;
-  created_at: string;
-  playback_id: string;
-  status: SupabaseStatus;
-  email: string | null;
-  first_name: string | null;
-  last_name: string | null;
-  aspect_ratio: `${string}:${string}` | null;
-};
-const supabaseToVideoStatus: Record<SupabaseStatus, Status> = {
-  [SupabaseStatus.PENDING]: Status.PENDING,
-  [SupabaseStatus.PREPARING]: Status.PREPARING,
-  [SupabaseStatus.READY]: Status.READY,
-};
 
-const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
+const VideoProvider = ({ children }: ProviderProps) => {
   const { setMessage } = useConsoleContext();
   const { setDeleteKey } = useDeleteKeyContext();
-  const [openVideo, setOpenVideo] = useState<Video | null>(null);
+  const [openVideo, setOpenVideo] = useState<Entry | null>(null);
+  const { entries: initialEntries } = usePage<SharedData>().props;
 
-  const [videos, setVideos] = useState<Video[]>(initialVideos);
-  const setVideo = useCallback((newVideo: Omit<Video, "rotation">) => {
+  const [videos, setVideos] = useState<Entry[]>(initialEntries);
+  
+  const setVideo = useCallback((newVideo: Entry) => {
     setVideos((videos) => {
       const ids = videos.map((video) => video.id);
       if (ids.includes(newVideo.id)) {
@@ -108,89 +80,56 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
     [videos]
   );
 
-  // And let's listen to updates from the db, too
-  // useEffect(() => {
-  //   const channel = supabase
-  //     .channel("entries")
-  //     .on(
-  //       "postgres_changes",
-  //       {
-  //         event: "*",
-  //         schema: "public",
-  //         table: "entries",
-  //       },
-  //       ({
-  //         old,
-  //         new: { status, id, playback_id, event_id },
-  //         eventType,
-  //       }: {
-  //         old: { id: number };
-  //         new: Database["public"]["Tables"]["entries"]["Row"];
-  //         eventType: string;
-  //       }) => {
-  //         if (eventType === "DELETE") {
-  //           removeVideo(old.id);
-  //           return;
-  //         }
+  const [reconnectKey, setReconnectKey] = useState(0);
 
-  //         if (event_id !== eventId) {
-  //           // ignore uploads from other events
-  //           // todo: can we do this in a filter up in the .on() function?
-  //           // https://supabase.com/docs/reference/javascript/subscribe#listening-to-row-level-changes
-  //           return;
-  //         }
+  // Listen to SSE updates for video status changes
+  const { message } = useEventStream(`/events?v=${reconnectKey}`, {
+    eventName: 'update',
+    onError: () => {
+      // Reconnect after 3 seconds by changing the URL
+      setTimeout(() => {
+        setReconnectKey(prev => prev + 1);
+      }, 3000);
+    },
+    onMessage: (event) => {
+      console.log('SSE video update:', event);
+      try {
+        const entryData = JSON.parse(event.data);
+        console.log('SSE video update:', entryData);
+        
+        // Update the video in our state
+        setVideo(entryData);
 
-  //         switch (status) {
-  //           case "preparing": {
-  //             setVideo({
-  //               id: id,
-  //               status: Status.PREPARING,
-  //             });
-  //             break;
-  //           }
-  //           case "ready": {
-  //             const videoData = {
-  //               id: id,
-  //               status: Status.READY,
-  //               playbackId: playback_id,
-  //             };
+        // Update open video if it's the same one
+        setOpenVideo((v) => {
+          if (!v) return v;
+          if (v.id !== entryData.id) return v;
 
-  //             setVideo(videoData);
+          return {
+            ...v,
+            ...entryData,
+          };
+        });
 
-  //             setOpenVideo((v) => {
-  //               if (!v) return v;
-  //               if (v.id !== id) return v;
-
-  //               return {
-  //                 id,
-  //                 status: Status.READY,
-  //                 playbackId: playback_id,
-  //                 rotation: v.rotation,
-  //               };
-  //             });
-  //           }
-  //         }
-  //         setMessage({
-  //           content: `(${eventType})`,
-  //           data: { id, status, playback_id },
-  //           type: MessageType.SUPABASE,
-  //         });
-  //       }
-  //     )
-  //     .subscribe();
-
-  //   return () => {
-  //     supabase.removeChannel(channel);
-  //   };
-  // }, [setMessage, setVideo, setOpenVideo, removeVideo]);
+        // Log the status change
+        setMessage({
+          content: `Video ${entryData.id} status: ${entryData.status}`,
+          data: { id: entryData.id, status: entryData.status, playback_id: entryData.playback_id },
+          type: MessageType.LARAVEL,
+        });
+      } catch (error) {
+        console.error('Error parsing SSE video data:', error);
+      }
+    }
+  });
 
   const submitUpload = useCallback(
     async (file: File) => {
       try {
         setMessage({
           content:
-            "Requesting authenticated url from Mux via serverless function",
-          type: MessageType.NEXT,
+            "Requesting authenticated url from Mux via Laravel endpoint",
+          type: MessageType.LARAVEL,
         });
 
         const response = await fetch("/upload", { method: "POST" });
@@ -198,19 +137,23 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
 
         setMessage({
           content: `Received authenticated url from Mux: ${url}.`,
-          type: MessageType.NEXT,
+          type: MessageType.LARAVEL,
         });
 
         setVideo({
           id,
           status: Status.INITIALIZING,
+          playback_id: '',
+          created_at: new Date().toISOString(),
+          aspect_ratio: '',
+          event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "8"),
         });
 
         setDeleteKey(id, delete_key);
 
         setMessage({
           content: `Uploading with chunk size ${formatBytes(30720)}.`,
-          type: MessageType.NEXT,
+          type: MessageType.LARAVEL,
         });
         const upload = UpChunk.createUpload({
           endpoint: url, // Authenticated url
@@ -223,6 +166,10 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
           setVideo({
             id,
             status: Status.ERROR,
+            playback_id: '',
+            created_at: new Date().toISOString(),
+            aspect_ratio: '',
+            event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "8"),
           });
         });
 
@@ -234,7 +181,11 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
           setVideo({
             id,
             status: Status.UPLOADING,
-            uploadStatus: progress.detail,
+            upload_progress: progress.detail,
+            playback_id: '',
+            created_at: new Date().toISOString(),
+            aspect_ratio: '',
+            event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "8"),
           });
         });
 
@@ -246,11 +197,19 @@ const VideoProvider = ({ initialVideos, children }: ProviderProps) => {
           setVideo({
             id,
             status: Status.UPLOADED,
+            playback_id: '',
+            created_at: new Date().toISOString(),
+            aspect_ratio: '',
+            event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "8"),
           });
           setOpenVideo({
             id,
             status: Status.UPLOADED,
             rotation: getVideoRotation(),
+            playback_id: '',
+            created_at: new Date().toISOString(),
+            aspect_ratio: '',
+            event_id: parseInt(import.meta.env.VITE_PUBLIC_EVENT_ID || "8"),
           });
         });
       } catch (error) {

@@ -1,4 +1,4 @@
-// import SelectDevice from "./settings-dialog";
+import SelectDevice from "./settings-dialog";
 import event from "@/constants/event";
 
 type Props = {
@@ -21,9 +21,9 @@ const Navbar = ({ withSettings = true, subheading = "" }: Props) => (
             </a>
             <div className="text-xl">{subheading}</div>
         </h1>
-        {/* {withSettings && (
-      <SelectDevice className="absolute right-0 sm:right-4 top-1/2 -translate-y-1/2" />
-    )} */}
+        {withSettings && (
+            <SelectDevice className="absolute right-0 sm:right-4 top-1/2 -translate-y-1/2" />
+        )}
     </div>
 );
 
