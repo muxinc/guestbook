@@ -25,6 +25,8 @@ Route::post('/lead', [LeadController::class, 'store'])->name('lead');
 Route::get('/events', function () {
     // set_time_limit(0);
 
+    header('X-Accel-Buffering: no');
+
     return response()->eventStream(function () {
         $lastCheck = now()->subMinutes(1); // Start 1 minute ago to catch any recent updates
         $iterations = 0;
