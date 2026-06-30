@@ -42,16 +42,18 @@ const Grid = ({ entries }: { entries: Entry[] }) => {
           {openVideo && (
             <>
               <MotionDialogOverlay
-                className="bg-black/80 z-50"
+                className="bg-black/50 backdrop-blur-sm z-50"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{ opacity: 0 }}
               />
               <MotionDialogContent
+                showOverlay={false}
                 className="w-[95vw] max-w-xl p-0 bg-transparent mx-auto my-16 outline-none border-none"
                 initial={{ y: -100 }}
                 animate={{ y: 0 }}
                 exit={{ y: -100 }}
+                transition={{ type: "tween", ease: "easeOut", duration: 0.4 }}
               >
                 <DialogTitle>
                   Guestbook entry
