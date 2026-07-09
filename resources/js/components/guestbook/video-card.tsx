@@ -173,8 +173,8 @@ const VideoCard = ({ entry, label, fullscreen = false, className = "" }: Props) 
       */}
       {fullscreen ? (
         <Link href={link}>
-            <div className="my-5 flex items-center gap-8 px-5">
-              <div className="border-4 border-[#F63002] bg-white p-2">
+            <div className="my-5 flex items-center gap-6 pl-2 pr-4">
+              <div className="shrink-0 border-8 border-[#F63002] bg-white">
                 <QRCodeSVG
                   value={link}
                   size={128}
@@ -186,7 +186,7 @@ const VideoCard = ({ entry, label, fullscreen = false, className = "" }: Props) 
               <img
                 src="/logos/laraprom-2026.png"
                 alt="LaraProm 2026"
-                className="h-32 w-auto object-contain"
+                className="min-w-0 flex-1 max-h-32 object-contain object-left"
               />
             </div>
         </Link>
