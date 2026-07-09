@@ -154,26 +154,39 @@ const VideoCard = ({ entry, label, fullscreen = false, className = "" }: Props) 
             )}
           </motion.div>
         )}
+
+        {/* "take this video with you" caption, overlaid on the lower-left of the video */}
+        {fullscreen && isLoaded && (
+          <div className="absolute bottom-2 left-2 z-10 bg-black px-3 py-2 text-white">
+            <div className="font-bold text-lg sm:text-xl">
+              Take this video with you!
+            </div>
+            <div className="text-sm sm:text-base">Scan or Click</div>
+          </div>
+        )}
       </div>
 
-      {/* 
+      {/*
         the footer of the video can have one of two things:
         in fullscreen, a QR code.
         in the grid, ust the video status
       */}
       {fullscreen ? (
         <Link href={link}>
-            <div className="my-5 flex gap-8 px-5">
-              <QRCodeSVG value={link} />
+            <div className="my-5 flex items-center gap-8 px-5">
+              <QRCodeSVG
+                value={link}
+                fgColor="#F63002"
+                bgColor="#ffffff"
+                marginSize={2}
+                className="h-32 w-32 border-4 border-[#F63002]"
+              />
               {/* <VisuallyHidden>Go to Video</VisuallyHidden> */}
-              <div className="flex flex-col justify-center">
-                <h2 className="font-bold text-xl sm:text-3xl mb-1 text-gray-700">
-                  Take your video with you!
-                </h2>
-                <p className="sm:text-xl text-gray-600">
-                  Scan or Click
-                </p>
-              </div>
+              <img
+                src="/logos/laraprom-2026.png"
+                alt="LaraProm 2026"
+                className="h-32 w-auto object-contain"
+              />
             </div>
         </Link>
       ) : (
