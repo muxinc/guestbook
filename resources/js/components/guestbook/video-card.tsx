@@ -157,7 +157,7 @@ const VideoCard = ({ entry, label, fullscreen = false, className = "" }: Props) 
 
         {/* "take this video with you" caption, overlaid on the lower-left of the video */}
         {fullscreen && isLoaded && (
-          <div className="absolute bottom-2 left-2 z-10 bg-black px-3 py-2 text-white">
+          <div className="absolute bottom-2 left-2 z-10 bg-black/80 px-3 py-2 text-white">
             <div className="font-bold text-lg sm:text-xl">
               Take this video with you!
             </div>
