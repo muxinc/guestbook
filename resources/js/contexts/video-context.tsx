@@ -29,6 +29,17 @@ export enum Status {
   UNKNOWN = "UNKNOWN",
 }
 
+// Statuses where a video is still working its way toward READY. While any
+// video is in one of these, we keep polling; once everything is READY (or
+// errored out), there's nothing left to wait on and we stop.
+const PENDING_STATUSES = [
+  Status.INITIALIZING,
+  Status.UPLOADING,
+  Status.UPLOADED,
+  Status.PENDING,
+  Status.PREPARING,
+];
+
 type VideoContextValue = {
   videos: Entry[];
   setVideo: (video: Entry) => void;
@@ -83,54 +94,70 @@ const VideoProvider = ({ children }: ProviderProps) => {
 
   const [reconnectKey, setReconnectKey] = useState(0);
 
-  // Listen to SSE updates for video status changes
-  useEffect(() => {
-    const pollEvents = async () => {
-      try {
-        const response = await fetch('/events-poll');
-        if (!response.ok) {
-          throw new Error('Failed to fetch events');
-        }
+  const hasPendingVideos = videos.some((video) =>
+    PENDING_STATUSES.includes(video.status?.toUpperCase() as Status)
+  );
 
-        const entries = await response.json();
-
-        entries.forEach((entryData: Entry) => {
-          console.log('Polling video update:', entryData);
-
-          // Update the video in our state
-          setVideo(entryData);
-
-          // Update open video if it's the same one
-          setOpenVideo((v) => {
-            if (!v) return v;
-            if (v.id !== entryData.id) return v;
-
-            return {
-              ...v,
-              ...entryData,
-            };
-          });
-
-          // Log the status change
-          setMessage({
-            content: `Video ${entryData.id} status: ${entryData.status}`,
-            data: { id: entryData.id, status: entryData.status, playback_id: entryData.playback_id },
-            type: MessageType.LARAVEL,
-          });
-        });
-      } catch (error) {
-        console.error('Error polling events:', error);
-        // Retry after 3 seconds on error
-        setTimeout(() => {
-          setReconnectKey(prev => prev + 1);
-        }, 3000);
+  const pollEvents = useCallback(async () => {
+    try {
+      const response = await fetch('/events-poll');
+      if (!response.ok) {
+        throw new Error('Failed to fetch events');
       }
-    };
 
-    const interval = setInterval(pollEvents, 1000); // Poll every second
+      const entries = await response.json();
+
+      entries.forEach((entryData: Entry) => {
+        console.log('Polling video update:', entryData);
+
+        // Update the video in our state
+        setVideo(entryData);
+
+        // Update open video if it's the same one
+        setOpenVideo((v) => {
+          if (!v) return v;
+          if (v.id !== entryData.id) return v;
+
+          return {
+            ...v,
+            ...entryData,
+          };
+        });
+
+        // Log the status change
+        setMessage({
+          content: `Video ${entryData.id} status: ${entryData.status}`,
+          data: { id: entryData.id, status: entryData.status, playback_id: entryData.playback_id },
+          type: MessageType.LARAVEL,
+        });
+      });
+    } catch (error) {
+      console.error('Error polling events:', error);
+      // Retry after 3 seconds on error
+      setTimeout(() => {
+        setReconnectKey(prev => prev + 1);
+      }, 3000);
+    }
+  }, [setVideo, setMessage]);
+
+  // Fast poll: while a video is still on its way to READY, check every second
+  // so the uploader sees their own video resolve quickly.
+  useEffect(() => {
+    if (!hasPendingVideos) return;
+
+    pollEvents(); // check immediately so a freshly-uploaded video resolves fast
+    const interval = setInterval(pollEvents, 1000);
 
     return () => clearInterval(interval);
-  }, [reconnectKey, setVideo, setMessage]);
+  }, [hasPendingVideos, reconnectKey, pollEvents]);
+
+  // Slow poll: always on, so new videos from other attendees show up on the
+  // wall without a page refresh (at a relaxed cadence to spare the server).
+  useEffect(() => {
+    const interval = setInterval(pollEvents, 15000);
+
+    return () => clearInterval(interval);
+  }, [reconnectKey, pollEvents]);
 
   const submitUpload = useCallback(
     async (file: File) => {
