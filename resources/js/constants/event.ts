@@ -38,9 +38,9 @@ const events: { [eventId: number]: Event } = {
     utmCampaign: "cascadiajs-2024",
   },
   8: {
-    title: "Laracon US 2025",
-    shareText: "Having a blast at #LaraconUS 2025",
-    utmCampaign: "laracon-us-2025",
+    title: "Laracon US 2026",
+    shareText: "Having a blast at #LaraconUS 2026",
+    utmCampaign: "laracon-us-2026",
   },
   2468: {
     title: "Developer Mode",
