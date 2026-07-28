@@ -32,7 +32,7 @@ const Recorder = () => {
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const mediaRecorderRef = React.useRef<MediaRecorder>(null);
   const chunksRef = React.useRef<Blob[]>([]);
-  const [chunks, setChunks] = React.useState<Blob[]>([]);
+  const [, setChunks] = React.useState<Blob[]>([]);
 
   // Store callbacks in ref to avoid dependency issues
   const callbacksRef = React.useRef({
@@ -124,7 +124,7 @@ const Recorder = () => {
       };
 
       // Set onstop handler here, when MediaRecorder is created
-      mediaRecorderRef.current.onstop = (e) => {
+      mediaRecorderRef.current.onstop = () => {
         callbacksRef.current.setMessage({
           content: `Stopping recording...`,
           type: MessageType.RECORDER,
@@ -141,7 +141,7 @@ const Recorder = () => {
         }
 
         // Use the MIME type from the actual chunks
-        let finalBlob = new Blob(allChunks, { type: allChunks[0].type });
+        const finalBlob = new Blob(allChunks, { type: allChunks[0].type });
 
         console.log('Final blob size:', finalBlob.size);
         console.log('Total chunks size:', allChunks.reduce((sum, chunk) => sum + chunk.size, 0));

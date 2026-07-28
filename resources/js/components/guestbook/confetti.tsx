@@ -31,6 +31,10 @@ const Confetti = () => {
     const interval = setTimeout(() => {
       shouldRun(false);
     }, 10000);
+
+    return () => {
+      clearTimeout(interval);
+    };
   }, [recordingStatus, shouldRun]);
 
   return (

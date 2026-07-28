@@ -2,10 +2,10 @@ import { useVideoContext } from "@/contexts/video-context";
 import { useEventStream } from "@laravel/stream-react";
 
 export default function useVideoSubscription() {
-    const { setVideo, setOpenVideo } = useVideoContext();
-    
+    const { setVideo } = useVideoContext();
+
     // Set up the event stream for real-time updates
-    const { message } = useEventStream('/events', {
+    useEventStream('/events', {
         eventName: 'update',
         onMessage: (event) => {
             try {

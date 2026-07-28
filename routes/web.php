@@ -1,22 +1,21 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-use App\Models\Entry;
-use Inertia\Inertia;
-use App\Http\Controllers\UploadController;
 use App\Http\Controllers\LeadController;
-use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\UploadController;
+use App\Models\Entry;
+use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
-        'entries' => Entry::orderBy('updated_at', 'desc')->get()
+        'entries' => Entry::orderBy('updated_at', 'desc')->get(),
     ]);
 })->name('home');
 
 Route::post('/upload', [UploadController::class, 'create'])->name('upload');
 Route::get('/entry/{id}', function ($id) {
     return Inertia::render('entry', [
-        'entry' => Entry::find($id)
+        'entry' => Entry::find($id),
     ]);
 })->name('entry');
 
@@ -69,7 +68,6 @@ Route::get('/events-poll', function () {
 
     return response()->json($entries);
 });
-
 
 Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('dashboard', function () {

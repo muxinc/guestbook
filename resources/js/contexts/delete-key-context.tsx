@@ -1,7 +1,7 @@
 // the responsibility of the deletekeycontext is to keep
 // localstorage `mux-guestbook:delete-keys` and clientstate in sync
 
-import { useContext, createContext, useEffect, useCallback } from "react";
+import { useContext, createContext } from "react";
 import useLocalStorageState, {
   objectValidator,
 } from "@/hooks/use-local-storage-state";

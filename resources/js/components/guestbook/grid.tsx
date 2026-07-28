@@ -1,4 +1,3 @@
-import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { Entry } from "@/types";
 import VideoCard from "./video-card";

@@ -1,4 +1,4 @@
-import { FormEvent, useState, useEffect } from "react";
+import { FormEvent, useState } from "react";
 
 import { useForm } from '@inertiajs/react'
 import { store } from '@/actions/App/Http/Controllers/LeadController'
@@ -8,7 +8,7 @@ type Props = {
 };
 const OptInForm = ({ className = "" }: Props) => {
 
-  const { setError, setData, post, data, processing, errors, submit } = useForm({
+  const { setData, data, processing, submit } = useForm({
     first_name: '',
     last_name: '',
     email: '',

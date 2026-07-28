@@ -2,7 +2,7 @@ import * as React from "react";
 import { usePage, router } from "@inertiajs/react";
 import type { PageProps } from "@inertiajs/core";
 import MuxVideo from "@mux/mux-video-react";
-import event, { eventId } from "@/constants/event";
+import event from "@/constants/event";
 import { useDeleteKeyContext } from "@/contexts/delete-key-context";
 import Navbar from "@/components/guestbook/nav-bar";
 import SEO from "@/components/guestbook/entry/SEO";

@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Lead;
+use Illuminate\Http\Request;
 
 class LeadController extends Controller
 {
@@ -21,6 +21,7 @@ class LeadController extends Controller
     public function store(Request $request)
     {
         $lead = Lead::create($request->all());
+
         return back()->with('success', 'Thank you for your interest!');
     }
 }

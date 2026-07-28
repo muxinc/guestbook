@@ -46,16 +46,16 @@ const RecorderProvider = ({ children }: ProviderProps) => {
   const { isSoundEnabled } = usePreferenceContext();
   const { setMessage } = useConsoleContext();
 
-  // Only initialize sound on client side
-  const [playBeep] = typeof window !== 'undefined' ? useSound("sounds/beep.mp3", {
+  // use-sound is SSR-safe: it only loads Howler in an effect on the client
+  const [playBeep] = useSound("sounds/beep.mp3", {
     volume: 0.5,
     soundEnabled: isSoundEnabled,
-  }) : [() => {}];
+  });
 
-  const [playDing] = typeof window !== 'undefined' ? useSound("sounds/ding.mp3", {
+  const [playDing] = useSound("sounds/ding.mp3", {
     volume: 0.8,
     soundEnabled: isSoundEnabled,
-  }) : [() => {}];
+  });
 
   // Recording status will always start off as INITIALIZING on page load.
   const [recordingStatus, setRecordingStatus] = useState(

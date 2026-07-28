@@ -2,13 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use MuxPhp\Api\DirectUploadsApi;
-use MuxPhp\Models\CreateUploadRequest;
-use MuxPhp\Models\CreateAssetRequest;
-use MuxPhp\Models\PlaybackPolicy;
-use Illuminate\Http\Request;
-
 use App\Models\Entry;
+use Illuminate\Http\Request;
+use MuxPhp\Api\DirectUploadsApi;
+use MuxPhp\Models\CreateAssetRequest;
+use MuxPhp\Models\CreateUploadRequest;
+use MuxPhp\Models\PlaybackPolicy;
 
 class UploadController extends Controller
 {
@@ -39,7 +38,7 @@ class UploadController extends Controller
 
         $createUploadRequest = new CreateUploadRequest([
             'cors_origin' => '*',
-            'new_asset_settings' => $createAssetRequest
+            'new_asset_settings' => $createAssetRequest,
         ]);
 
         $upload = $this->uploads->createDirectUpload($createUploadRequest);

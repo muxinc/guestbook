@@ -58,7 +58,7 @@ return new class extends Migration
     {
         Schema::dropIfExists('activity');
         Schema::dropIfExists('assets');
-        Schema::dropIfExists('entries'); 
+        Schema::dropIfExists('entries');
         Schema::dropIfExists('events');
         Schema::dropIfExists('leads');
     }

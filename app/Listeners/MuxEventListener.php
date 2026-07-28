@@ -2,13 +2,9 @@
 
 namespace App\Listeners;
 
-use MartinBean\Laravel\Mux\Events\WebhookReceived;
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
-
-use Illuminate\Support\Str;
-
 use App\Models\Entry;
+use Illuminate\Support\Str;
+use MartinBean\Laravel\Mux\Events\WebhookReceived;
 
 class MuxEventListener
 {
@@ -37,7 +33,7 @@ class MuxEventListener
     {
         $passthrough = $payload['data']['passthrough'] ?? null;
         $metadata = $passthrough ? json_decode($passthrough, true) : [];
-        
+
         if (isset($metadata['entry_id'])) {
             $updatePayload = [
                 'id' => $metadata['entry_id'],
@@ -74,7 +70,7 @@ class MuxEventListener
 
         // Check if entry exists and is already ready
         $entry = Entry::find($metadata['entry_id']);
-        
+
         if ($entry && $entry->status === 'READY') {
             return;
         }

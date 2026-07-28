@@ -4,7 +4,6 @@ import {
   useRecorderContext,
   CountdownStatus,
   RecordingStatus,
-  RECORDING_DURATION,
 } from "@/contexts/recorder-context";
 import { useVideoContext } from "@/contexts/video-context";
 
@@ -23,7 +22,6 @@ const recordingIndicatorVariants: Variants = {
 const RecordButton = () => {
   const {
     recordingStatus,
-    countdownSecondsRemaining,
     countdownStatus,
     setCountdownStatus,
   } = useRecorderContext();

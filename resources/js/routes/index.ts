@@ -50,7 +50,7 @@ home.head = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
 
 /**
 * @see \App\Http\Controllers\UploadController::upload
-* @see app/Http/Controllers/UploadController.php:24
+* @see app/Http/Controllers/UploadController.php:22
 * @route '/upload'
 */
 export const upload = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
@@ -68,7 +68,7 @@ upload.definition = {
 
 /**
 * @see \App\Http\Controllers\UploadController::upload
-* @see app/Http/Controllers/UploadController.php:24
+* @see app/Http/Controllers/UploadController.php:22
 * @route '/upload'
 */
 upload.url = (options?: { query?: QueryParams, mergeQuery?: QueryParams }) => {
@@ -77,7 +77,7 @@ upload.url = (options?: { query?: QueryParams, mergeQuery?: QueryParams }) => {
 
 /**
 * @see \App\Http\Controllers\UploadController::upload
-* @see app/Http/Controllers/UploadController.php:24
+* @see app/Http/Controllers/UploadController.php:22
 * @route '/upload'
 */
 upload.post = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
@@ -194,7 +194,7 @@ lead.post = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
 })
 
 /**
-* @see routes/web.php:64
+* @see routes/web.php:75
 * @route '/dashboard'
 */
 export const dashboard = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
@@ -211,7 +211,7 @@ dashboard.definition = {
 }
 
 /**
-* @see routes/web.php:64
+* @see routes/web.php:75
 * @route '/dashboard'
 */
 dashboard.url = (options?: { query?: QueryParams, mergeQuery?: QueryParams }) => {
@@ -219,7 +219,7 @@ dashboard.url = (options?: { query?: QueryParams, mergeQuery?: QueryParams }) =>
 }
 
 /**
-* @see routes/web.php:64
+* @see routes/web.php:75
 * @route '/dashboard'
 */
 dashboard.get = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
@@ -231,7 +231,7 @@ dashboard.get = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
 })
 
 /**
-* @see routes/web.php:64
+* @see routes/web.php:75
 * @route '/dashboard'
 */
 dashboard.head = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {

@@ -1,7 +1,7 @@
 import { queryParams, type QueryParams } from './../../../../wayfinder'
 /**
 * @see \App\Http\Controllers\UploadController::create
-* @see app/Http/Controllers/UploadController.php:24
+* @see app/Http/Controllers/UploadController.php:22
 * @route '/upload'
 */
 export const create = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
@@ -19,7 +19,7 @@ create.definition = {
 
 /**
 * @see \App\Http\Controllers\UploadController::create
-* @see app/Http/Controllers/UploadController.php:24
+* @see app/Http/Controllers/UploadController.php:22
 * @route '/upload'
 */
 create.url = (options?: { query?: QueryParams, mergeQuery?: QueryParams }) => {
@@ -28,7 +28,7 @@ create.url = (options?: { query?: QueryParams, mergeQuery?: QueryParams }) => {
 
 /**
 * @see \App\Http\Controllers\UploadController::create
-* @see app/Http/Controllers/UploadController.php:24
+* @see app/Http/Controllers/UploadController.php:22
 * @route '/upload'
 */
 create.post = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {

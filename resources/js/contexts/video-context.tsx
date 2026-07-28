@@ -9,12 +9,10 @@ import {
 import * as UpChunk from "@mux/upchunk";
 import formatBytes from "@/lib/utils";
 import { MessageType, useConsoleContext } from "./console-context";
-import { useEventStream } from "@laravel/stream-react";
 import { Entry } from "@/types";
 import { type SharedData } from '@/types';
 
 export const getVideoRotation = () => -4 + Math.random() * 8;
-import { eventId } from "@/constants/event";
 import { useDeleteKeyContext } from "./delete-key-context";
 import { usePage } from '@inertiajs/react';
 
@@ -83,14 +81,6 @@ const VideoProvider = ({ children }: ProviderProps) => {
       }
     });
   }, []);
-
-  const removeVideo = useCallback(
-    (id: number) => {
-      const updated = videos.filter((v) => v.id !== id);
-      setVideos(updated);
-    },
-    [videos]
-  );
 
   const [reconnectKey, setReconnectKey] = useState(0);
 

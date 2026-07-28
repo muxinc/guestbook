@@ -148,7 +148,7 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
       } else {
         setAudioDeviceIdLocalStorage(audioDevices[0].deviceId);
       }
-    } catch (error) {
+    } catch {
       setMessage({
         type: MessageType.ERROR,
         content: "Error requesting user media",

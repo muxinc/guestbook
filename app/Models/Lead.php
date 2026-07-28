@@ -8,13 +8,13 @@ class Lead extends Model
 {
     protected $fillable = [
         'event_id',
-        'first_name', 
+        'first_name',
         'last_name',
-        'email'
+        'email',
     ];
 
     protected $casts = [
         'created_at' => 'datetime',
-        'event_id' => 'integer'
+        'event_id' => 'integer',
     ];
 }
