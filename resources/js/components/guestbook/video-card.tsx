@@ -174,18 +174,18 @@ const VideoCard = ({ entry, label, fullscreen = false, className = "" }: Props) 
       {fullscreen ? (
         <Link href={link}>
             <div className="my-5 flex items-center gap-6 pl-2 pr-4">
-              <div className="shrink-0 border-8 border-[#F63002] bg-white">
+              <div className="shrink-0 border-8 border-black bg-white">
                 <QRCodeSVG
                   value={link}
                   size={128}
-                  fgColor="#F63002"
+                  fgColor="#000000"
                   bgColor="#ffffff"
                 />
               </div>
               {/* <VisuallyHidden>Go to Video</VisuallyHidden> */}
               <img
-                src="/logos/laraprom-2026.png"
-                alt="LaraProm 2026"
+                src="/logos/resend-forward-2026.png"
+                alt="Resend Forward 2026 – Resend × Mux"
                 className="min-w-0 flex-1 max-h-32 object-contain object-left"
               />
             </div>

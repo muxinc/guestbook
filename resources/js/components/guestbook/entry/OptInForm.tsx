@@ -2,6 +2,7 @@ import { FormEvent, useState } from "react";
 
 import { useForm } from '@inertiajs/react'
 import { store } from '@/actions/App/Http/Controllers/LeadController'
+import { eventId } from '@/constants/event'
 
 type Props = {
   className?: string;
@@ -12,7 +13,7 @@ const OptInForm = ({ className = "" }: Props) => {
     first_name: '',
     last_name: '',
     email: '',
-    event_id: 2468
+    event_id: eventId
   })
   
   const [isOptInChecked, setIsOptInChecked] = useState(false);

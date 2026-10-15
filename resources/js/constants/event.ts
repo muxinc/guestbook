@@ -42,6 +42,11 @@ const events: { [eventId: number]: Event } = {
     shareText: "Having a blast at #LaraconUS 2026",
     utmCampaign: "laracon-us-2026",
   },
+  9: {
+    title: "Resend Forward 2026",
+    shareText: "Having a blast at #ResendForward 2026 with @resend × @MuxHQ",
+    utmCampaign: "resend-forward-2026",
+  },
   2468: {
     title: "Developer Mode",
     shareText: "I'm running this app in #DeveloperMode",
