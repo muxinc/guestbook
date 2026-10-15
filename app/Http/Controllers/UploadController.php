@@ -23,7 +23,7 @@ class UploadController extends Controller
 
         try {
             $entry = Entry::create([
-                'event_id' => env('VITE_PUBLIC_EVENT_ID'),
+                'event_id' => config('app.event_id'),
                 'status' => 'INITIALIZING',
             ]);
         } catch (\Exception $e) {

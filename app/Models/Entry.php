@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 
 class Entry extends Model
@@ -22,4 +23,9 @@ class Entry extends Model
         'status' => null,
         'aspect_ratio' => null,
     ];
+
+    public function scopeCurrentEvent(Builder $query): void
+    {
+        $query->where('event_id', config('app.event_id'));
+    }
 }

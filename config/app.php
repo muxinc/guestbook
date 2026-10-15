@@ -15,6 +15,8 @@ return [
 
     'name' => env('APP_NAME', 'Laravel'),
 
+    'event_id' => (int) env('VITE_PUBLIC_EVENT_ID'),
+
     /*
     |--------------------------------------------------------------------------
     | Application Environment

@@ -8,7 +8,7 @@ use Inertia\Inertia;
 
 Route::get('/', function () {
     return Inertia::render('welcome', [
-        'entries' => Entry::orderBy('updated_at', 'desc')->get(),
+        'entries' => Entry::currentEvent()->orderBy('updated_at', 'desc')->get(),
     ]);
 })->name('home');
 
@@ -40,7 +40,8 @@ Route::get('/events', function () {
             }
 
             // Get entries that have been updated since the last check
-            $entries = Entry::where('status', 'READY')
+            $entries = Entry::currentEvent()
+                ->where('status', 'READY')
                 ->where('updated_at', '>', $lastCheck)
                 ->orderBy('updated_at', 'asc')
                 ->get();
@@ -62,7 +63,8 @@ Route::get('/events', function () {
 
 Route::get('/events-poll', function () {
     // Get entries that have been updated since the last check
-    $entries = Entry::where('status', 'READY')
+    $entries = Entry::currentEvent()
+        ->where('status', 'READY')
         ->orderBy('updated_at', 'asc')
         ->get();
 
