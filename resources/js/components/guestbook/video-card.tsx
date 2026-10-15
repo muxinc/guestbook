@@ -128,6 +128,9 @@ const VideoCard = ({ entry, label, fullscreen = false, className = "" }: Props) 
                 className="h-full w-full object-cover cursor-pointer"
                 playbackId={entry.playback_id}
                 streamType="on-demand"
+                // Chrome now reports native HLS support but fails on these
+                // streams, leaving the card on its spinner. Use hls.js when available.
+                preferPlayback="mse"
                 loop
                 autoPlay
                 playsInline
