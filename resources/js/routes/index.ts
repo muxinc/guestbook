@@ -1,6 +1,6 @@
 import { queryParams, type QueryParams } from './../wayfinder'
 /**
-* @see routes/web.php:10
+* @see routes/web.php:9
 * @route '/'
 */
 export const home = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
@@ -17,7 +17,7 @@ home.definition = {
 }
 
 /**
-* @see routes/web.php:10
+* @see routes/web.php:9
 * @route '/'
 */
 home.url = (options?: { query?: QueryParams, mergeQuery?: QueryParams }) => {
@@ -25,7 +25,7 @@ home.url = (options?: { query?: QueryParams, mergeQuery?: QueryParams }) => {
 }
 
 /**
-* @see routes/web.php:10
+* @see routes/web.php:9
 * @route '/'
 */
 home.get = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
@@ -37,7 +37,7 @@ home.get = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
 })
 
 /**
-* @see routes/web.php:10
+* @see routes/web.php:9
 * @route '/'
 */
 home.head = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
@@ -50,7 +50,7 @@ home.head = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
 
 /**
 * @see \App\Http\Controllers\UploadController::upload
-* @see app/Http/Controllers/UploadController.php:22
+* @see app/Http/Controllers/UploadController.php:21
 * @route '/upload'
 */
 export const upload = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
@@ -68,7 +68,7 @@ upload.definition = {
 
 /**
 * @see \App\Http\Controllers\UploadController::upload
-* @see app/Http/Controllers/UploadController.php:22
+* @see app/Http/Controllers/UploadController.php:21
 * @route '/upload'
 */
 upload.url = (options?: { query?: QueryParams, mergeQuery?: QueryParams }) => {
@@ -77,7 +77,7 @@ upload.url = (options?: { query?: QueryParams, mergeQuery?: QueryParams }) => {
 
 /**
 * @see \App\Http\Controllers\UploadController::upload
-* @see app/Http/Controllers/UploadController.php:22
+* @see app/Http/Controllers/UploadController.php:21
 * @route '/upload'
 */
 upload.post = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
@@ -89,7 +89,7 @@ upload.post = (options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
 })
 
 /**
-* @see routes/web.php:17
+* @see routes/web.php:16
 * @route '/entry/{id}'
 */
 export const entry = (args: { id: string | number } | [id: string | number ] | string | number, options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
@@ -106,7 +106,7 @@ entry.definition = {
 }
 
 /**
-* @see routes/web.php:17
+* @see routes/web.php:16
 * @route '/entry/{id}'
 */
 entry.url = (args: { id: string | number } | [id: string | number ] | string | number, options?: { query?: QueryParams, mergeQuery?: QueryParams }) => {
@@ -130,7 +130,7 @@ entry.url = (args: { id: string | number } | [id: string | number ] | string | n
 }
 
 /**
-* @see routes/web.php:17
+* @see routes/web.php:16
 * @route '/entry/{id}'
 */
 entry.get = (args: { id: string | number } | [id: string | number ] | string | number, options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
@@ -142,7 +142,7 @@ entry.get = (args: { id: string | number } | [id: string | number ] | string | n
 })
 
 /**
-* @see routes/web.php:17
+* @see routes/web.php:16
 * @route '/entry/{id}'
 */
 entry.head = (args: { id: string | number } | [id: string | number ] | string | number, options?: { query?: QueryParams, mergeQuery?: QueryParams }): {
