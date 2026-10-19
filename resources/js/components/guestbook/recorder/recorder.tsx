@@ -30,6 +30,11 @@ const Recorder = () => {
   const { recordingStatus, setRecordingStatus } = useRecorderContext();
 
   const videoRef = React.useRef<HTMLVideoElement>(null);
+  const streamRef = React.useRef<MediaStream | null>(null);
+  const setupQueueRef = React.useRef<Promise<void>>(Promise.resolve());
+  const [isConfiguring, setIsConfiguring] = React.useState(false);
+  const [mediaError, setMediaError] = React.useState<string | null>(null);
+  const [setupAttempt, setSetupAttempt] = React.useState(0);
   const mediaRecorderRef = React.useRef<MediaRecorder>(null);
   const chunksRef = React.useRef<Blob[]>([]);
   const [, setChunks] = React.useState<Blob[]>([]);
@@ -49,6 +54,11 @@ const Recorder = () => {
       submitUpload,
     };
   }, [setMessage, setRecordingStatus, submitUpload]);
+
+  React.useEffect(() => () => {
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+  }, []);
 
   React.useEffect(() => {
     // This hook should run under two circumstances:
@@ -71,15 +81,26 @@ const Recorder = () => {
         audioDeviceId !== audioTrack?.getSettings().deviceId);
     if (!isInitReady && !isReadyReady) return;
 
-    // Did we pass the test? Ok let's go.
+    let cancelled = false;
+    let requestedStream: MediaStream | undefined;
+    setIsConfiguring(true);
+    setMediaError(null);
+
+    // Release the old devices before opening another camera. Some browsers
+    // and capture devices cannot run multiple camera streams at once.
+    streamRef.current?.getTracks().forEach((track) => track.stop());
+    streamRef.current = null;
+    mediaRecorderRef.current = null;
+    if (videoRef.current) videoRef.current.srcObject = null;
+
     const setup = async () => {
       if (!videoRef.current) return;
 
       const audioPrefs: boolean | MediaTrackConstraints = {
-        deviceId: audioDeviceId,
+        deviceId: { exact: audioDeviceId },
       };
       const videoPrefs: boolean | MediaTrackConstraints = {
-        deviceId: videoDeviceId,
+        deviceId: { exact: videoDeviceId },
         // When in portrait mode, iOS will invert this ratio. So like, 9 / 16.
         // Which, like, what if I want a horizontal crop of a vertical video?
         // AND THEN it'll still try to tell me that the width of the video > height.
@@ -91,6 +112,13 @@ const Recorder = () => {
         audio: audioPrefs,
         video: videoPrefs,
       });
+
+      requestedStream = stream;
+      // Ignore late results from an older selection or an unmounted recorder.
+      if (cancelled) {
+        stream.getTracks().forEach((track) => track.stop());
+        return;
+      }
 
       const mimeType = getSupportedMimeType();
       if (typeof mimeType === "undefined") {
@@ -165,19 +193,44 @@ const Recorder = () => {
         callbacksRef.current.setRecordingStatus(RecordingStatus.READY);
       };
 
+      streamRef.current = stream;
       videoRef.current.srcObject = stream;
       videoRef.current.autoplay = true;
       videoRef.current.muted = true;
       videoRef.current.playsInline = true;
       videoRef.current.controls = false;
 
-      setRecordingStatus(RecordingStatus.READY);
+      setIsConfiguring(false);
+      callbacksRef.current.setRecordingStatus(RecordingStatus.READY);
     };
-    setup();
+    // getUserMedia cannot be aborted. Wait for any superseded acquisition to
+    // finish and release its stream before asking exclusive hardware to reopen.
+    const setupTask = setupQueueRef.current.then(() => {
+      if (!cancelled) return setup();
+    }).catch((error: unknown) => {
+      requestedStream?.getTracks().forEach((track) => track.stop());
+      if (cancelled) return;
+      streamRef.current = null;
+      mediaRecorderRef.current = null;
+      if (videoRef.current) videoRef.current.srcObject = null;
+      const message = "Unable to open the selected camera or microphone. Check that it is connected and not in use by another app, then try again or choose another source in Settings.";
+      setMediaError(message);
+      setIsConfiguring(false);
+      callbacksRef.current.setMessage({
+        content: message,
+        data: error,
+        type: MessageType.ERROR,
+      });
+    });
+    setupQueueRef.current = setupTask;
+    return () => {
+      cancelled = true;
+    };
   }, [
     audioDeviceId,
     recordingStatus,
     videoDeviceId,
+    setupAttempt,
     // Don't include callback functions in dependencies
   ]);
 
@@ -208,7 +261,18 @@ const Recorder = () => {
           controls={false}
         />
 
-        {recordingStatus === RecordingStatus.INITIALIZING ? (
+        {mediaError ? (
+          <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 p-4 text-center text-white" role="alert">
+            <p>{mediaError}</p>
+            <button className="rounded bg-white px-3 py-2 text-gray-700" onClick={() => setSetupAttempt((attempt) => attempt + 1)}>
+              Try again
+            </button>
+          </div>
+        ) : isConfiguring ? (
+          <div className="absolute inset-0 flex items-center justify-center text-white" role="status">
+            Connecting camera…
+          </div>
+        ) : recordingStatus === RecordingStatus.INITIALIZING ? (
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="flex flex-col items-center justify-center space-y-4">
               <div className="text-2xl text-white text-center">Connect your camera to begin</div>
