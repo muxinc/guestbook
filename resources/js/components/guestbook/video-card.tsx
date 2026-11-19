@@ -4,6 +4,7 @@ import { QRCodeSVG } from "qrcode.react";
 import MuxVideo from "@mux/mux-video-react";
 import { type Entry } from "@/types";
 import { Status } from "@/constants/status";
+import event from "@/constants/event";
 
 import { Link } from '@inertiajs/react'
 // import VisuallyHidden from "@reach/visually-hidden";
@@ -186,11 +187,13 @@ const VideoCard = ({ entry, label, fullscreen = false, className = "" }: Props) 
                 />
               </div>
               {/* <VisuallyHidden>Go to Video</VisuallyHidden> */}
-              <img
-                src="/logos/resend-forward-2026.png"
-                alt="Resend Forward 2026 – Resend × Mux"
-                className="min-w-0 flex-1 max-h-32 object-contain object-left"
-              />
+              {event?.logo && (
+                <img
+                  src={event.logo.src}
+                  alt={event.logo.alt}
+                  className="min-w-0 flex-1 max-h-32 object-contain object-left"
+                />
+              )}
             </div>
         </Link>
       ) : (

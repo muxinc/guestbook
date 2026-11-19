@@ -4,6 +4,8 @@ type Event = {
   title: string;
   shareText: string;
   utmCampaign: string;
+  // shown beside the QR code on the fullscreen Polaroid
+  logo?: { src: string; alt: string };
 };
 const events: { [eventId: number]: Event } = {
   2: {
@@ -41,11 +43,25 @@ const events: { [eventId: number]: Event } = {
     title: "Laracon US 2026",
     shareText: "Having a blast at #LaraconUS 2026",
     utmCampaign: "laracon-us-2026",
+    logo: { src: "/logos/laraprom-2026.png", alt: "LaraProm 2026" },
   },
   9: {
     title: "Resend Forward 2026",
     shareText: "Having a blast at #ResendForward 2026 with @resend × @MuxHQ",
     utmCampaign: "resend-forward-2026",
+    logo: {
+      src: "/logos/resend-forward-2026.png",
+      alt: "Resend Forward 2026 – Resend × Mux",
+    },
+  },
+  10: {
+    title: "Dev Tools After Dark",
+    shareText: "Having a blast at #DevToolsAfterDark with @MuxHQ",
+    utmCampaign: "dev-tools-after-dark",
+    logo: {
+      src: "/logos/dev-tools-after-dark.png",
+      alt: "Dev Tools After Dark – Clerk, Gauge, Mux, Temporal, TinyFish",
+    },
   },
   2468: {
     title: "Developer Mode",
