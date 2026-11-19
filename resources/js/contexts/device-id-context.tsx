@@ -74,12 +74,19 @@ const DeviceIdProvider = ({ children }: ProviderProps) => {
     try {
       console.log('requestUserMedia: Starting...');
       /* First we get a list of devices */
-      await navigator.mediaDevices.getUserMedia({
+      const permissionStream = await navigator.mediaDevices.getUserMedia({
         video: true,
         audio: true,
       }); // safari won't return a list of devices until we approve this
 
-      const devices = await navigator.mediaDevices.enumerateDevices();
+      // Discovery only needs a temporary stream. Always release it so it
+      // cannot keep the default camera busy when a different one is selected.
+      let devices: MediaDeviceInfo[];
+      try {
+        devices = await navigator.mediaDevices.enumerateDevices();
+      } finally {
+        permissionStream.getTracks().forEach((track) => track.stop());
+      }
       console.log('requestUserMedia: Enumerated devices:', devices.length);
 
       const videoDevices = devices.filter(
